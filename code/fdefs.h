@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.4  1996/04/11 21:27:53  trq
+ * Revision 1.5  1996/06/29 00:17:02  trq
+ * Changed loadbinary to load subboxes.
+ *
+ * Revision 1.4  1996/04/11  21:27:53  trq
  * view_star.c: fixed bug in abox vs. density calculation.
  * activatebox.c: hsmdivv is independent of abox.
  * divv.c, smooth.c, smooth.h, view_gas.c: Use tree to calculate hsmdivv[].
@@ -85,6 +88,8 @@ PROTO(void, ikernel_load, ());
 PROTO(void, input_error, (char *command));
 PROTO(void, load_color_table, ());
 PROTO(void, loadall, ());
+PROTO(void, loadbinary, (FILE *infile, double time));
+PROTO(void, loadbin_box, (FILE *infile,double time, Real *xmin, Real *xmax));
 PROTO(void, loadbox, (int box));
 PROTO(void, load_redshift, ());
 PROTO(void, loadsphere, (int box, Real *center, double radius));

@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.8  1996/03/05 00:04:23  nsk
+ * Revision 1.9  1996/06/29 00:17:00  trq
+ * Changed loadbinary to load subboxes.
+ *
+ * Revision 1.8  1996/03/05  00:04:23  nsk
  * *** empty log message ***
  *
  * Revision 1.7  1996/02/16  17:19:21  trq
@@ -193,7 +196,7 @@ arguments(job)
     }
     else if ( strcmp(command,"loadbinary") == 0 ||
 	    strcmp(command,"loadb") == 0 ) {
-	printf("loadbinary time\n") ;
+	printf("loadbinary time [x-center y-center z-center x-hwidth y-hwidth z-hwidth]\n") ;
     }
     else if ( strcmp(command,"lumconstants") == 0 ||
 	    strcmp(command,"lconst") == 0 ) {

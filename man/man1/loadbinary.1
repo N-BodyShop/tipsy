@@ -3,7 +3,7 @@
 loadbinary \- load in data from a binary file
 .SH SYNOPSIS
 .B loadbinary
-.I time
+.I time [ x-center y-center z-center x-hwidth y-hwidth z-hwidth ]
 .SH ALIASES
 .B loadb
 .SH DESCRIPTION
@@ -27,6 +27,13 @@ program.  The data cannot be used until box 0 is loaded using either the
 or
 .B setbox
 command.
+If the arguments
+.I x-center y-center z-center x-hwidth y-hwidth z-hwidth
+are given, then a subbox centered at
+.I x-center y-center z-center
+of half width
+.I x-hwidth y-hwidth z-hwidth
+is loaded.
 .SH SEE ALSO
 .BR loadall (1),
 .BR openbinary (1),

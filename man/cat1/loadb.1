@@ -1,40 +1,36 @@
 
 
 
-LOADBINARY(1)            TIPSY COMMANDS             LOADBINARY(1)
+LOADBINARY(1)		  TIPSY	COMMANDS	    LOADBINARY(1)
 
 
+NNAAMMEE
+       loadbinary - load in data from a	binary file
 
-NAME
-     loadbinary - load in data from a binary file
+SSYYNNOOPPSSIISS
+       llooaaddbbiinnaarryy  _t_i_m_e	 _[ _x_-_c_e_n_t_e_r _y_-_c_e_n_t_e_r _z_-_c_e_n_t_e_r _x_-_h_w_i_d_t_h _y_-
+       _h_w_i_d_t_h _z_-_h_w_i_d_t_h _]
 
-SYNOPSIS
-     loadbinary _t_i_m_e
+AALLIIAASSEESS
+       llooaaddbb
 
-ALIASES
-     loadb
+DDEESSCCRRIIPPTTIIOONN
+       llooaaddbbiinnaarryy loads	in the data at time _t_i_m_e  from	the  cur-
+       rently open binary file.	 If more than one time is present
+       in the binary file the time closest to _t_i_m_e is  used.   It
+       is  typical (and	useful)	to have	many sequential	time out-
+       puts in one tipsy binary	file. If no binary file	 is  open
+       an  error  is generated.	 Binary	files can be opened using
+       the ooppeennbbiinnaarryy command.	Binary files can be created using
+       the  rreeaaddaasscciiii  command	or the aasscciiii22bbiinnaarryy program.  The
+       data cannot be used until box 0 is loaded using either the
+       llooaaddaallll	or  sseettbbooxx command.  If	the arguments _x_-_c_e_n_t_e_r _y_-
+       _c_e_n_t_e_r _z_-_c_e_n_t_e_r _x_-_h_w_i_d_t_h	_y_-_h_w_i_d_t_h _z_-_h_w_i_d_t_h are given, then
+       a  subbox  centered  at _x_-_c_e_n_t_e_r	_y_-_c_e_n_t_e_r _z_-_c_e_n_t_e_r of half
+       width _x_-_h_w_i_d_t_h _y_-_h_w_i_d_t_h _z_-_h_w_i_d_t_h	is loaded.
 
-DESCRIPTION
-     loadbinary loads in the data at time _t_i_m_e from the currently
-     open  binary  file.  If more than one time is present in the
-     binary file the time closest to _t_i_m_e is used.  It is typical
-     (and  useful)  to  have  many sequential time outputs in one
-     tipsy binary file. If no binary file is  open  an  error  is
-     generated.   Binary files can be opened using the openbinary
-     command.  Binary files can be created  using  the  readascii
-     command  or  the  ascii2binary  program.  The data cannot be
-     used until box 0 is loaded using either the loadall or  set-
-     box command.
-
-SEE ALSO
-     loadall(1), openbinary(1), readascii(1), setbox(1)
-
-
-
-
-
-
-
+SSEEEE AALLSSOO
+       llooaaddaallll(1), ooppeennbbiinnaarryy(1), rreeaaddaasscciiii(1),	sseettbbooxx(1)
 
 
 
@@ -60,7 +56,11 @@ SEE ALSO
 
 
 
-KQ Release 2.0     Last change: 22 MARCH 1994                   1
 
+
+
+
+
+KQ Release 2.0		  22 MARCH 1994				1
 
 
