@@ -1,5 +1,5 @@
 #include "defs.h"
-void reset_color();
+#include "fdefs.h"
 
 void
 load_color_table()

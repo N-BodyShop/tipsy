@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.10  1996/12/20 01:25:08  trq
+ * Revision 1.11  1997/01/17 21:22:55  trq
+ * Added optional argument to resetcolor command.
+ *
+ * Revision 1.10  1996/12/20  01:25:08  trq
  * Added catbox command.
  *
  * Revision 1.9  1996/06/29  00:17:00  trq
@@ -292,7 +295,7 @@ arguments(job)
     }
     else if ( strcmp(command,"resetcolor") ==0 ||
 	    strcmp(command,"rcol") == 0 ) {
-	printf("resetcolor\n") ;
+	printf("resetcolor [fraction]\n") ;
     }
     else if ( strcmp(command,"rotate") == 0 ) {
 	printf("rotate direction degrees\n") ;

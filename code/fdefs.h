@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.7  1996/12/20 01:25:10  trq
+ * Revision 1.8  1997/01/17 21:22:58  trq
+ * Added optional argument to resetcolor command.
+ *
+ * Revision 1.7  1996/12/20  01:25:10  trq
  * Added catbox command.
  *
  * Revision 1.6  1996/08/19  20:56:01  trq
@@ -133,6 +136,7 @@ PROTO(void, project, ());
 PROTO(void, radial_color, ());
 PROTO(void, readarray, (char *job));
 PROTO(void, readoldbin, (char *job));
+PROTO(void, reset_color, (char *job));
 PROTO(void, reset_zoom_scroll, ());
 PROTO(void, rotate, (int direction,double angle));
 PROTO(void, setival, (int *a, int b));
