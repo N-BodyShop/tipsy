@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.4  2003/08/04 23:51:03  trq
+ * Reset current_plot if we have reloaded an active box.
+ *
  * Revision 1.3  1996/12/20 01:25:10  trq
  * Added catbox command.
  *
@@ -120,6 +123,9 @@ loadbox(box)
 	boxes[box].center[i] = (boxes[box].x1[i] +boxes[box].x6[i]) / 2.0 ;
     }
     box_cumulate(box);
+    if(box == active_box) {
+	current_project = NO;
+	}
 }
 
 /*

@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.3  2003/08/04 23:51:03  trq
+ * Reset current_plot if we have reloaded an active box.
+ *
  * Revision 1.2  1996/12/20 01:25:12  trq
  * Added catbox command.
  *
@@ -101,4 +104,7 @@ loadsphere(box,center,radius)
     boxes[box].volume = 4.*PI/3.*radius*radius*radius ;
     setvec(boxes[box].center,center) ;
     box_cumulate(box);
+    if(box == active_box) {
+	current_project = NO;
+	}
 }
