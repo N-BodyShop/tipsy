@@ -1,4 +1,6 @@
+#include <malloc.h>
 #include "defs.h"
+
 oldascii2binary(infile,outfile)
     FILE *infile;
     FILE *outfile;

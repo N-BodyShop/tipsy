@@ -2,6 +2,7 @@
 
 	cfg 7/89
 */
+#include <malloc.h>
 #include "defs.h"
 #define BLANK 	-32768		/* short blank value */
 
