@@ -3,7 +3,7 @@
 
 void
 profile(job)
-    char job[MAXCOMM] ;
+    char *job ;
 {
     char command[MAXCOMM] ;
     char particle_type[MAXCOMM] ;
@@ -50,6 +50,8 @@ profile(job)
     Real vel_shell[MAXDIM] ;
     double bin_size ;
     double dx2;
+    double gasconst;		/* convert kboltz/mhydrogen to system
+				   units assuming G == 1 */
     struct gas_particle *gp ;
     struct dark_particle *dp ;
     struct star_particle *sp ;
@@ -268,6 +270,11 @@ profile(job)
 		    strcmp(particle_type,"mark") == 0 ||
 		    strcmp(particle_type,"unmark") == 0 ||
 		    strcmp(particle_type,"all") ==0) {
+		if(boxlist[box].ngas > 0 && !meanmwt_loaded) {
+		    meanmwt_func();
+		}
+		gasconst = kpcunit*KPCCM*KBOLTZ/MHYDR/GCGS/msolunit/MSOLG;
+		
 		for (i = 0 ;i < boxlist[box].ngas ; i++) {
 		    if(strcmp(particle_type,"mark") == 0 &&
 		       mark_gas[boxlist[box].gpi[i]] == 0)
@@ -320,7 +327,8 @@ profile(job)
 			vel_radial_sigma[bin] += (gp->mass) * vel * vel ;
 			density[bin] += (gp->mass) * (gp->rho) ;
 			temp[bin] += (gp->mass) * (gp->temp) ;
-			pressure[bin] += (gp->mass) * (gp->temp) * (gp->rho) ;
+			pressure[bin] += (gp->mass) * gasconst
+			    * (gp->temp/meanmwt[i]) * (gp->rho) ;
 		    }
 		}
 	    }
