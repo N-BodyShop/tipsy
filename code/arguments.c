@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.7  1996/02/16 17:19:21  trq
+ * Revision 1.8  1996/03/05 00:04:23  nsk
+ * *** empty log message ***
+ *
+ * Revision 1.7  1996/02/16  17:19:21  trq
  * Fixed bug in window for non-8 bit displays.
  * Added optional size arguments to the window command.
  *
@@ -361,8 +364,8 @@ arguments(job)
 	printf("velscale scale\n") ;
     }
     else if ( strcmp(command,"velsigma") == 0 ) {
-	printf("velsigma box-number particle binning bin_number ") ;
-	printf("minimum_radius maximum_radius\n") ;
+	printf("velsigma box-number center-box-number particle binning ") ;
+	printf("bin_number minimum_radius maximum_radius\n") ;
     }
     else if ( strcmp(command,"version") == 0 ) {
 	printf("version\n") ;

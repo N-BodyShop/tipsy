@@ -6,6 +6,7 @@ vel_sigma(job)
     char particle_type[MAXCOMM] ;
     char bin_type[MAXCOMM] ;
     int box ;
+    int center_box ;
     int number_bins ;
     int bin ;
     double min_radius ;
@@ -36,9 +37,10 @@ vel_sigma(job)
     int i,j ;
     Real center_angular_mom[MAXDIM] ;
 
-    if (sscanf(job,"%s %d %s %s %d %lf %lf",command,&box,
-	    particle_type,bin_type,&number_bins,&min_radius,&max_radius) == 7){
-	if (boxes_loaded[box] && number_bins <= MAXBIN) {
+    if (sscanf(job,"%s %d %s %s %d %lf %lf",command,&box,&center_box,
+	    particle_type,bin_type,&number_bins,&min_radius,&max_radius) == 8){
+	if (boxes_loaded[box] && boxes_loaded[center_box] &&
+		number_bins <= MAXBIN) {
 	    for (i = 0 ; i < MAXBIN ;i++) {
 		mass[i] = 0. ;
 		for (j = 0 ; j < header.ndim ;j++) {
@@ -61,6 +63,24 @@ vel_sigma(job)
 	    else {
 		printf("<sorry, %s not a bin type, %s>\n",bin_type,title) ;
 		return ;
+	    }
+	    if (strcmp(particle_type,"dark") == 0){
+		setvec(center,boxes[center_box].dark_com) ;
+		setvec(center_vel,boxes[box].dark_com_vel) ;
+		setvec(center_angular_mom,boxes[box].dark_angular_mom) ;
+	    else if (strcmp(particle_type,"star") == 0){
+		setvec(center,boxes[center_box].star_com) ;
+		setvec(center_vel,boxes[box].star_com_vel) ;
+		setvec(center_angular_mom,boxes[box].star_angular_mom) ;
+	    else if (strcmp(particle_type,"gas") == 0){
+		setvec(center,boxes[center_box].gas_com) ;
+		setvec(center_vel,boxes[box].gas_com_vel) ;
+		setvec(center_angular_mom,boxes[box].gas_angular_mom) ;
+	    }
+	    else{
+		setvec(center,boxes[center_box].total_com) ;
+		setvec(center_vel,boxes[box].total_com_vel) ;
+		setvec(center_angular_mom,boxes[box].total_angular_mom) ;
 	    }
 	    fit_radius = max_radius ;
 	    find_shape(particle_type,box,center) ;
@@ -290,6 +310,9 @@ vel_sigma(job)
 		    vel_circ[1],vel_circ[2],sigma[0],sigma[1],sigma[2]) ;
 	}
 	else if (!boxes_loaded[box]) {
+	    printf("<sorry, box %d is not loaded, %s>\n",box,title) ;
+	}
+	else if (!boxes_loaded[center_box]) {
 	    printf("<sorry, box %d is not loaded, %s>\n",box,title) ;
 	}
 	else {
