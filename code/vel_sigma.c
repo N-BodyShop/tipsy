@@ -37,7 +37,7 @@ vel_sigma(job)
     int i,j ;
     Real center_angular_mom[MAXDIM] ;
 
-    if (sscanf(job,"%s %d %s %s %d %lf %lf",command,&box,&center_box,
+    if (sscanf(job,"%s %d %d %s %s %d %lf %lf",command,&box,&center_box,
 	    particle_type,bin_type,&number_bins,&min_radius,&max_radius) == 8){
 	if (boxes_loaded[box] && boxes_loaded[center_box] &&
 		number_bins <= MAXBIN) {
@@ -306,6 +306,7 @@ vel_sigma(job)
 	    for(j = 0 ;j < header.ndim ;j++){
 		vel_circ[j] /= mass_r ;
 		sigma[j] /= mass_r ;
+		sigma[j] = sqrt(sigma[j]) ;
 	    }
 	    printf("b/a = %g, c/a = %g\n",ba,ca) ;
 	    printf("vel = (%g, %g, %g)\nsigma = (%g, %g, %g)\n",vel_circ[0],

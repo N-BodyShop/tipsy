@@ -18,13 +18,13 @@ int n,*nrot;
 		z[ip]=0.0;
 	}
 	*nrot=0;
-	for (i=1;i<=50;i++) {
+	for (i=1;i<=100;i++) {
 		sm=0.0;
 		for (ip=1;ip<=n-1;ip++) {
 			for (iq=ip+1;iq<=n;iq++)
 				sm += fabs(a[ip][iq]);
 		}
-		if (sm <= 1.0e-6) {
+		if (sm <= 1.0e-12) {
 			return;
 		}
 		if (i < 4)
