@@ -27,9 +27,9 @@ divv()
 	load_cool() ;
     }
 
-    rsys = cosmof*kpcunit/1.e3 ;
-    vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
-    hsys = rsys*hubble_constant/(1.0 + redshift)/vsys;
+    rsys = kpcunit/1.e3 ;
+    vsys = sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
+    hsys = rsys*hubble_constant*sqrt(1.0 + omega*redshift)/vsys;
 
     if(boxlist[0].ngas != header.nsph) {
 	printf("<Warning, box 0 does not contain all particles, %s>\n", title);
