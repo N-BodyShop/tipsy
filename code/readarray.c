@@ -1,6 +1,10 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.5  2002/12/23 19:44:05  trq
+ * Added "readbinarray" command to read binary arrays.  Only native formats
+ * are supported.
+ *
  * Revision 1.4  2002/08/15 22:33:14  trq
  * Fixed bugs in freeing arrays on bad input.
  *
@@ -138,6 +142,119 @@ readarray(job)
 		break;
 	    }
 	    array[count++] *= pow(tmp,power);
+	  }
+      }
+    else {
+	input_error(command) ;
+    }
+}
+
+void
+readbinarray(job)
+     char *job;
+     
+{
+  char command[MAXCOMM] ;
+  char filename[MAXCOMM] ;
+  char type[MAXCOMM] ;
+  double power;
+  Real tmp;
+  FILE *infile;
+  int i;
+  int count;
+  int nbodies;
+  int btype;
+  int check;
+
+  if (sscanf(job,"%s %s %s",command,filename, type) == 3) {
+      if(!strcmp(type, "int")) {
+	  btype = 0;
+      }
+      else if(!strcmp(type, "float")){
+	  btype = 1;
+      }
+      else if(!strcmp(type, "double")){
+	  btype = 2;
+      }
+      else {
+	  input_error(command) ;
+      }
+      
+	  
+    infile = fopen(filename, "r");
+    if(infile == NULL)
+      {
+        printf("<Sorry %s, file does not exist>\n",title);
+	return;
+      }
+	count=fread(&nbodies, sizeof(int), 1, infile) ;
+	if ( (count == EOF) || (count==0) ){
+	    printf("<Sorry %s, file format is wrong>\n",title);
+	    return;
+	}
+    if(array != NULL) free(array);
+    array = (Real *)malloc(nbodies*sizeof(*array));
+    array_size = nbodies;
+    if(array == NULL) 
+      {
+	printf("<Sorry %s, no room for array>\n",title);
+	return;
+      }
+	for(i = 0, count = 0; i < nbodies; i++)
+	  {
+				/* skip line if a partial box was
+				   loaded and this particle is not in
+				   it */
+	    if(box0_pi && box0_pi[count] != i) {
+		switch (btype) {
+		int idummy;
+		float fdummy;
+		double ddummy;
+		case 0:
+		    fread(&idummy, sizeof(int), 1, infile) ;
+		    break;
+		case 1:
+		    fread(&fdummy, sizeof(float), 1, infile) ;
+		    break;
+		case 2:
+		    fread(&ddummy, sizeof(double), 1, infile) ;
+		}
+		
+	      continue;
+	    }
+	    else {
+	      if(count >= header.nbodies) {
+		    printf("<Sorry %s, file format is wrong>\n",title);
+		    array_size = 0 ;
+		    free(array) ;
+		    array = NULL;
+		    break;
+	      }
+	    }
+		switch (btype) {
+		int idummy;
+		float fdummy;
+		double ddummy;
+		case 0:
+		    check = fread(&idummy, sizeof(int), 1, infile) ;
+		    array[count] = idummy;
+		    break;
+		case 1:
+		    check = fread(&fdummy, sizeof(float), 1, infile) ;
+		    array[count] = fdummy;
+		    break;
+		case 2:
+		    check = fread(&ddummy, sizeof(double), 1, infile) ;
+		    array[count] = ddummy;
+		}
+	    if(check == EOF) {
+		printf("<Sorry %s, file format is wrong>\n",title);
+		array_size = 0 ;
+		free(array) ;
+		array = NULL;
+		break;
+	    }
+	    count++;
 	  }
       }
     else {

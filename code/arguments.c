@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.26  2002/12/23 19:44:03  trq
+ * Added "readbinarray" command to read binary arrays.  Only native formats
+ * are supported.
+ *
  * Revision 1.25  2001/10/04 17:58:35  nsk
  *
  *             Added back in two continue lines that were accidently deleted
@@ -335,6 +339,9 @@ arguments(job)
     }
     else if ( strcmp(command,"readarray") == 0) {
 	printf("readarray filename\n") ;
+    }
+    else if ( strcmp(command,"readbinarray") == 0) {
+	printf("readarray filename type\n") ;
     }
     else if ( strcmp(command,"readvector") == 0) {
 	printf("readvector filename\n") ;

@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.16  2002/12/23 19:44:05  trq
+ * Added "readbinarray" command to read binary arrays.  Only native formats
+ * are supported.
+ *
  * Revision 1.15  2001/10/04 17:58:36  nsk
  *
  *             Added back in two continue lines that were accidently deleted
@@ -149,6 +153,7 @@ extern void profile() ;
 
 extern void read_macro() ;
 extern void readarray() ;
+extern void readbinarray() ;
 extern void readvector() ;
 extern void readascii() ;
 extern void readoldbin() ;
@@ -337,6 +342,7 @@ struct comm c_list[] = {
 
      {"rcol",        reset_color,	1},
      {"readarray",   readarray,		0},
+     {"readbinarray", readbinarray,	0},
      {"readvector",  readvector,	0},
      {"readascii",   readascii,		0},
      {"readoldbin",  readoldbin,	0},
