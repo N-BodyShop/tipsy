@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.4  1995/03/30 00:14:41  trq
+ * Revision 1.5  1995/06/06 17:47:51  trq
+ * dump_pixmap.c: Cleaned up declarations.
+ *
+ * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
+ *
+ * Revision 1.4  1995/03/30  00:14:41  trq
  * Added "ruler" command.
  *
  * Revision 1.3  1995/03/24  18:49:06  trq
@@ -299,6 +304,12 @@ struct list {
     int *spi;
 } ;
 extern struct list boxlist[MAXBOX+1] ;
+
+#include "smooth.h"
+extern SMX box0_smx;
+extern Real ball_size;
+extern int ball_size_loaded;
+extern int n_smooth;
 
 struct command_list {
   char *command;

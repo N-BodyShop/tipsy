@@ -2,9 +2,48 @@
 #include "fdefs.h"
 
 #include <X11/XWDFile.h>
+#include <malloc.h>
 
 extern Pixmap back_xid;
 extern Widget canvas;
+
+void
+_swapshort (bp, n)
+    register char *bp;
+    register unsigned n;
+{
+    register char c;
+    register char *ep = bp + n;
+
+    while (bp < ep) {
+        c = *bp;
+        *bp = *(bp + 1);
+        bp++;
+        *bp++ = c;
+    }
+}
+
+void
+_swaplong (bp, n)
+    register char *bp;
+    register unsigned n;
+{
+    register char c;
+    register char *ep = bp + n;
+    register char *sp;
+
+    while (bp < ep) {
+        sp = bp + 3;
+        c = *sp;
+        *sp = *bp;
+        *bp++ = c;
+        sp = bp + 1;
+        c = *sp;
+        *sp = *bp;
+        *bp++ = c;
+        bp += 2;
+    }
+}
 
 /*
  * Get the XColors of all pixels in image - returns # of colors
@@ -164,40 +203,4 @@ char *name;
      * Free image
      */
     XDestroyImage(image);
-}
-
-_swapshort (bp, n)
-    register char *bp;
-    register unsigned n;
-{
-    register char c;
-    register char *ep = bp + n;
-
-    while (bp < ep) {
-        c = *bp;
-        *bp = *(bp + 1);
-        bp++;
-        *bp++ = c;
-    }
-}
-
-_swaplong (bp, n)
-    register char *bp;
-    register unsigned n;
-{
-    register char c;
-    register char *ep = bp + n;
-    register char *sp;
-
-    while (bp < ep) {
-        sp = bp + 3;
-        c = *sp;
-        *sp = *bp;
-        *bp++ = c;
-        sp = bp + 1;
-        c = *sp;
-        *sp = *bp;
-        *bp++ = c;
-        bp += 2;
-    }
 }

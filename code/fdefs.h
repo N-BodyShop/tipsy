@@ -1,7 +1,12 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:20  trq
- * Initial revision
+ * Revision 1.2  1995/06/06 17:47:53  trq
+ * dump_pixmap.c: Cleaned up declarations.
+ *
+ * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:21  trq
+ * Import to CVS
  *
  * Revision 2.4  1994/10/12  21:25:54  trq
  * Added prototype for wait_on_X.
@@ -50,6 +55,7 @@ PROTO(double, dot_product, (Real *x1,Real *x2));
 PROTO(void, draworient, ());
 PROTO(void, draw_label, ());
 PROTO(void, draw_color_label,());
+PROTO(void, dump_pixmap, (char *name));
 PROTO(double, ell_distance, (Real *x1));
 PROTO(void, find_shape, (char *particle_type, int box, Real *center));
 PROTO(void, find_vel, (char *particle_type, int box, Real *center_vel,

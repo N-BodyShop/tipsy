@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.4  1995/04/25 17:59:42  trq
+ * Revision 1.5  1995/06/06 17:47:49  trq
+ * dump_pixmap.c: Cleaned up declarations.
+ *
+ * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
+ *
+ * Revision 1.4  1995/04/25  17:59:42  trq
  * New command: zspace
  *
  * Revision 1.3  1995/03/30  00:14:39  trq
@@ -314,6 +319,9 @@ arguments(job)
     }
     else if ( strcmp(command,"showvel") == 0 || strcmp(command,"svel") == 0 ) {
 	printf("showvel yes/no\n") ;
+    }
+    else if ( strcmp(command,"smooth") == 0 ) {
+	printf("smooth ball_size n_smooth\n") ;
     }
     else if ( strcmp(command,"starhistory") == 0 ) {
 	printf("starhistory box-number") ;

@@ -1,7 +1,12 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.2  1995/03/02 17:30:27  nsk
+ * Revision 1.3  1995/06/06 17:48:00  trq
+ * dump_pixmap.c: Cleaned up declarations.
+ *
+ * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
+ *
+ * Revision 1.2  1995/03/02  17:30:27  nsk
  * changed absorption cross section tb be done by integral
  * added optical depth output and fixed bug in absorb
  * added stellar mass plot to view_star
@@ -16,9 +21,15 @@
  * Added star formation plots
  * 
  */
+#include <malloc.h>
 #include "defs.h"
+#include "fdefs.h"
+#include "kd.h"
+#include "smooth.h"
+
+void
 view_star(job)
-    char job[MAXCOMM] ;
+    char *job ;
 {
     char command[MAXCOMM] ;
     char type[MAXCOMM] ;
@@ -29,6 +40,7 @@ view_star(job)
     struct star_particle *sp ;
     int i;
     double mag_offset ;
+    KD kd;
 
     if (boxes_loaded[0]) {
 	if((i = sscanf(job,"%s %s %lf %lf %s",command,type,&low,&high,
@@ -178,6 +190,22 @@ view_star(job)
 		    sp = boxlist[active_box].sp[i] ;
 		    particle_color[i] = (int)(color_slope * 
 			    log10((sp->mass)) + color_offset +0.5);
+		}
+	    }
+	    else if(strcmp(type,"logrho") == 0){
+		calc_density(&box0_smx, 0, 0, 1);
+		kd = box0_smx->kd;
+		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
+		    particle_color[i] = (int)(color_slope * 
+			    log10(kd->p[i].fDensity) + color_offset +0.5);
+		}
+	    }
+	    else if(strcmp(type,"rho") == 0){
+		calc_density(&box0_smx, 0, 0, 1);
+		kd = box0_smx->kd;
+		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
+		    particle_color[i] = (int)(color_slope * 
+			    kd->p[i].fDensity + color_offset +0.5);
 		}
 	    }
 	    else {

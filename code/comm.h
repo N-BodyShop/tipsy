@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1995/04/25 17:59:43  trq
+ * Revision 1.4  1995/06/06 17:47:50  trq
+ * dump_pixmap.c: Cleaned up declarations.
+ *
+ * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
+ *
+ * Revision 1.3  1995/04/25  17:59:43  trq
  * New command: zspace
  *
  * Revision 1.2  1995/03/30  00:14:40  trq
@@ -125,6 +130,7 @@ extern void showstar_sub() ;
 
 extern void showvec_sub() ;
 extern void showvel_sub() ;
+extern void smooth_sub();
 extern void star_history() ;
 extern void unload_box() ;
 extern void unmark_all() ;
@@ -304,6 +310,7 @@ struct comm c_list[] = {
 
      {"showvec",     showvec_sub,	0},
      {"showvel",     showvel_sub,	0},
+     {"smooth",      smooth_sub,	0},
      {"sstar",       showstar_sub,	0},
      {"starhistory", star_history,	0},
      {"svec",        showvec_sub,	0},

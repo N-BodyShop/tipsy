@@ -1,7 +1,12 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.4  1995/03/30 00:14:44  trq
+ * Revision 1.5  1995/06/06 17:47:57  trq
+ * dump_pixmap.c: Cleaned up declarations.
+ *
+ * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
+ *
+ * Revision 1.4  1995/03/30  00:14:44  trq
  * Added "ruler" command.
  *
  * Revision 1.3  1995/03/24  18:49:09  trq
@@ -84,6 +89,11 @@ struct dump header  = { 0.0, 0, 0 , 0 , 0, 0};
 struct box boxes[MAXBOX+1] ;    
 struct list boxlist[MAXBOX+1] ;
 struct macro_list *macros = NULL;
+
+SMX box0_smx = NULL;
+Real ball_size = 0.0;
+int ball_size_loaded = 0;
+int n_smooth = 32;
 
 int showgas = ON ;
 int showdark = ON ;

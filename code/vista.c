@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.4  1995/03/02 17:30:29  nsk
+ * Revision 1.5  1995/06/06 17:48:01  trq
+ * dump_pixmap.c: Cleaned up declarations.
+ *
+ * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
+ *
+ * Revision 1.4  1995/03/02  17:30:29  nsk
  * changed absorption cross section tb be done by integral
  * added optical depth output and fixed bug in absorb
  * added stellar mass plot to view_star
@@ -564,9 +569,7 @@ vista(job)
 		}
 	    }
 	    else if(vista_type == VSTAR){
-		if(!epsgas_loaded){
-		    load_epsgas() ;
-		}
+		calc_balls(&box0_smx, 0, 0 , 1);
 		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
 		    sp = boxlist[active_box].sp[i] ;
 		    for (part_pos[0] = part_pos[1] = 0.0,j = 0 ;
@@ -576,137 +579,115 @@ vista(job)
 			part_pos[1] += rot_matrix[1][j] * (sp->pos[j] -
 				boxes[active_box].center[j]) ;
 		    }
-		    kx = (int)((part_pos[0]-xmin)/ size_pixel) ;
-		    ky = (int)((part_pos[1]-ymin)/ size_pixel) ;
-		    if(kx >= 0 && kx < vista_size && ky >= 0 && ky <
-			    vista_size){
-			quantity[kx][ky] += sp->mass ;
-		    }
-		}
-		hsmooth = epsgas_grav ;
-		if(hsmooth > size_pixel){
-		    thsmooth = 2. * hsmooth ;
-		    distnorm = 1. / (hsmooth * hsmooth) ;
-		    hsmth2pi = distnorm / PI ;
-		    for(i = 0; i < vista_size ; i++){
-			for(j = 0; j < vista_size ; j++){
-			    if(quantity[i][j] > 0.){
-				part_pos[0] = xmin + (i + .5) * size_pixel ;
-				part_pos[1] = ymin + (j + .5) * size_pixel ;
-				kx_min = max(0,(int)((part_pos[0]-thsmooth-
-					xmin)/size_pixel + .499999)) ;
-				kx_max = min(vista_size-1,(int)((part_pos[0]+
-					thsmooth- xmin)/size_pixel + .499999)) ;
-				ky_min = max(0,(int)((part_pos[1]-thsmooth-
-					ymin)/size_pixel + .499999)) ;
-				ky_max = min(vista_size-1,(int)((part_pos[1]+
-					thsmooth- ymin)/size_pixel + .499999)) ;
-				for(kx = kx_min; kx < kx_max + 1; kx++){
-				    for(ky = ky_min; ky < ky_max + 1; ky++){
-					pixel_pos[0] = xmin + (kx + .5) *
-						size_pixel ;
-					pixel_pos[1] = ymin + (ky + .5) *
-						size_pixel ;
-					radius2 = distance_dim2(pixel_pos,
-						part_pos)*distnorm ;
-					if(radius2 < 4.){
-					    radius2 *= deldr2i ;
-					    iwsm = (int)radius2 ;
-					    drw = radius2 - (double)iwsm ;
-					kernel = ((1. - drw) * iwsmooth[iwsm] +
-						drw * iwsmooth[1 + iwsm]) *
-						hsmth2pi;
-					}
-					else{
-					    kernel = 0. ;
-					}
-					kernel *= size_pixel ;
-					if(kernel != 0.){
-					    density[kx][ky] += (float)(kernel*
-						quantity[i][j]) ;
-					}
-				    }
-				}
-			    }
-			}
-		    }
-		}
-		else{
-		    for(i = 0; i < vista_size ; i++){
-			for(j = 0; j < vista_size ; j++){
-			    density[kx][ky] += quantity[i][j] ;
-			}
-		    }
-		}
-	    }
-	    else if(vista_type == LUMSTAR){
-		if(!epsgas_loaded){
-		    load_epsgas() ;
-		}
-		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
-		    sp = boxlist[active_box].sp[i] ;
-		    luminosity = star_lum_redshift(sp->mass,sp->tform,
-			    wavelength) ;
-		    hsmooth = epsgas_grav ;
-		    for (part_pos[0] = part_pos[1] = 0.0,j = 0 ;
-			    j < header.ndim ;j++) {
-			part_pos[0] += rot_matrix[0][j] * (sp->pos[j] -
-				boxes[active_box].center[j]) ;
-			part_pos[1] += rot_matrix[1][j] * (sp->pos[j] -
-				boxes[active_box].center[j]) ;
-		    }
+		    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
 		    if(hsmooth > size_pixel){
 			thsmooth = 2. * hsmooth ;
 			distnorm = 1. / (hsmooth * hsmooth) ;
 			hsmth2pi = distnorm / PI ;
 			kx_min = max(0,(int)((part_pos[0]-thsmooth-xmin)/
 				size_pixel + .499999)) ;
-			kx_max = min(vista_size-1,(int)((part_pos[0]+thsmooth-
-				xmin)/
-				size_pixel + .499999)) ;
+			kx_max = min(vista_size-1,(int)((part_pos[0]+
+				thsmooth-xmin)/size_pixel + .499999)) ;
 			ky_min = max(0,(int)((part_pos[1]-thsmooth-ymin)/
 			    size_pixel + .499999)) ;
-			ky_max = min(vista_size-1,(int)((part_pos[1]+thsmooth-
-				ymin)/
-				size_pixel + .499999)) ;
+			ky_max = min(vista_size-1,(int)((part_pos[1]+
+				thsmooth- ymin)/ size_pixel + .499999)) ;
 			for(kx = kx_min; kx < kx_max + 1; kx++){
 			    for(ky = ky_min; ky < ky_max + 1; ky++){
-				pixel_pos[0] = xmin + (kx + .5) * size_pixel ;
-				pixel_pos[1] = ymin + (ky + .5) * size_pixel ;
-				radius2 = distance_dim2(pixel_pos,part_pos) *
+				pixel_pos[0] = xmin+(kx + .5) * size_pixel ;
+				pixel_pos[1] = ymin+(ky + .5) * size_pixel ;
+				radius2 = distance_dim2(pixel_pos,part_pos)*
 					distnorm ;
 				if(radius2 < 4.){
 				    radius2 *= deldr2i ;
 				    iwsm = (int)radius2 ;
 				    drw = radius2 - (double)iwsm ;
 				    kernel = ((1. - drw) * iwsmooth[iwsm] +
-					    drw*iwsmooth[1 + iwsm]) * hsmth2pi ;
+					    drw*iwsmooth[1+iwsm])*hsmth2pi ;
 				}
 				else{
 				    kernel = 0. ;
 				}
 				kernel *= size_pixel_2 ;
 				if(kernel != 0.){
-				    density[kx][ky] += (float)(kernel*
-					luminosity) ;
+					density[kx][ky] += (float)(kernel*
+					    (sp->mass)) ;
 				}
 			    }
 			}
 		    }
-		    else {
-			kx = (int)((part_pos[0]-xmin)/size_pixel + .499999) ;
-			ky = (int)((part_pos[1]-ymin)/size_pixel + .499999) ;
+		    else{
+			kx = (int)((part_pos[0]-xmin)/size_pixel+0.499999) ;
+			ky = (int)((part_pos[1]-ymin)/size_pixel+0.499999) ;
 			if(kx >= 0 && kx < vista_size && ky >= 0 &&
 				ky < vista_size){
-				    density[kx][ky] += (float)(luminosity) ;
+				density[kx][ky] += (float)((sp->mass)) ;
+			}
+		    }
+		}
+	    }
+	    else if(vista_type == LUMSTAR){
+		calc_balls(&box0_smx, 0, 0 , 1);
+		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
+		    sp = boxlist[active_box].sp[i] ;
+		    luminosity = star_lum_redshift(sp->mass,sp->tform,
+			    wavelength) ;
+		    for (part_pos[0] = part_pos[1] = 0.0,j = 0 ;
+			    j < header.ndim ;j++) {
+			part_pos[0] += rot_matrix[0][j] * (sp->pos[j] -
+				boxes[active_box].center[j]) ;
+			part_pos[1] += rot_matrix[1][j] * (sp->pos[j] -
+				boxes[active_box].center[j]) ;
+		    }
+		    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+		    if(hsmooth > size_pixel){
+			thsmooth = 2. * hsmooth ;
+			distnorm = 1. / (hsmooth * hsmooth) ;
+			hsmth2pi = distnorm / PI ;
+			kx_min = max(0,(int)((part_pos[0]-thsmooth-xmin)/
+				size_pixel + .499999)) ;
+			kx_max = min(vista_size-1,(int)((part_pos[0]+
+				thsmooth-xmin)/size_pixel + .499999)) ;
+			ky_min = max(0,(int)((part_pos[1]-thsmooth-ymin)/
+			    size_pixel + .499999)) ;
+			ky_max = min(vista_size-1,(int)((part_pos[1]+
+				thsmooth- ymin)/ size_pixel + .499999)) ;
+			for(kx = kx_min; kx < kx_max + 1; kx++){
+			    for(ky = ky_min; ky < ky_max + 1; ky++){
+				pixel_pos[0] = xmin+(kx + .5) * size_pixel ;
+				pixel_pos[1] = ymin+(ky + .5) * size_pixel ;
+				radius2 = distance_dim2(pixel_pos,part_pos)*
+					distnorm ;
+				if(radius2 < 4.){
+				    radius2 *= deldr2i ;
+				    iwsm = (int)radius2 ;
+				    drw = radius2 - (double)iwsm ;
+				    kernel = ((1. - drw) * iwsmooth[iwsm] +
+					    drw*iwsmooth[1+iwsm])*hsmth2pi ;
+				}
+				else{
+				    kernel = 0. ;
+				}
+				kernel *= size_pixel_2 ;
+				if(kernel != 0.){
+					density[kx][ky] += (float)(kernel*
+					    luminosity) ;
+				}
+			    }
+			}
+		    }
+		    else{
+			kx = (int)((part_pos[0]-xmin)/size_pixel+0.499999) ;
+			ky = (int)((part_pos[1]-ymin)/size_pixel+0.499999) ;
+			if(kx >= 0 && kx < vista_size && ky >= 0 &&
+				ky < vista_size){
+				density[kx][ky] += (float)(luminosity) ;
 			}
 		    }
 		}
 	    }
 	    else if(vista_type == VDARK){
-		if(!eps_loaded){
-		    load_eps() ;
-		}
+		calc_balls(&box0_smx, 1, 0 , 0);
 		for (i = 0 ;i < boxlist[active_box].ndark ;i++) {
 		    dp = boxlist[active_box].dp[i] ;
 		    for (part_pos[0] = part_pos[1] = 0.0,j = 0 ;
@@ -716,65 +697,49 @@ vista(job)
 			part_pos[1] += rot_matrix[1][j] * (dp->pos[j] -
 				boxes[active_box].center[j]) ;
 		    }
-		    kx = (int)((part_pos[0]-xmin)/ size_pixel) ;
-		    ky = (int)((part_pos[1]-ymin)/ size_pixel) ;
-		    if(kx >= 0 && kx < vista_size && ky >= 0 && ky <
-			    vista_size){
-			quantity[kx][ky] += dp->mass ;
-		    }
-		}
-		hsmooth = eps_grav ;
-		if(hsmooth > size_pixel){
-		    thsmooth = 2. * hsmooth ;
-		    distnorm = 1. / (hsmooth * hsmooth) ;
-		    hsmth2pi = distnorm / PI ;
-		    for(i = 0; i < vista_size ; i++){
-			for(j = 0; j < vista_size ; j++){
-			    if(quantity[i][j] > 0.){
-				part_pos[0] = xmin + (i + .5) * size_pixel ;
-				part_pos[1] = ymin + (j + .5) * size_pixel ;
-				kx_min = max(0,(int)((part_pos[0]-thsmooth-
-					xmin)/size_pixel + .499999)) ;
-				kx_max = min(vista_size-1,(int)((part_pos[0]+
-					thsmooth-xmin)/ size_pixel + .499999)) ;
-				ky_min = max(0,(int)((part_pos[1]-thsmooth-
-					ymin)/size_pixel + .499999)) ;
-				ky_max = min(vista_size-1,(int)((part_pos[1]+
-					thsmooth-ymin)/ size_pixel + .499999)) ;
-				for(kx = kx_min; kx < kx_max + 1; kx++){
-				    for(ky = ky_min; ky < ky_max + 1; ky++){
-					pixel_pos[0] = xmin + (kx + .5) *
-						size_pixel ;
-					pixel_pos[1] = ymin + (ky + .5) *
-						size_pixel ;
-					radius2 = distance_dim2(pixel_pos,
-						part_pos)*distnorm ;
-					if(radius2 < 4.){
-					    radius2 *= deldr2i ;
-					    iwsm = (int)radius2 ;
-					    drw = radius2 - (double)iwsm ;
-					kernel = ((1. - drw) * iwsmooth[iwsm] +
-						drw * iwsmooth[1 + iwsm]) *
-						hsmth2pi;
-					}
-					else{
-					    kernel = 0. ;
-					}
-					kernel *= size_pixel_2 ;
-					if(kernel != 0.){
-					    density[kx][ky] += (float)(kernel*
-						quantity[i][j]) ;
-					}
-				    }
+		    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+		    if(hsmooth > size_pixel){
+			thsmooth = 2. * hsmooth ;
+			distnorm = 1. / (hsmooth * hsmooth) ;
+			hsmth2pi = distnorm / PI ;
+			kx_min = max(0,(int)((part_pos[0]-thsmooth-xmin)/
+				size_pixel + .499999)) ;
+			kx_max = min(vista_size-1,(int)((part_pos[0]+
+				thsmooth-xmin)/size_pixel + .499999)) ;
+			ky_min = max(0,(int)((part_pos[1]-thsmooth-ymin)/
+			    size_pixel + .499999)) ;
+			ky_max = min(vista_size-1,(int)((part_pos[1]+
+				thsmooth- ymin)/ size_pixel + .499999)) ;
+			for(kx = kx_min; kx < kx_max + 1; kx++){
+			    for(ky = ky_min; ky < ky_max + 1; ky++){
+				pixel_pos[0] = xmin+(kx + .5) * size_pixel ;
+				pixel_pos[1] = ymin+(ky + .5) * size_pixel ;
+				radius2 = distance_dim2(pixel_pos,part_pos)*
+					distnorm ;
+				if(radius2 < 4.){
+				    radius2 *= deldr2i ;
+				    iwsm = (int)radius2 ;
+				    drw = radius2 - (double)iwsm ;
+				    kernel = ((1. - drw) * iwsmooth[iwsm] +
+					    drw*iwsmooth[1+iwsm])*hsmth2pi ;
+				}
+				else{
+				    kernel = 0. ;
+				}
+				kernel *= size_pixel_2 ;
+				if(kernel != 0.){
+					density[kx][ky] += (float)(kernel*
+					    (dp->mass)) ;
 				}
 			    }
 			}
 		    }
-		}
-		else {
-		    for(i = 0; i < vista_size ; i++){
-			for(j = 0; j < vista_size ; j++){
-			    density[kx][ky] += quantity[i][j] ;
+		    else{
+			kx = (int)((part_pos[0]-xmin)/size_pixel+0.499999) ;
+			ky = (int)((part_pos[1]-ymin)/size_pixel+0.499999) ;
+			if(kx >= 0 && kx < vista_size && ky >= 0 &&
+				ky < vista_size){
+				density[kx][ky] += (float)((dp->mass)) ;
 			}
 		    }
 		}

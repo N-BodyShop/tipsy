@@ -100,6 +100,12 @@ loadbinary(infile,time)
 	return ;
     }
 
+    if(box0_smx) {
+	kdFinish(box0_smx->kd);
+	smFinish(box0_smx);
+	box0_smx = NULL;
+    }
+
     fread((char *)gas_particles,sizeof(struct gas_particle),
 		     header.nsph,infile) ;
     fread((char *)dark_particles,sizeof(struct dark_particle),
