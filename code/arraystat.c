@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.5  2003/08/28 15:55:38  trq
+ * Fixed multiple particle type bug.
+ *
  * Revision 1.4  2003/06/13 17:37:37  trq
  * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
  * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
@@ -39,6 +42,7 @@ arraystat(job)
     double median;
     double uquartile;
     int i, offset;
+    int j;
     int totpart;
     int aoffset;
     Real **medtmp = NULL;
@@ -103,17 +107,18 @@ arraystat(job)
 		else if (strcmp(type,"baryon") == 0 ) {
 		  medtmp = (Real **)malloc((boxlist[box].ngas+boxlist[box].nstar)
 				  *sizeof(*medtmp));
-		  for (i = 0 ;i < boxlist[box].ngas ;i++)
+		  j = 0;
+		  for (i = 0 ;i < boxlist[box].ngas ;i++, j++)
 		    {
 		      aoffset = boxlist[box].gp[i]-gas_particles;
-		      medtmp[i] = &array[aoffset];
+		      medtmp[j] = &array[aoffset];
 		      mean += array[aoffset];
 		    }
 		  offset = header.nsph + header.ndark;
-		  for (i = 0 ;i < boxlist[box].nstar ;i++)
+		  for (i = 0 ;i < boxlist[box].nstar ;i++, j++)
 		    {
 		      aoffset = boxlist[box].sp[i]-star_particles+offset;
-		      medtmp[i] = &array[aoffset];
+		      medtmp[j] = &array[aoffset];
 		      mean += array[aoffset];
 		    }
 		  totpart = boxlist[box].nstar + boxlist[box].ngas;
@@ -127,24 +132,25 @@ arraystat(job)
 		else if (strcmp(type,"all") == 0 ) {
 		  medtmp = (Real **)malloc((boxlist[box].ngas+boxlist[box].nstar
 				   +boxlist[box].ndark)*sizeof(*medtmp));
-		  for (i = 0 ;i < boxlist[box].ngas ;i++)
+		  j = 0;
+		  for (i = 0 ;i < boxlist[box].ngas ;i++, j++)
 		    {
 		      aoffset = boxlist[box].gp[i]-gas_particles;
-		      medtmp[i] = &array[aoffset];
+		      medtmp[j] = &array[aoffset];
 		      mean += array[aoffset];
 		    }
 		  offset = header.nsph;
-		  for (i = 0 ;i < boxlist[box].ndark ;i++)
+		  for (i = 0 ;i < boxlist[box].ndark ;i++, j++)
 		    {
 		      aoffset = boxlist[box].dp[i]-dark_particles+offset;
-		      medtmp[i] = &array[aoffset];
+		      medtmp[j] = &array[aoffset];
 		      mean += array[aoffset];
 		    }
 		  offset = header.nsph + header.ndark;
-		  for (i = 0 ;i < boxlist[box].nstar ;i++)
+		  for (i = 0 ;i < boxlist[box].nstar ;i++, j++)
 		    {
 		      aoffset = boxlist[box].sp[i]-star_particles+offset;
-		      medtmp[i] = &array[aoffset];
+		      medtmp[j] = &array[aoffset];
 		      mean += array[aoffset];
 		    }
 		  totpart = boxlist[box].nstar + boxlist[box].ngas
