@@ -1,0 +1,39 @@
+.TH SETBOX  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+catbox \- concatenate two boxes into a third
+.SH SYNOPSIS
+.B setbox
+.I box1
+.I box2
+.I box3
+.SH DESCRIPTION
+.B catbox
+is used to concatenate the particles in
+.I box1
+and
+.I box2
+into
+.I box3.
+Particles that are duplicated in
+.I box1
+and
+.I box2
+will be noticed and only copied once.
+
+All the boxes must be between 1 and
+.I MAXBOX
+or an error will be generated.  The value of
+.I MAXBOX
+can be found by using the 
+.B version
+command.
+
+.SH SEE ALSO
+.BR activatebox(1),
+.BR loadall(1),
+.BR makebox(1),
+.BR setbox(1),
+.BR setsphere(1),
+.BR showboxes(1),
+.BR unload(1),
+.BR version(1)

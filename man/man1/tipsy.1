@@ -2,6 +2,70 @@
 .SH NAME
 tipsy \- theoretical image processing system
 .SH SYNOPSIS
-.SH ALIASES
+.B tipsy
+.I [-nodisplay] [-address title] [X options]
 .SH DESCRIPTION
-.SH SEE ALSO
+The developement of TIPSY was motivated by the need to quickly display
+and analyze the results of N-body simulations.  Most data
+visualization packages are designed for the display of gridded data,
+and hence are unsuitable for use with particle data.  Therefore, a
+special package was built that could easily perform the following
+functions:
+
+* Display particle positions (as points), and velocities (as line
+segments) from an arbitrary viewpoint.
+
+* Zoom in to a chosen position.  Due to their extremely clustered nature,
+structure of interest in an N-body simulation is often so small that
+it can not be seen when looking at the simulation as a whole.
+
+* Color particles to display scalar fields.  Examples of such fields
+are potential energy, or for SPH particles, density and temperature.
+
+* Selection of a subset of the particles for display and analysis.
+Regions of interest are generally small subsets of the simulation.
+
+* Following selected particles from one timestep to another.
+
+* Finding cumulative properties of a collection of particles.   This
+usually involves just a sum over the particles.
+
+The basic data structure is an array of particle structures.  Since
+TIPSY was built for use with cosmological N-body simulations, there
+are actually three separate arrays for each of the types of particle
+used in such simulations: collisionless particles, SPH particles, and
+star particles.  A single timestep is read into these arrays from a
+disk file.  Display is done by finding the x and y coordinates of the
+particles in the rotated coordinate system, and storing them in
+arrays.  Screen coordinates are calculated from these arrays according
+to the current zoom factor.  Also, a software Z-buffer is maintained
+to save time if many particles project to the same screen pixel.
+
+There are several types of display.  An ``all plot'' displays all
+particles colored according to their type.  A ``radial plot'' will
+color particles according to the projection of the velocity along the
+line-of-sight.  A ``gas plot'' will color gas according to SPH
+quantities such as density, temperature, neutral hydrogen fraction, etc.
+
+Subsets of particles are maintained using ``boxes''.  A box structure
+contains a bounding box, and an array of pointers to particles within
+the box.  All display and analysis functions are performed on the
+``active box''.  By default all particles are loaded into box 0, which
+becomes the active box.
+
+If a new timestep is read from disk, all boxes are destroyed.  A
+selection of particles can be followed between timesteps via a
+``mark'' array.  Marked particles are displayed in a different color,
+and the analysis functions can be told to only operate on the marked
+particles.
+
+To quickly test out tipsy, try the commands:
+
+openascii run99.ascii
+
+readascii run99.bin
+
+loadb 14
+
+xall
+

@@ -1,66 +1,132 @@
 
 
 
-TIPSY(1)                 TIPSY COMMANDS                  TIPSY(1)
+     TTTTIIIIPPPPSSSSYYYY((((1111))))	KKKKaaaattttzzzz aaaannnndddd QQQQuuuuiiiinnnnnnnn RRRReeeelllleeeeaaaasssseeee 2222....0000 ((((22222222 MMMMAAAARRRRCCCCHHHH 1111999999994444))))    TTTTIIIIPPPPSSSSYYYY((((1111))))
 
 
 
-NAME
-     tipsy - theoretical image processing system
+     NNNNAAAAMMMMEEEE
+	  tipsy	- theoretical image processing system
 
-SYNOPSIS
-ALIASES
-DESCRIPTION
-SEE ALSO
+     SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+	  ttttiiiippppssssyyyy	[-_n_o_d_i_s_p_l_a_y] [-_a_d_d_r_e_s_s _t_i_t_l_e] [_X _o_p_t_i_o_n_s]
 
+     DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+	  The developement of TIPSY was	motivated by the need to
+	  quickly display and analyze the results of N-body
+	  simulations.	Most data visualization	packages are designed
+	  for the display of gridded data, and hence are unsuitable
+	  for use with particle	data.  Therefore, a special package
+	  was built that could easily perform the following functions:
 
+	  * Display particle positions (as points), and	velocities (as
+	  line segments) from an arbitrary viewpoint.
 
+	  * Zoom in to a chosen	position.  Due to their	extremely
+	  clustered nature, structure of interest in an	N-body
+	  simulation is	often so small that it can not be seen when
+	  looking at the simulation as a whole.
 
+	  * Color particles to display scalar fields.  Examples	of
+	  such fields are potential energy, or for SPH particles,
+	  density and temperature.
 
+	  * Selection of a subset of the particles for display and
+	  analysis.  Regions of	interest are generally small subsets
+	  of the simulation.
 
+	  * Following selected particles from one timestep to another.
 
+	  * Finding cumulative properties of a collection of
+	  particles.   This usually involves just a sum	over the
+	  particles.
 
+	  The basic data structure is an array of particle structures.
+	  Since	TIPSY was built	for use	with cosmological N-body
+	  simulations, there are actually three	separate arrays	for
+	  each of the types of particle	used in	such simulations:
+	  collisionless	particles, SPH particles, and star particles.
+	  A single timestep is read into these arrays from a disk
+	  file.	 Display is done by finding the	x and y	coordinates of
+	  the particles	in the rotated coordinate system, and storing
+	  them in arrays.  Screen coordinates are calculated from
+	  these	arrays according to the	current	zoom factor.  Also, a
+	  software Z-buffer is maintained to save time if many
+	  particles project to the same	screen pixel.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Katz and Quinn ReleasLeas2t.0change: 22 MARCH 1994                  1
-
+	  There	are several types of display.  An ``all	plot''
+	  displays all particles colored according to their type.  A
+	  ``radial plot'' will color particles according to the
 
 
+
+     Page 1					     (printed 5/22/97)
+
+
+
+
+
+
+     TTTTIIIIPPPPSSSSYYYY((((1111))))	KKKKaaaattttzzzz aaaannnndddd QQQQuuuuiiiinnnnnnnn RRRReeeelllleeeeaaaasssseeee 2222....0000 ((((22222222 MMMMAAAARRRRCCCCHHHH 1111999999994444))))    TTTTIIIIPPPPSSSSYYYY((((1111))))
+
+
+
+	  projection of	the velocity along the line-of-sight.  A ``gas
+	  plot'' will color gas	according to SPH quantities such as
+	  density, temperature,	neutral	hydrogen fraction, etc.
+
+	  Subsets of particles are maintained using ``boxes''.	A box
+	  structure contains a bounding	box, and an array of pointers
+	  to particles within the box.	All display and	analysis
+	  functions are	performed on the ``active box''.  By default
+	  all particles	are loaded into	box 0, which becomes the
+	  active box.
+
+	  If a new timestep is read from disk, all boxes are
+	  destroyed.  A	selection of particles can be followed between
+	  timesteps via	a ``mark'' array.  Marked particles are
+	  displayed in a different color, and the analysis functions
+	  can be told to only operate on the marked particles.
+
+	  To quickly test out tipsy, try the commands:
+
+	  openascii run99.ascii
+
+	  readascii run99.bin
+
+	  loadb	14
+
+	  xall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Page 2					     (printed 5/22/97)
 
 
 

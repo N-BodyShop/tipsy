@@ -2,7 +2,36 @@
 .SH NAME
 viewrad \- plot particles according to radial component of velocity or vector
 .SH SYNOPSIS
+.B viewall
+.I particle
+.I min
+.I max
+.I plot_type
+[
+.I clip
+]
 .SH ALIASES
 .B vrad
 .SH DESCRIPTION
+.B viewrad
+plots particles of type
+.I particle
+(either "gas", "dark", "star", or "all")
+in the active box.  The particles are colored according to the radial
+component of either the particle's velocity (if
+.I plot_type
+is "velocity") or the vector loaded by
+.B readvector
+(if
+.I plot_type
+is "vector") using a rainbow colormap.
+.I min
+and
+.I max
+set the value of the minimum and maximum color.
+
 .SH SEE ALSO
+.BR readvector(1)
+.BR xrad (1),
+.BR yrad (1),
+.BR zrad (1)
