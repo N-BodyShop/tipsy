@@ -2,5 +2,73 @@
 .SH NAME
 vista \- make FITS images
 .SH SYNOPSIS
+.B vista
+.I type
+.I low
+.I high
+.I file
+.I size
+.I [ vel-min velmax ]
 .SH DESCRIPTION
+.B vista
+creates a fits image of
+.I size
+pixels on a side of the current projection
+and writes it to
+.I file.
+The values in the fits file are base 10 logarithms of various smooth
+quantities and are limited to values between
+.I low
+and
+.I high.
+.I type
+determines what variables are output, and is one of:
+.I density
+(gas density),
+.I temperature
+(gas temperature),
+.I pressure
+(gas pressure),
+.I cooling
+(gas cooling time),
+.I formstar
+(star formation rate),
+.I star
+(star density),
+.I lumi, lumv, lumb, lumu, lumuu
+(I, V, B, U or UU band stellar luminosity),
+.I dark
+(dark matter density),
+.I hneutral
+(neutral hydrogen column density),
+.I heI
+(neutral helium column density),
+and
+.I heII
+(singly ionized helium column density).
+
+All smoothed quantities are calculated by projecting the particles
+onto the grid using a Smooth Particle Hydrodynamics technique with a
+spline softening kernel.  For gas quantities the smoothing length  is
+set by the
+.I hsmooth
+parameter of each particle.
+For dark or star quantities, the smoothing parameters can be set by
+the
+.B smooth
+command.
+
+For the species column densities, velocity cuts can be made with the
+optional parameters
+.I vel-min
+and
+.I vel-max.
+to simulate emmission seen within a limited spectral range.
+
 .SH SEE ALSO
+.BR coolconstants (1),
+.BR formconstants (1),
+.BR lumconstants (1),
+.BR redshift (1),
+.BR smooth(1)
+.BR viscconstants (1)
