@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.16  1997/09/25 18:35:08  nsk
+ * Revision 1.17  1997/09/30 17:32:43  nsk
+ * generalized rotcur
+ *
+ * Revision 1.16  1997/09/25  18:35:08  nsk
  * added uv command and discrete uv sources
  *
  * Revision 1.15  1997/09/24  17:35:03  trq
@@ -330,8 +333,9 @@ arguments(job)
     }
     else if ( strcmp(command,"rotationcurve") == 0 ||
 	    strcmp(command,"rotcur") == 0 ) {
-	printf("rotationcurve box-number center-box-number binning") ;
-	printf(" bin_number filename minimum_radius maximum_radius\n") ; 
+	printf("rotationcurve box-number center-box-number center-type") ;
+	printf(" particle-type binning bin_number filename minimum_radius") ;
+	printf(" maximum_radius\n") ; 
     }
     else if ( strcmp(command,"ruler") ==0 ) {
 	printf("ruler\n") ;

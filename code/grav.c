@@ -1,5 +1,5 @@
 #include "defs.h"
-grav(pos,acc_gas,acc_star,acc_dark)
+void grav(pos,acc_gas,acc_star,acc_dark)
     Real pos[MAXDIM] ;
     Real acc_gas[MAXDIM] ;
     Real acc_star[MAXDIM] ;
@@ -19,7 +19,7 @@ grav(pos,acc_gas,acc_star,acc_dark)
     double accsm ;
     double acci ;
     int smindex ;
-    char dummy[80] ;
+    char dummy[MAXCOMM] ;
     double dot_product() ;
 
     if(!acc_loaded){
@@ -38,15 +38,20 @@ grav(pos,acc_gas,acc_star,acc_dark)
     }
     for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 	gp = boxlist[active_box].gp[i] ;
-	sub_vec(delta_x,pos,gp->pos) ;
-	dxdotdx = dot_product(delta_x,delta_x) ;
+	delta_x[0] = pos[0] - gp->pos[0] ;
+	delta_x[1] = pos[1] - gp->pos[1] ;
+	delta_x[2] = pos[2] - gp->pos[2] ;
+	dxdotdx = delta_x[0]*delta_x[0] + delta_x[1]*delta_x[1] +
+		delta_x[2]*delta_x[2] ;
         sdxdotdx = sqrt(dxdotdx) ;
         r3inveff = 1./sdxdotdx / dxdotdx ;
-        dxdeldxg = sdxdotdx * (double)NINTERP / epsgas_grav ;
-        smindex = min(NINTERP,(int)dxdeldxg) ;
-        drsm = min(1.,dxdeldxg-(double)smindex) ;
-        accsm=(1.-drsm)*acsmooth[smindex]+drsm*acsmooth[1+smindex] ;
-        r3inveff = accsm * r3inveff ;
+	if(epsgas_grav != 0.){
+	    dxdeldxg = sdxdotdx * (double)NINTERP / epsgas_grav / 2. ;
+	    smindex = min(NINTERP,(int)dxdeldxg) ;
+	    drsm = min(1.,dxdeldxg-(double)smindex) ;
+	    accsm=(1.-drsm)*acsmooth[smindex]+drsm*acsmooth[1+smindex] ;
+	    r3inveff = accsm * r3inveff ;
+	}
         acci = gp->mass * r3inveff ;
         acc_gas[0] -= delta_x[0] * acci ;
         acc_gas[1] -= delta_x[1] * acci ;
@@ -54,15 +59,20 @@ grav(pos,acc_gas,acc_star,acc_dark)
     }
     for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
 	sp = boxlist[active_box].sp[i] ;
-	sub_vec(delta_x,pos,sp->pos) ;
-	dxdotdx = dot_product(delta_x,delta_x) ;
+	delta_x[0] = pos[0] - sp->pos[0] ;
+	delta_x[1] = pos[1] - sp->pos[1] ;
+	delta_x[2] = pos[2] - sp->pos[2] ;
+	dxdotdx = delta_x[0]*delta_x[0] + delta_x[1]*delta_x[1] +
+		delta_x[2]*delta_x[2] ;
         sdxdotdx = sqrt(dxdotdx) ;
         r3inveff = 1./sdxdotdx / dxdotdx ;
-        dxdeldxg = sdxdotdx * (double)NINTERP / epsgas_grav ;
-        smindex = min(NINTERP,(int)dxdeldxg) ;
-        drsm = min(1.,dxdeldxg-smindex) ;
-        accsm=(1.-drsm)*acsmooth[smindex]+drsm*acsmooth[1+smindex] ;
-        r3inveff = accsm * r3inveff ;
+	if(epsgas_grav != 0.){
+	    dxdeldxg = sdxdotdx * (double)NINTERP / epsgas_grav / 2. ;
+	    smindex = min(NINTERP,(int)dxdeldxg) ;
+	    drsm = min(1.,dxdeldxg-smindex) ;
+	    accsm=(1.-drsm)*acsmooth[smindex]+drsm*acsmooth[1+smindex] ;
+	    r3inveff = accsm * r3inveff ;
+	}
         acci = sp->mass * r3inveff ;
         acc_star[0] -= delta_x[0] * acci ;
         acc_star[1] -= delta_x[1] * acci ;
@@ -70,15 +80,20 @@ grav(pos,acc_gas,acc_star,acc_dark)
     }
     for (i = 0 ;i < boxlist[active_box].ndark ;i++) {
 	dp = boxlist[active_box].dp[i] ;
-	sub_vec(delta_x,pos,dp->pos) ;
-	dxdotdx = dot_product(delta_x,delta_x) ;
+	delta_x[0] = pos[0] - dp->pos[0] ;
+	delta_x[1] = pos[1] - dp->pos[1] ;
+	delta_x[2] = pos[2] - dp->pos[2] ;
+	dxdotdx = delta_x[0]*delta_x[0] + delta_x[1]*delta_x[1] +
+		delta_x[2]*delta_x[2] ;
         sdxdotdx = sqrt(dxdotdx) ;
         r3inveff = 1./sdxdotdx / dxdotdx ;
-        dxdeldxg = sdxdotdx * (double)NINTERP / eps_grav ;
-        smindex = min(NINTERP,(int)dxdeldxg) ;
-        drsm = min(1.,dxdeldxg-smindex) ;
-        accsm=(1.-drsm)*acsmooth[smindex]+drsm*acsmooth[1+smindex] ;
-        r3inveff = accsm * r3inveff ;
+	if(eps_grav != 0.){
+	    dxdeldxg = sdxdotdx * (double)NINTERP / eps_grav / 2. ;
+	    smindex = min(NINTERP,(int)dxdeldxg) ;
+	    drsm = min(1.,dxdeldxg-smindex) ;
+	    accsm=(1.-drsm)*acsmooth[smindex]+drsm*acsmooth[1+smindex] ;
+	    r3inveff = accsm * r3inveff ;
+	}
         acci = dp->mass * r3inveff ;
         acc_dark[0] -= delta_x[0] * acci ;
         acc_dark[1] -= delta_x[1] * acci ;

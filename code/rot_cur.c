@@ -1,5 +1,5 @@
 #include "defs.h"
-rot_cur(job)
+void rot_cur(job)
     char job[MAXCOMM] ;
 {
     char command[MAXCOMM] ;
@@ -34,10 +34,25 @@ rot_cur(job)
     double acc_rad_bar ;
     double acc_rad_dark ;
     double acc_rad_tot ;
+    char cbox_type[MAXCOMM] ;
+    char particle_type[MAXCOMM] ;
 
-    if (sscanf(job,"%s %d %d %s %d %s %lf %lf",command,&box,&center_box,
-	    bin_type,&number_bins,
-	    hardfile.name,&min_radius,&max_radius) == 8) { 
+    if (sscanf(job,"%s %d %d %s %s %s %d %s %lf %lf",command,&box,&center_box,
+	    cbox_type,particle_type,bin_type,&number_bins,
+	    hardfile.name,&min_radius,&max_radius) == 10) { 
+	if(strcmp(cbox_type, "com") != 0 && strcmp(cbox_type, "pot") != 0){
+	    printf("<sorry, %s not a center type, %s>\n",cbox_type,title) ;
+	    return;
+	}
+	if (strcmp(particle_type,"dark") != 0 && 
+		strcmp(particle_type,"gas") != 0 &&
+		strcmp(particle_type,"star") != 0 &&
+		strcmp(particle_type,"baryon") != 0 &&
+		strcmp(particle_type,"all") !=0) {
+	    printf("<sorry, %s is not a particle type, %s>\n",
+		    particle_type,title) ;
+	    return ;
+	}
 	if (boxes_loaded[box] && boxes_loaded[center_box]) {
 	    if (strcmp(bin_type,"lin") == 0) {
 		bin_size = (max_radius - min_radius) /
@@ -51,8 +66,38 @@ rot_cur(job)
 		printf("<sorry, %s not a bin type, %s>\n",bin_type,title) ;
 		return ;
 	    }
-	    setvec(center,boxes[center_box].total_com) ;
-	    setvec(center_angular_mom,boxes[box].gas_angular_mom) ;
+	    if(strcmp(cbox_type, "pot") == 0)
+	      pot_center(center, center_box);
+	    if (strcmp(particle_type,"dark") == 0){
+	      if(strcmp(cbox_type, "pot") != 0)
+		setvec(center,boxes[center_box].dark_com) ;
+		setvec(center_angular_mom,boxes[box].dark_angular_mom) ;
+	    }
+	    else if (strcmp(particle_type,"star") == 0){
+	      if(strcmp(cbox_type, "pot") != 0)
+		setvec(center,boxes[center_box].star_com) ;
+		setvec(center_angular_mom,boxes[box].star_angular_mom) ;
+	    }
+	    else if (strcmp(particle_type,"gas") == 0){
+	      if(strcmp(cbox_type, "pot") != 0)
+		setvec(center,boxes[center_box].gas_com) ;
+		setvec(center_angular_mom,boxes[box].gas_angular_mom) ;
+	    }
+	    else if (strcmp(particle_type,"baryon") == 0){
+	      if(strcmp(cbox_type, "pot") != 0)
+		mass_add_vec(center,boxes[center_box].gas_com,
+			boxes[center_box].gas_mass, 
+			boxes[center_box].star_com,boxes[center_box].star_mass);
+		mass_add_vec(center_angular_mom,boxes[box].gas_angular_mom,
+			boxes[box].gas_mass, 
+			boxes[box].star_angular_mom, 
+			boxes[box].star_mass) ;
+	    }
+	    else{
+	      if(strcmp(cbox_type, "pot") != 0)
+		setvec(center,boxes[center_box].total_com) ;
+		setvec(center_angular_mom,boxes[box].total_angular_mom) ;
+	    }
 	    cross_product(unit1,center_angular_mom,xaxis) ;
 	    norm = sqrt(dot_product(unit1,unit1)) ;
 	    for(i = 0; i < MAXDIM ; i++){
