@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/03/02 17:30:23  nsk
+ * Revision 1.3  1995/03/24 18:49:06  trq
+ * Added "revrain" colormap.
+ *
+ * divv.c: included malloc.h.
+ *
+ * Revision 1.2  1995/03/02  17:30:23  nsk
  * changed absorption cross section tb be done by integral
  * added optical depth output and fixed bug in absorb
  * added stellar mass plot to view_star
@@ -65,7 +70,13 @@
 #include <X11/StringDefs.h>
 #include <stdio.h>
 #include <math.h>
+
+#ifdef HAVE_STRING_H
+#include <string.h>
+#else
 #include <strings.h>
+#endif
+
 #include <fcntl.h>
 
 #define INTMAX 536870911
@@ -421,6 +432,9 @@ extern double gp0_Hep ;
 extern unsigned char wrbb_red[256] ;
 extern unsigned char wrbb_green[256] ;
 extern unsigned char wrbb_blue[256] ;
+extern unsigned char revrain_red[256] ;
+extern unsigned char revrain_green[256] ;
+extern unsigned char revrain_blue[256] ;
 extern unsigned char rainbow_red[256] ;
 extern unsigned char rainbow_green[256] ;
 extern unsigned char rainbow_blue[256] ;

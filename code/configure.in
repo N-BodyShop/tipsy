@@ -18,7 +18,7 @@ AC_PROG_CC
 AC_ISC_POSIX
 AC_PROG_INSTALL
 AC_PROG_RANLIB
-AC_ALLOCA
+AC_HAVE_HEADERS(string.h)
 AC_FIND_XTRA
 
 # Find any funky flags that X needs.
@@ -56,6 +56,8 @@ AC_IRIX_SUN
 
 AC_HAVE_LIBRARY(termlib, [LIBS="$LIBS -ltermlib"])
 AC_HAVE_LIBRARY(termcap, [LIBS="$LIBS -ltermcap"])
+
+AC_ALLOCA
 
 AC_SUBST(CFLAGS)dnl
 AC_SUBST(LDFLAGS)dnl

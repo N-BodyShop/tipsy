@@ -1,8 +1,13 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:24  trq
- * Initial revision
+ * Revision 1.2  1995/03/24 18:49:08  trq
+ * Added "revrain" colormap.
+ *
+ * divv.c: included malloc.h.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:25  trq
+ * Import to CVS
  *
  * Revision 2.3  94/03/24  11:49:52  nsk
  * made dark particles lighter
@@ -49,6 +54,31 @@ initialize_color_table()
 	rainbow_blue[i] = 255 ;
     }
 
+    slope = 255./31. ;
+    for(i = 0 ;i < 31 ;i++){
+	revrain_red[i] = 0 ;
+	revrain_green[i] = (int)(slope * (double)(i) + .5) ;
+	revrain_blue[i] = 255 ;
+    }
+    slope = 205./29. ;
+    for(i = 31 ;i < 60 ;i++){
+	revrain_red[i] = 0 ;
+	revrain_green[i] = 255 ;
+	revrain_blue[i] = 255 - (int)(slope * (double)(i - 31) + .5) ;
+    }
+    slope = 205./21. ;
+    for(i = 60 ;i < 81 ;i++){
+	revrain_red[i] = (int)(slope * (double)(i - 60) + 50.0 + .5) ;
+	revrain_green[i] = 255 ;
+	revrain_blue[i] = 0 ;
+    }
+    slope = 205./42. ;
+    for(i = 81 ;i < 125 ;i++){
+	revrain_red[i] = 255 ;
+	revrain_green[i] = 255 - (int)(slope * (double)(i - 81)  + .5) ;
+	revrain_blue[i] = 0 ;
+    }
+
     slope = 255./20. ;
     for(i = 0 ;i < 21 ;i++){
 	wrbb_red[i] = 0 ;
@@ -90,6 +120,9 @@ initialize_color_table()
 	rainbow_red[i] = rainbow_red[j] ;
 	rainbow_green[i] = rainbow_green[j] ;
 	rainbow_blue[i] = rainbow_blue[j] ;
+	revrain_red[i] = revrain_red[j] ;
+	revrain_green[i] = revrain_green[j] ;
+	revrain_blue[i] = revrain_blue[j] ;
     }
     colormap_red[0] = 0 ;
     colormap_green[0] = 0 ;

@@ -1,7 +1,12 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:35  trq
- * Initial revision
+ * Revision 1.2  1995/03/24 18:49:10  trq
+ * Added "revrain" colormap.
+ *
+ * divv.c: included malloc.h.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:36  trq
+ * Import to CVS
  *
  * Revision 1.4  94/04/20  08:46:23  trq
  * Added title variable.
@@ -68,6 +73,14 @@ view_array(job)
 		arraymap_red = rainbow_red;
 		arraymap_green = rainbow_green;
 		arraymap_blue = rainbow_blue;
+	      }
+	    else if((strcmp(mapname, "reverse_rainbow") == 0)
+		    || (strcmp(mapname, "revrain") == 0)
+		    || (strcmp(mapname, "rr") == 0))
+	      {
+		arraymap_red = revrain_red;
+		arraymap_green = revrain_green;
+		arraymap_blue = revrain_blue;
 	      }
 	    else if((strcmp(mapname, "default") == 0)
 		    || (strcmp(mapname, "d") == 0))

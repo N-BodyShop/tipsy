@@ -1,4 +1,6 @@
 #include "defs.h"
+#include <malloc.h>
+
 void
 divv()
 {

@@ -460,64 +460,6 @@ fi
 test -z "$RANLIB" && RANLIB=":"
 test -n "$RANLIB" && test -n "$verbose" && echo "	setting RANLIB to $RANLIB"
 
-# The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
-# for constant arguments.  Useless!
-test -n "$silent" || echo "checking for working alloca.h"
-cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-#include <alloca.h>
-int main() { return 0; }
-int t() { char *p = alloca(2 * sizeof(int));; return 0; }
-EOF
-if eval $ac_compile; then
-  rm -rf conftest*
-  
-{
-test -n "$verbose" && \
-echo "	defining HAVE_ALLOCA_H"
-echo "#define" HAVE_ALLOCA_H "1" >> confdefs.h
-DEFS="$DEFS -DHAVE_ALLOCA_H=1"
-}
-
-
-fi
-rm -f conftest*
-
-ac_decl="#ifdef __GNUC__
-#define alloca __builtin_alloca
-#else
-#if HAVE_ALLOCA_H
-#include <alloca.h>
-#else
-#ifdef _AIX
- #pragma alloca
-#else
-char *alloca ();
-#endif
-#endif
-#endif
-"
-test -n "$silent" || echo "checking for alloca"
-cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-$ac_decl
-int main() { return 0; }
-int t() { char *p = (char *) alloca(1);; return 0; }
-EOF
-if eval $ac_compile; then
-  rm -rf conftest*
-  
-{
-test -n "$verbose" && \
-echo "	defining HAVE_ALLOCA"
-echo "#define" HAVE_ALLOCA "1" >> confdefs.h
-DEFS="$DEFS -DHAVE_ALLOCA=1"
-}
-
-
-else
-  rm -rf conftest*
-  ac_alloca_missing=1
 test -n "$silent" || echo "checking how to run the C preprocessor"
 if test -z "$CPP"; then
   # This must be in double quotes, not single quotes, because CPP may get
@@ -557,205 +499,31 @@ rm -f conftest*
 fi
 test -n "$verbose" && echo "	setting CPP to $CPP"
 
+for ac_hdr in string.h
+do
+ac_tr_hdr=HAVE_`echo $ac_hdr | tr '[a-z]./' '[A-Z]__'`
+test -n "$silent" || echo "checking for ${ac_hdr}"
 cat > conftest.${ac_ext} <<EOF
 #include "confdefs.h"
-
-#if defined(CRAY) && ! defined(CRAY2)
-winnitude
-#else
-lossage
-#endif
-
+#include <${ac_hdr}>
 EOF
-eval "$ac_cpp conftest.${ac_ext} > conftest.out 2>&1"
-if egrep "winnitude" conftest.out >/dev/null 2>&1; then
+# Some shells (Coherent) do redirections in the wrong order, so need
+# the parens.
+ac_err=`eval "($ac_cpp conftest.${ac_ext} >/dev/null) 2>&1"`
+if test -z "$ac_err"; then
   rm -rf conftest*
-  test -n "$silent" || echo "checking for _getb67"
-cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-#include <ctype.h>
-int main() { return 0; }
-int t() { 
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub__getb67) || defined (__stub____getb67)
-choke me
-#else
-/* Override any gcc2 internal prototype to avoid an error.  */
-extern char _getb67(); _getb67();
-#endif
-; return 0; }
-EOF
-if eval $ac_compile; then
-  rm -rf conftest*
-  {
-test -n "$verbose" && \
-echo "	defining" CRAY_STACKSEG_END to be "_getb67"
-echo "#define" CRAY_STACKSEG_END "_getb67" >> confdefs.h
-DEFS="$DEFS -DCRAY_STACKSEG_END=_getb67"
-}
-
-
-else
-  rm -rf conftest*
-  test -n "$silent" || echo "checking for GETB67"
-cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-#include <ctype.h>
-int main() { return 0; }
-int t() { 
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub_GETB67) || defined (__stub___GETB67)
-choke me
-#else
-/* Override any gcc2 internal prototype to avoid an error.  */
-extern char GETB67(); GETB67();
-#endif
-; return 0; }
-EOF
-if eval $ac_compile; then
-  rm -rf conftest*
-  {
-test -n "$verbose" && \
-echo "	defining" CRAY_STACKSEG_END to be "GETB67"
-echo "#define" CRAY_STACKSEG_END "GETB67" >> confdefs.h
-DEFS="$DEFS -DCRAY_STACKSEG_END=GETB67"
-}
-
-
-else
-  rm -rf conftest*
-  test -n "$silent" || echo "checking for getb67"
-cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-#include <ctype.h>
-int main() { return 0; }
-int t() { 
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub_getb67) || defined (__stub___getb67)
-choke me
-#else
-/* Override any gcc2 internal prototype to avoid an error.  */
-extern char getb67(); getb67();
-#endif
-; return 0; }
-EOF
-if eval $ac_compile; then
-  rm -rf conftest*
-  {
-test -n "$verbose" && \
-echo "	defining" CRAY_STACKSEG_END to be "getb67"
-echo "#define" CRAY_STACKSEG_END "getb67" >> confdefs.h
-DEFS="$DEFS -DCRAY_STACKSEG_END=getb67"
-}
-
-
-fi
-rm -f conftest*
-
-fi
-rm -f conftest*
-
-fi
-rm -f conftest*
-
-
-fi
-rm -f conftest*
-
-
-fi
-rm -f conftest*
-
-if test -n "$ac_alloca_missing"; then
-  # The SVR3 libPW and SVR4 libucb both contain incompatible functions
-  # that cause trouble.  Some versions do not even contain alloca or
-  # contain a buggy version.  If you still want to use their alloca,
-  # use ar to extract alloca.o from them instead of compiling alloca.c.
-  ALLOCA=alloca.o
   
 {
 test -n "$verbose" && \
-echo "	defining C_ALLOCA"
-echo "#define" C_ALLOCA "1" >> confdefs.h
-DEFS="$DEFS -DC_ALLOCA=1"
+echo "	defining ${ac_tr_hdr}"
+echo "#define" ${ac_tr_hdr} "1" >> confdefs.h
+DEFS="$DEFS -D${ac_tr_hdr}=1"
 }
 
-
-  test -n "$silent" || echo "checking stack direction for C alloca"
-  test -n "$silent" || echo "checking whether cross-compiling"
-# If we cannot run a trivial program, we must be cross compiling.
-cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-main(){exit(0);}
-EOF
-eval $ac_compile
-if test -s conftest && (./conftest; exit) 2>/dev/null; then
-  :
-else
-  cross_compiling=1
-fi
-rm -fr conftest*
-
-if test -n "$cross_compiling"
-then
-  
-{
-test -n "$verbose" && \
-echo "	defining" STACK_DIRECTION to be "0"
-echo "#define" STACK_DIRECTION "0" >> confdefs.h
-DEFS="$DEFS -DSTACK_DIRECTION=0"
-}
-
-else
-cat > conftest.${ac_ext} <<EOF
-#include "confdefs.h"
-find_stack_direction ()
-{
-  static char *addr = 0;
-  auto char dummy;
-  if (addr == 0)
-    {
-      addr = &dummy;
-      return find_stack_direction ();
-    }
-  else
-    return (&dummy > addr) ? 1 : -1;
-}
-main ()
-{
-  exit (find_stack_direction() < 0);
-}
-EOF
-eval $ac_compile
-if test -s conftest && (./conftest; exit) 2>/dev/null; then
-  
-{
-test -n "$verbose" && \
-echo "	defining" STACK_DIRECTION to be "1"
-echo "#define" STACK_DIRECTION "1" >> confdefs.h
-DEFS="$DEFS -DSTACK_DIRECTION=1"
-}
-
-
-else
-  
-{
-test -n "$verbose" && \
-echo "	defining" STACK_DIRECTION to be "-1"
-echo "#define" STACK_DIRECTION "-1" >> confdefs.h
-DEFS="$DEFS -DSTACK_DIRECTION=-1"
-}
 
 fi
-fi
-rm -fr conftest*
-fi
+rm -f conftest*
+done
 
 # If we find X, set shell vars x_includes and x_libraries to the paths.
 no_x=true
@@ -1147,6 +915,265 @@ else
 fi
 
 
+# The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
+# for constant arguments.  Useless!
+test -n "$silent" || echo "checking for working alloca.h"
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+#include <alloca.h>
+int main() { return 0; }
+int t() { char *p = alloca(2 * sizeof(int));; return 0; }
+EOF
+if eval $ac_compile; then
+  rm -rf conftest*
+  
+{
+test -n "$verbose" && \
+echo "	defining HAVE_ALLOCA_H"
+echo "#define" HAVE_ALLOCA_H "1" >> confdefs.h
+DEFS="$DEFS -DHAVE_ALLOCA_H=1"
+}
+
+
+fi
+rm -f conftest*
+
+ac_decl="#ifdef __GNUC__
+#define alloca __builtin_alloca
+#else
+#if HAVE_ALLOCA_H
+#include <alloca.h>
+#else
+#ifdef _AIX
+ #pragma alloca
+#else
+char *alloca ();
+#endif
+#endif
+#endif
+"
+test -n "$silent" || echo "checking for alloca"
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+$ac_decl
+int main() { return 0; }
+int t() { char *p = (char *) alloca(1);; return 0; }
+EOF
+if eval $ac_compile; then
+  rm -rf conftest*
+  
+{
+test -n "$verbose" && \
+echo "	defining HAVE_ALLOCA"
+echo "#define" HAVE_ALLOCA "1" >> confdefs.h
+DEFS="$DEFS -DHAVE_ALLOCA=1"
+}
+
+
+else
+  rm -rf conftest*
+  ac_alloca_missing=1
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+
+#if defined(CRAY) && ! defined(CRAY2)
+winnitude
+#else
+lossage
+#endif
+
+EOF
+eval "$ac_cpp conftest.${ac_ext} > conftest.out 2>&1"
+if egrep "winnitude" conftest.out >/dev/null 2>&1; then
+  rm -rf conftest*
+  test -n "$silent" || echo "checking for _getb67"
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+#include <ctype.h>
+int main() { return 0; }
+int t() { 
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub__getb67) || defined (__stub____getb67)
+choke me
+#else
+/* Override any gcc2 internal prototype to avoid an error.  */
+extern char _getb67(); _getb67();
+#endif
+; return 0; }
+EOF
+if eval $ac_compile; then
+  rm -rf conftest*
+  {
+test -n "$verbose" && \
+echo "	defining" CRAY_STACKSEG_END to be "_getb67"
+echo "#define" CRAY_STACKSEG_END "_getb67" >> confdefs.h
+DEFS="$DEFS -DCRAY_STACKSEG_END=_getb67"
+}
+
+
+else
+  rm -rf conftest*
+  test -n "$silent" || echo "checking for GETB67"
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+#include <ctype.h>
+int main() { return 0; }
+int t() { 
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_GETB67) || defined (__stub___GETB67)
+choke me
+#else
+/* Override any gcc2 internal prototype to avoid an error.  */
+extern char GETB67(); GETB67();
+#endif
+; return 0; }
+EOF
+if eval $ac_compile; then
+  rm -rf conftest*
+  {
+test -n "$verbose" && \
+echo "	defining" CRAY_STACKSEG_END to be "GETB67"
+echo "#define" CRAY_STACKSEG_END "GETB67" >> confdefs.h
+DEFS="$DEFS -DCRAY_STACKSEG_END=GETB67"
+}
+
+
+else
+  rm -rf conftest*
+  test -n "$silent" || echo "checking for getb67"
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+#include <ctype.h>
+int main() { return 0; }
+int t() { 
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_getb67) || defined (__stub___getb67)
+choke me
+#else
+/* Override any gcc2 internal prototype to avoid an error.  */
+extern char getb67(); getb67();
+#endif
+; return 0; }
+EOF
+if eval $ac_compile; then
+  rm -rf conftest*
+  {
+test -n "$verbose" && \
+echo "	defining" CRAY_STACKSEG_END to be "getb67"
+echo "#define" CRAY_STACKSEG_END "getb67" >> confdefs.h
+DEFS="$DEFS -DCRAY_STACKSEG_END=getb67"
+}
+
+
+fi
+rm -f conftest*
+
+fi
+rm -f conftest*
+
+fi
+rm -f conftest*
+
+
+fi
+rm -f conftest*
+
+
+fi
+rm -f conftest*
+
+if test -n "$ac_alloca_missing"; then
+  # The SVR3 libPW and SVR4 libucb both contain incompatible functions
+  # that cause trouble.  Some versions do not even contain alloca or
+  # contain a buggy version.  If you still want to use their alloca,
+  # use ar to extract alloca.o from them instead of compiling alloca.c.
+  ALLOCA=alloca.o
+  
+{
+test -n "$verbose" && \
+echo "	defining C_ALLOCA"
+echo "#define" C_ALLOCA "1" >> confdefs.h
+DEFS="$DEFS -DC_ALLOCA=1"
+}
+
+
+  test -n "$silent" || echo "checking stack direction for C alloca"
+  test -n "$silent" || echo "checking whether cross-compiling"
+# If we cannot run a trivial program, we must be cross compiling.
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+main(){exit(0);}
+EOF
+eval $ac_compile
+if test -s conftest && (./conftest; exit) 2>/dev/null; then
+  :
+else
+  cross_compiling=1
+fi
+rm -fr conftest*
+
+if test -n "$cross_compiling"
+then
+  
+{
+test -n "$verbose" && \
+echo "	defining" STACK_DIRECTION to be "0"
+echo "#define" STACK_DIRECTION "0" >> confdefs.h
+DEFS="$DEFS -DSTACK_DIRECTION=0"
+}
+
+else
+cat > conftest.${ac_ext} <<EOF
+#include "confdefs.h"
+find_stack_direction ()
+{
+  static char *addr = 0;
+  auto char dummy;
+  if (addr == 0)
+    {
+      addr = &dummy;
+      return find_stack_direction ();
+    }
+  else
+    return (&dummy > addr) ? 1 : -1;
+}
+main ()
+{
+  exit (find_stack_direction() < 0);
+}
+EOF
+eval $ac_compile
+if test -s conftest && (./conftest; exit) 2>/dev/null; then
+  
+{
+test -n "$verbose" && \
+echo "	defining" STACK_DIRECTION to be "1"
+echo "#define" STACK_DIRECTION "1" >> confdefs.h
+DEFS="$DEFS -DSTACK_DIRECTION=1"
+}
+
+
+else
+  
+{
+test -n "$verbose" && \
+echo "	defining" STACK_DIRECTION to be "-1"
+echo "#define" STACK_DIRECTION "-1" >> confdefs.h
+DEFS="$DEFS -DSTACK_DIRECTION=-1"
+}
+
+fi
+fi
+rm -fr conftest*
+fi
+
+
 
 
 # The preferred way to propogate these variables is regular @ substitutions.
@@ -1213,10 +1240,10 @@ INSTALL_PROGRAM='$INSTALL_PROGRAM'
 INSTALL_DATA='$INSTALL_DATA'
 RANLIB='$RANLIB'
 CPP='$CPP'
-ALLOCA='$ALLOCA'
 X_CFLAGS='$X_CFLAGS'
 X_LIBS='$X_LIBS'
 X_EXTRA_LIBS='$X_EXTRA_LIBS'
+ALLOCA='$ALLOCA'
 CFLAGS='$CFLAGS'
 LDFLAGS='$LDFLAGS'
 X_LDFLAGS='$X_LDFLAGS'
@@ -1275,10 +1302,10 @@ s%@INSTALL_PROGRAM@%$INSTALL_PROGRAM%g
 s%@INSTALL_DATA@%$INSTALL_DATA%g
 s%@RANLIB@%$RANLIB%g
 s%@CPP@%$CPP%g
-s%@ALLOCA@%$ALLOCA%g
 s%@X_CFLAGS@%$X_CFLAGS%g
 s%@X_LIBS@%$X_LIBS%g
 s%@X_EXTRA_LIBS@%$X_EXTRA_LIBS%g
+s%@ALLOCA@%$ALLOCA%g
 s%@CFLAGS@%$CFLAGS%g
 s%@LDFLAGS@%$LDFLAGS%g
 s%@X_LDFLAGS@%$X_LDFLAGS%g

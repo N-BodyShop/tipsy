@@ -1,7 +1,12 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:35  trq
- * Initial revision
+ * Revision 1.2  1995/03/24 18:49:02  trq
+ * Added "revrain" colormap.
+ *
+ * divv.c: included malloc.h.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:36  trq
+ * Import to CVS
  *
  * Revision 1.3  94/04/20  08:44:54  trq
  * Added title variable.
@@ -14,7 +19,7 @@
 #include <malloc.h>
 
 void input_error();
-static Real *select();
+static Real *array_select();
 
 void
 arraystat(job)
@@ -45,9 +50,9 @@ arraystat(job)
 		      mean += array[aoffset];
 		    }
 		  mean /= boxlist[box].ngas;
-		  uquartile = *(select(medtmp, boxlist[box].ngas,
+		  uquartile = *(array_select(medtmp, boxlist[box].ngas,
 				    3*boxlist[box].ngas/4));
-		  median = *(select(medtmp, boxlist[box].ngas,
+		  median = *(array_select(medtmp, boxlist[box].ngas,
 				    boxlist[box].ngas/2));
 		  free(medtmp);
 		  printf("<array mean, median and upper quartile of the gas in box %d>\n", box);
@@ -62,9 +67,9 @@ arraystat(job)
 		      mean += array[aoffset];
 		    }
 		  mean /= boxlist[box].ndark;
-		  uquartile = *(select(medtmp, boxlist[box].ndark,
+		  uquartile = *(array_select(medtmp, boxlist[box].ndark,
 				    3*boxlist[box].ndark/4));
-		  median = *(select(medtmp, boxlist[box].ndark,
+		  median = *(array_select(medtmp, boxlist[box].ndark,
 				    boxlist[box].ndark/2));
 		  free(medtmp);
 		  printf("<array mean, median and upper quartile of the dark matter in box %d>\n",
@@ -80,9 +85,9 @@ arraystat(job)
 		      mean += array[aoffset];
 		    }
 		  mean /= boxlist[box].nstar;
-		  uquartile = *(select(medtmp, boxlist[box].nstar,
+		  uquartile = *(array_select(medtmp, boxlist[box].nstar,
 				    3*boxlist[box].nstar/4));
-		  median = *(select(medtmp, boxlist[box].nstar,
+		  median = *(array_select(medtmp, boxlist[box].nstar,
 				    boxlist[box].nstar/2));
 		  free(medtmp);
 		  printf("<array mean, median and upper quartile of the stars in box %d>\n",
@@ -106,8 +111,8 @@ arraystat(job)
 		    }
 		  totpart = boxlist[box].nstar + boxlist[box].ngas;
 		  mean /= totpart;
-		  uquartile = *(select(medtmp, totpart, 3*totpart/4));
-		  median = *(select(medtmp, totpart, totpart/2));
+		  uquartile = *(array_select(medtmp, totpart, 3*totpart/4));
+		  median = *(array_select(medtmp, totpart, totpart/2));
 		  free(medtmp);
 		  printf("<array mean, median and upper quartile of the baryons in box %d>\n",
 			 box);
@@ -138,8 +143,8 @@ arraystat(job)
 		  totpart = boxlist[box].nstar + boxlist[box].ngas
 		    + boxlist[box].ndark;
 		  mean /= totpart;
-		  uquartile = *(select(medtmp, totpart, 3*totpart/4));
-		  median = *(select(medtmp, totpart, totpart/2));
+		  uquartile = *(array_select(medtmp, totpart, 3*totpart/4));
+		  median = *(array_select(medtmp, totpart, totpart/2));
 		  free(medtmp);
 		  printf("<array mean, median and upper quartile of box %d>\n",
 			 box);
@@ -174,7 +179,7 @@ void swap(p, q)
   *q = tmp;
 }
 
-static Real *select(a, n, k)
+static Real *array_select(a, n, k)
      Real **a;
      int n, k;
 {
