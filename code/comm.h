@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.12  1998/07/24 17:41:00  trq
+ * Revision 1.13  1999/04/28 22:08:51  nsk
+ * Added the writeiv command to output iv format.
+ *
+ * Revision 1.12  1998/07/24  17:41:00  trq
  * Added "closeb" alias for "closebinary.
  *
  * Revision 1.11  1998/03/31  00:26:53  trq
@@ -194,6 +197,7 @@ extern void window() ;
 extern void write_macro() ;
 extern void writebox() ;
 extern void writebox_rot() ;
+extern void writeiv() ;
 extern void writemark() ;
 
 extern void xplot_all() ;
@@ -398,12 +402,14 @@ struct comm c_list[] = {
      {"vrad",        view_rad,		1},
      {"wbox",        writebox,		0},
      {"wboxr",       writebox_rot,	1},
+     {"wiv",         writeiv,	        1},
 
      {"whatis",      whatis,		0},
      {"window",	     window,		1},
      {"wmac",        write_macro,	0},
      {"writebox",    writebox,		0},
      {"writeboxrot", writebox_rot,	1},
+     {"writeiv",     writeiv,	        1},
      {"writemacro",  write_macro,	0},
      {"writemark",   writemark,		0},
      {"xall",        xplot_all,		1},

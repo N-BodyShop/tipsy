@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.20  1998/07/24 17:40:59  trq
+ * Revision 1.21  1999/04/28 22:08:50  nsk
+ * Added the writeiv command to output iv format.
+ *
+ * Revision 1.20  1998/07/24  17:40:59  trq
  * Added "closeb" alias for "closebinary.
  *
  * Revision 1.19  1998/03/31  00:26:54  trq
@@ -479,6 +482,9 @@ arguments(job)
     else if ( strcmp(command,"writeboxrot") == 0 ||
 	    strcmp(command,"wboxR") == 0 ) {
 	printf("writeboxrot box-number filename\n") ;
+    }
+    else if ( strcmp(command,"writeiv") == 0 || strcmp(command,"wiv") == 0 ) {
+	printf("writeiv fraction filename\n") ;
     }
     else if ( strcmp(command,"writemacro") == 0 ||
 	    strcmp(command,"wmac") == 0 ) {
