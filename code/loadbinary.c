@@ -40,6 +40,10 @@ loadbinary(infile,time)
     lastpos = currpos ;
     fread((char *)&header,sizeof(header),1,infile) ;
 
+    if(header.ndim < 2 || header.ndim > 3) {
+	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
+	    return;
+    }
     if(gas_particles != NULL) free(gas_particles);
     if(header.nsph != 0) {
 	gas_particles = (struct gas_particle *)
@@ -166,6 +170,10 @@ loadbin_box(infile,time, xmin, xmax)
     fseek(infile,currpos,0) ;
     lastpos = currpos ;
     fread((char *)&header,sizeof(header),1,infile) ;
+    if(header.ndim < 2 || header.ndim > 3) {
+	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
+	    return;
+    }
 
     if(gas_particles != NULL) free(gas_particles);
     if(header.nsph != 0) {
