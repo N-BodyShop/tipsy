@@ -29,7 +29,7 @@ divv()
 
     rsys = kpcunit/1.e3 ;
     vsys = sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
-    hsys = rsys*hubble_constant*sqrt(1.0 + omega*redshift)/vsys;
+    hsys = rsys*hubble_constant/vsys;
 
     if(boxlist[0].ngas != header.nsph) {
 	printf("<Warning, box 0 does not contain all particles, %s>\n", title);
