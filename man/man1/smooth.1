@@ -1,4 +1,4 @@
-.TH GRAVSOFT  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.TH SMOOTH  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
 .SH NAME
 smooth \- set parameters for smoothing
 .SH SYNOPSIS
@@ -16,8 +16,12 @@ for use in commands such as
 .B vista
 that require estimating smooth field parameters.  If
 .I ball_size
-is positive,
+is non-negative,
 .I n_smooth
+is ignored.  Otherwise, the smoothing length for each particle is
+adjusted such that it contains
+.I n_smooth
+particles.
 
 .SH SEE ALSO
 .BR coolconstants (1),

@@ -1,14 +1,22 @@
 .TH LABEL  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
 .SH NAME
-label \- place a label in the upper-left corner
+label \- place a label in the plot
 .SH SYNOPSIS
 .B label
-.I text
+.I x-position y-position orientation text
 .SH DESCRIPTION
 .B label
 places the label 
 .I text
-in the upper-left corner of the plot window.
+at the position indicated by
+.I x-position
+and
+.I y-position.
+The
+.I orientation
+of the label with respect to the designated position is designated by an
+integer 1-9 as in the position of the numeric keys in a standard keypad.
+
 This is useful when making hardcopies using the
 .B hard
 command.
