@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.9  1996/12/19 18:03:24  trq
+ * Revision 1.10  1997/02/20 02:36:05  trq
+ * Don't redefine PI.
+ *
+ * Revision 1.9  1996/12/19  18:03:24  trq
  * Fixed handling of arrays and vectors when a sub-box is loaded.
  *
  * Revision 1.8  1996/06/26  00:34:48  nsk
@@ -124,7 +127,9 @@
 #define FALSE 0
 #define NO 0
 #define YES 1
+#ifndef PI
 #define PI 3.141592653589793
+#endif
 #define LN10 2.302585093
 #define ZOOMSCALE 2
 #define BARHEIGHT 50
