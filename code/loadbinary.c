@@ -6,50 +6,119 @@ static double currtime = 0.0;
 static long currpos = 0L ;
 static long lastpos = 0L ;
 
+/* get the time to use and load up the header */
 int
-loadbinary(infile,time)
-    FILE *infile;
-    double time;
-{
-    int old_nstar;
-    int i;
-    int nread;
+loadheader(FILE *binaryfile, 
+	   double time, 
+	   FILE **infile) {
+
+  int i, nread;
+
+  if (!ismanifest) {
+    /* regular binary */
+    *infile = binaryfile;
 
     if ((float)currtime > (float)time){
-	fseek(infile,0L,0);
-	currtime=0.0;
-	currpos=0;
+      fseek(*infile,0L,0);
+      currtime=0.0;
+      currpos=0;
     }
-    old_nstar = header.nstar;
+    
     forever {
-	if(fread((char *)&header,sizeof(header),1,infile) 
-	   != 1) {
-	    printf("<sorry time too large %s, using %f>\n",title,
-			     (float)currtime) ;
-	    break ;
-	}
-	currtime = header.time ;
-	currpos = ftell(infile) - sizeof(header);
-	if ( (float)header.time >= (float)time ) 
-	    break ;
-	fseek(infile,
+      if(fread((char *)&header,sizeof(header),1,*infile) 
+	 != 1) {
+	printf("<sorry time too large %s, using %f>\n",title,
+	       (float)currtime) ;
+      break ;
+      }
+      currtime = header.time ;
+      currpos = ftell(*infile) - sizeof(header);
+      if ( (float)header.time >= (float)time ) 
+	break ;
+      fseek(*infile,
 	    sizeof(gas_particles[0])*header.nsph +
 	    sizeof(dark_particles[0])*header.ndark +
 	    sizeof(star_particles[0])*header.nstar,
 	    1) ;
     }	
-    fseek(infile,currpos,0) ;
+    fseek(*infile,currpos,0) ;
     lastpos = currpos ;
-    fread((char *)&header,sizeof(header),1,infile) ;
-
-    if(header.ndim < 2 || header.ndim > 3) {
-	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
-	    fseek(infile,0L,0);
-	    currtime=0.0;
-	    currpos=0;
-	    header.nstar = 0;
-	    return FALSE;
+    fread((char *)&header,sizeof(header),1,*infile) ;
+    
+  } else {
+    /* manifest file */
+    i = 0; 
+    while (1) {
+      if (i == manifest_length) {
+	printf("<sorry time too large %s, using %f>\n",title,
+	       (float)manifest[i-1].time) ;
+	i--;
+      }
+      if ( (float)manifest[i].time >= (float)time ) break;
+      i++;
     }
+
+    printf("<Using file %s, %s>\n", manifest[i].name, title);
+    *infile = fopen(manifest[i].name, "r");
+    if (*infile == NULL) {
+      printf("<Unable to open file %s, %s>\n", manifest[i].name, title);
+      return FALSE;
+    }
+    nread = fread((char *)&header, sizeof(header), 1, *infile) ;
+    if (nread != 1) {
+      printf("<Error reading header from file %s, %s>\n", 
+	     manifest[i].name, title);
+      return FALSE;
+    }
+    currpos = ftell(*infile) - sizeof(header);
+    lastpos = currpos ;
+  }
+
+  if(header.ndim < 2 || header.ndim > 3) {
+    printf("<sorry, file has crazy dimension, %s>\n",title) ;
+    fseek(*infile,0L,0);
+    currtime=0.0;
+    currpos=0;
+    header.nstar = 0;
+    return FALSE;
+  }
+  return TRUE;
+
+}
+
+
+
+int
+loadbinary(binaryfile, time)
+    FILE *binaryfile;
+    double time;
+{
+    int old_nstar;
+    int i;
+    int nread;
+    FILE *infile;
+    double loaded_time;
+
+
+    old_nstar = header.nstar;
+    if (binary_loaded) {
+      loaded_time = header.time;
+    } else {
+      loaded_time = -1.;
+    }
+
+    if (loadheader(binaryfile, time, &infile) == FALSE) 
+      return FALSE;
+
+    if (header.time == loaded_time) {
+      currpos = lastpos;
+      fseek(infile,currpos,0) ;
+      currtime = header.time ;
+      printf("<reused time %f, hope you don't mind %s>\n",
+	       (float)currtime, title);
+      return TRUE;
+    }
+
     if(gas_particles != NULL) free(gas_particles);
     if(header.nsph != 0) {
 	gas_particles = (struct gas_particle *)
@@ -119,7 +188,6 @@ loadbinary(infile,time)
       free(box0_pi);
       box0_pi = NULL;
     }
-
     nread = fread((char *)gas_particles,sizeof(struct gas_particle),
 		     header.nsph,infile) ;
     if(nread != header.nsph) {
@@ -146,12 +214,13 @@ loadbinary(infile,time)
 	printf("<used time %f, hope you don't mind %s>\n",
 	       (float)currtime,title);
     }
+    if (ismanifest) fclose(infile);
     return TRUE;
 }
 
 int
-loadbin_box(infile,time, xmin, xmax)
-    FILE *infile;
+loadbin_box(binaryfile,time, xmin, xmax)
+    FILE *binaryfile;
     double time;
     Real *xmin;
     Real *xmax;
@@ -160,6 +229,7 @@ loadbin_box(infile,time, xmin, xmax)
     int i;
     int k;
     int in;
+    FILE *infile;
     int max_part = 1000;
     int max_gas = 1000;
     int max_dark = 1000;
@@ -169,37 +239,10 @@ loadbin_box(infile,time, xmin, xmax)
     struct star_particle *sp;
     int ngas, ndark, nstar;
 
-    if ((float)currtime > (float)time){
-	fseek(infile,0L,0);
-	currtime=0.0;
-	currpos=0;
-    }
     old_nstar = header.nstar;
-    forever {
-	if(fread((char *)&header,sizeof(header),1,infile) 
-	   != 1) {
-	    printf("<sorry time too large %s, using %f>\n",title,
-			     (float)currtime) ;
-	    break ;
-	}
-	currtime = header.time ;
-	currpos = ftell(infile) - sizeof(header);
-	if ( (float)header.time >= (float)time ) 
-	    break ;
-	fseek(infile,
-	    sizeof(gas_particles[0])*header.nsph +
-	    sizeof(dark_particles[0])*header.ndark +
-	    sizeof(star_particles[0])*header.nstar,
-	    1) ;
-    }	
-    fseek(infile,currpos,0) ;
-    lastpos = currpos ;
-    fread((char *)&header,sizeof(header),1,infile) ;
-    if(header.ndim < 2 || header.ndim > 3) {
-	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
-	    header.nstar = 0;
-	    return FALSE;
-    }
+
+    if (loadheader(binaryfile, time, &infile) == FALSE) 
+      return FALSE;
 
     if(gas_particles != NULL) free(gas_particles);
     if(header.nsph != 0) {
@@ -382,6 +425,7 @@ loadbin_box(infile,time, xmin, xmax)
 	printf("<used time %f, hope you don't mind %s>\n",
 	       (float)currtime,title);
     }
+    if (ismanifest) fclose(infile);
     return TRUE;
 }
 
@@ -509,46 +553,107 @@ struct star_particle *star;
 #define STD_DARK_SIZE 36
 #define STD_STAR_SIZE 44
 
-int
-loadstandard(infile,time)
-    FILE *infile;
-    double time;
-{
-    int old_nstar;
-    int i;
+/* get the time to use and load up the header */
+int 
+loadheader_std(FILE *binaryfile, 
+	       double time,
+	       FILE **infile) {
+
+  int i, nread;
+
+  if (!ismanifest) {
+    /* regular binary */
+    *infile = binaryfile;
 
     if ((float)currtime > (float)time){
-	fseek(infile,0L,0);
-	currtime=0.0;
-	currpos=0;
+      fseek(*infile,0L,0);
+      currtime=0.0;
+      currpos=0;
     }
-    old_nstar = header.nstar;
-    xdrstdio_create(&xdrs, infile, XDR_DECODE);
+    xdrstdio_create(&xdrs, *infile, XDR_DECODE);
     forever {
-	if(xdr_header() != 1) {
-	    printf("<sorry time too large %s, using %f>\n",title,
-			     (float)currtime) ;
-	    break ;
-	}
-	currtime = header.time ;
-	currpos = ftell(infile) - STD_HEADER_SIZE;
-	if ( (float)header.time >= (float)time ) 
-	    break ;
-	fseek(infile,
+      if(xdr_header() != 1) {
+	printf("<sorry time too large %s, using %f>\n",title,
+	       (float)currtime) ;
+	break ;
+      }
+      currtime = header.time ;
+      currpos = ftell(*infile) - STD_HEADER_SIZE;
+      if ( (float)header.time >= (float)time ) 
+	break ;
+      fseek(*infile,
 	    STD_GAS_SIZE*header.nsph +
 	    STD_DARK_SIZE*header.ndark +
 	    STD_STAR_SIZE*header.nstar,
 	    1) ;
     }	
-    fseek(infile,currpos,0) ;
+    fseek(*infile,currpos,0) ;
     lastpos = currpos ;
     xdr_header();
-    
-    if(header.ndim < 2 || header.ndim > 3) {
-	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
-	    header.nstar = 0;
-	    return FALSE;
+  } else {
+    /* manifest file */
+    i = 0; 
+    while (1) {
+      if (i == manifest_length) {
+	printf("<sorry time too large %s, using %f>\n",title,
+	       (float)manifest[i-1].time) ;
+	i--;
+      }
+      if ( (float)manifest[i].time >= (float)time ) break;
+      i++;
     }
+
+    printf("<Using file %s, %s>\n", manifest[i].name, title);
+    *infile = fopen(manifest[i].name, "r");
+    if (*infile == NULL) {
+      printf("<Unable to open file %s, %s>\n", manifest[i].name, title);
+      return FALSE;
+    }
+    xdrstdio_create(&xdrs, *infile, XDR_DECODE);
+    fseek(*infile,currpos,0) ;
+    lastpos = currpos ;
+    xdr_header();
+
+  }
+  
+  if(header.ndim < 2 || header.ndim > 3) {
+    printf("<sorry, file has crazy dimension, %s>\n",title) ;
+    header.nstar = 0;
+    return FALSE;
+  }
+}
+
+
+int
+loadstandard(binaryfile,time)
+    FILE *binaryfile;
+    double time;
+{
+    int old_nstar;
+    int i;
+    FILE *infile;
+    double loaded_time;
+
+    old_nstar = header.nstar;
+    if (binary_loaded) {
+      loaded_time = header.time;
+    } else {
+      loaded_time = -1.;
+    }
+
+    if (loadheader_std(binaryfile, time, &infile) == FALSE) 
+      return FALSE;
+
+    if (header.time == loaded_time) {
+      currpos = lastpos ;
+      fseek(infile,currpos,0) ;
+      currtime = header.time ;
+      printf("<reused time %f, hope you don't mind %s>\n",
+	     (float)currtime, title);
+      xdr_destroy(&xdrs);
+      return TRUE;
+    }
+
     if(gas_particles != NULL) free(gas_particles);
     if(header.nsph != 0) {
 	gas_particles = (struct gas_particle *)
@@ -655,8 +760,8 @@ loadstandard(infile,time)
 }
 
 int
-loadstd_box(infile,time, xmin, xmax)
-    FILE *infile;
+loadstd_box(binaryfile,time, xmin, xmax)
+    FILE *binaryfile;
     double time;
     Real *xmin;
     Real *xmax;
@@ -665,6 +770,7 @@ loadstd_box(infile,time, xmin, xmax)
     int i;
     int k;
     int in;
+    FILE *infile;
     int max_part = 1000;
     int max_gas = 1000;
     int max_dark = 1000;
@@ -674,37 +780,10 @@ loadstd_box(infile,time, xmin, xmax)
     struct star_particle *sp;
     int ngas, ndark, nstar;
 
-    if ((float)currtime > (float)time){
-	fseek(infile,0L,0);
-	currtime=0.0;
-	currpos=0;
-    }
     old_nstar = header.nstar;
-    xdrstdio_create(&xdrs, infile, XDR_DECODE);
-    forever {
-	if(xdr_header() != 1) {
-	    printf("<sorry time too large %s, using %f>\n",title,
-			     (float)currtime) ;
-	    break ;
-	}
-	currtime = header.time ;
-	currpos = ftell(infile) - STD_HEADER_SIZE;
-	if ( (float)header.time >= (float)time ) 
-	    break ;
-	fseek(infile,
-	    STD_GAS_SIZE*header.nsph +
-	    STD_DARK_SIZE*header.ndark +
-	    STD_STAR_SIZE*header.nstar,
-	    1) ;
-    }	
-    fseek(infile,currpos,0) ;
-    lastpos = currpos ;
-    xdr_header();
-    if(header.ndim < 2 || header.ndim > 3) {
-	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
-	    header.nstar = 0;
-	    return FALSE;
-    }
+
+    if (loadheader_std(binaryfile, time, &infile) == FALSE) 
+      return FALSE;
 
     if(gas_particles != NULL) free(gas_particles);
     if(header.nsph != 0) {
