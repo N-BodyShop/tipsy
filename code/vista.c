@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.9  1996/06/26 00:34:50  nsk
+ * Revision 1.10  1996/07/30 22:20:25  trq
+ * Fixed HeII logic bugs.
+ *
+ * Revision 1.9  1996/06/26  00:34:50  nsk
  * Added deuterium to absorb, HeI, HeII, and xray to vista
  *
  * Revision 1.8  1996/04/24  23:40:38  trq
@@ -193,7 +196,7 @@ vista(job)
 	      else if(strcmp(type,"heI") == 0){
 		  vista_type = HEI ;
 	      }
-	      else if(strcmp(type,"heI") == 0){
+	      else if(strcmp(type,"heII") == 0){
 		  vista_type = HEII ;
 	      }
 	      else {
@@ -363,7 +366,7 @@ vista(job)
                 t_upper = e_upper*(1 + redshift)*1.6e-9/KBOLTZ ;
 	    }
 	    else if(vista_type == HNEUT || vista_type == HEI || 
-		    vista_type == HEI){
+		    vista_type == HEII){
 		autolim = NO ;
 		if(num_read != 8){
 		    vel_min = -HUGE ;
@@ -431,10 +434,10 @@ vista(job)
 				    }
 				}
 				if((!periodic && ((vista_type != HNEUT &&
-					vista_type == HEI && vista_type == HEII)
+					vista_type != HEI && vista_type != HEII)
 					      || autolim == YES))
 				   || (periodic && ((vista_type != HNEUT &&
-					vista_type == HEI && vista_type == HEII)
+					vista_type != HEI && vista_type != HEII)
 						    || autolim == YES)
 				       && (part_pos[2]< period_size/2.&&
 					   part_pos[2] >= -period_size/2.))
