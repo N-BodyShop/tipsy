@@ -281,8 +281,8 @@ profile(job)
 		    strcmp(particle_type,"all") ==0) {
 		if(boxlist[box].ngas > 0 && !meanmwt_loaded) {
 		    meanmwt_func();
+		    gasconst = kpcunit*KPCCM*KBOLTZ/MHYDR/GCGS/msolunit/MSOLG;
 		}
-		gasconst = kpcunit*KPCCM*KBOLTZ/MHYDR/GCGS/msolunit/MSOLG;
 		
 		for (i = 0 ;i < boxlist[box].ngas ; i++) {
 		    if(strcmp(particle_type,"mark") == 0 &&
