@@ -218,6 +218,41 @@ writeiv(job)
 
 void writeAxes() {
 
+    Real box_coord[BOXPTS][MAXDIM] ;
+    double bound_max[MAXDIM];
+    double bound_min[MAXDIM];
+    double bound_center[MAXDIM];
+    double max_size ;
+    double offset ;
+    int j,k;
+
+    setvec(&box_coord[0][0],boxes[active_box].x1) ;
+    setvec(&box_coord[1][0],boxes[active_box].x2) ;
+    setvec(&box_coord[2][0],boxes[active_box].x3) ;
+    setvec(&box_coord[3][0],boxes[active_box].x4) ;
+    setvec(&box_coord[4][0],boxes[active_box].x5) ;
+    setvec(&box_coord[5][0],boxes[active_box].x6) ;
+    diff_add_vec(&box_coord[6][0],boxes[active_box].x5,
+	    boxes[active_box].x3,boxes[active_box].x1) ;
+    diff_add_vec(&box_coord[7][0],boxes[active_box].x6,
+	    boxes[active_box].x4,boxes[active_box].x2) ;
+    for(k = 0; k < MAXDIM; k++) {
+      bound_max[k] = box_coord[0][k];
+      bound_min[k] = box_coord[0][k];
+    }
+    for (j = 1 ;j < BOXPTS ;j++) {
+	for(k = 0; k < MAXDIM; k++) {
+	  bound_max[k] = max(bound_max[k], box_coord[j][k]);
+	  bound_min[k] = min(bound_min[k], box_coord[j][k]);
+	}
+    }
+    max_size = bound_max[0] - bound_min[0] ;
+    max_size = max(bound_max[1] - bound_min[1],max_size) ;
+    max_size = max(bound_max[2] - bound_min[2],max_size) ;
+    for(k = 0; k < MAXDIM; k++) {
+      bound_center[k] = 0.5*(bound_min[k]+bound_max[k]);
+    }
+    offset = .05*max_size ;
   fprintf(hardfile.ptr,"  Separator {\n");
   fprintf(hardfile.ptr,"    DrawStyle {\n");
   fprintf(hardfile.ptr,"      lineWidth     2\n");
@@ -227,25 +262,28 @@ void writeAxes() {
   fprintf(hardfile.ptr,"        rgb	1 0 0\n");
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Coordinate3 {\n");
-  fprintf(hardfile.ptr,"        point  [   -0.1 -0.55 -0.55,\n");
-  fprintf(hardfile.ptr,"                   0.1  -0.55 -0.55 ]\n");
+  fprintf(hardfile.ptr,"        point  [   %g %g %g,\n",bound_center[0]-
+	2.*offset,bound_min[1]-offset,bound_min[2]-offset);
+  fprintf(hardfile.ptr,"                   %g %g %g ]\n",bound_center[0]+
+	2.*offset,bound_min[1]-offset,bound_min[2]-offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      LineSet {\n");
   fprintf(hardfile.ptr,"        numVertices [ 2 ]\n");
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Translation {\n");
-  fprintf(hardfile.ptr,"        translation 0.075 -0.55 -0.55\n");
+  fprintf(hardfile.ptr,"        translation %g %g %g\n",bound_center[0]+
+	1.5*offset,bound_min[1]-offset,bound_min[2]-offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      RotationXYZ {\n");
   fprintf(hardfile.ptr,"        axis    Z\n");
   fprintf(hardfile.ptr,"        angle   -1.5708\n");
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Cone {\n");
-  fprintf(hardfile.ptr,"        bottomRadius    0.02\n");
-  fprintf(hardfile.ptr,"        height  0.05\n");
+  fprintf(hardfile.ptr,"        bottomRadius    %g\n",offset/5.);
+  fprintf(hardfile.ptr,"        height  %g\n",offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Translation {\n");
-  fprintf(hardfile.ptr,"	translation	0 0.05 0\n");
+  fprintf(hardfile.ptr,"	translation	0 %g 0\n",offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Text2 { \n");
   fprintf(hardfile.ptr,"        string \"X\"\n");
@@ -256,21 +294,24 @@ void writeAxes() {
   fprintf(hardfile.ptr,"        rgb	0 1 0\n");
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Coordinate3 {\n");
-  fprintf(hardfile.ptr,"        point  [   -0.55 -0.1 -0.55,\n");
-  fprintf(hardfile.ptr,"                   -0.55  0.1 -0.55 ]\n");
+  fprintf(hardfile.ptr,"        point  [   %g %g %g,\n",bound_min[0]-offset,
+	bound_center[1]-2.*offset,bound_min[2]-offset);
+  fprintf(hardfile.ptr,"                   %g %g %g ]\n",bound_min[0]-
+	  offset,bound_center[1]+2.*offset,bound_min[2]-offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      LineSet {\n");
   fprintf(hardfile.ptr,"        numVertices [ 2 ]\n");
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Translation {\n");
-  fprintf(hardfile.ptr,"        translation -0.55 0.075 -0.55\n");
+  fprintf(hardfile.ptr,"        translation %g %g %g\n",bound_min[0]-
+	  offset,bound_center[1]+1.5*offset,bound_min[2]-offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Cone {\n");
-  fprintf(hardfile.ptr,"        bottomRadius    0.02\n");
-  fprintf(hardfile.ptr,"        height  0.05\n");
+  fprintf(hardfile.ptr,"        bottomRadius    %g\n",offset/5.);
+  fprintf(hardfile.ptr,"        height  %g\n",offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Translation {\n");
-  fprintf(hardfile.ptr,"	translation	0 0.05 0\n");
+  fprintf(hardfile.ptr,"	translation	0 %g 0\n",offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Text2 { \n");
   fprintf(hardfile.ptr,"        string \"Y\"\n");
@@ -281,25 +322,28 @@ void writeAxes() {
   fprintf(hardfile.ptr,"        rgb	0.1 0.1 1\n");
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Coordinate3 {\n");
-  fprintf(hardfile.ptr,"        point  [   -0.55 -0.55 -0.1,\n");
-  fprintf(hardfile.ptr,"                   -0.55 -0.55  0.1 ]\n");
+  fprintf(hardfile.ptr,"        point  [   %g %g %g,\n",bound_min[0]-
+	  offset,bound_min[1]-offset,bound_center[2]-2.*offset);
+  fprintf(hardfile.ptr,"                   %g %g %g ]\n",bound_min[0]-
+	  offset,bound_min[1]-offset,bound_center[2]+2.*offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      LineSet {\n");
   fprintf(hardfile.ptr,"        numVertices [ 2 ]\n");
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Translation {\n");
-  fprintf(hardfile.ptr,"        translation -0.55 -0.55 0.075 \n");
+  fprintf(hardfile.ptr,"        translation %g %g %g\n",bound_min[0]-
+	  offset,bound_min[1]-offset,bound_center[2]+1.5*offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      RotationXYZ {\n");
   fprintf(hardfile.ptr,"        axis    X\n");
   fprintf(hardfile.ptr,"        angle   1.5708\n");
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Cone {\n");
-  fprintf(hardfile.ptr,"        bottomRadius    0.02\n");
-  fprintf(hardfile.ptr,"        height  0.05\n");
+  fprintf(hardfile.ptr,"        bottomRadius    %g\n",offset/5.);
+  fprintf(hardfile.ptr,"        height  %g\n",offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Translation {\n");
-  fprintf(hardfile.ptr,"	translation    0 0.05 0 \n");
+  fprintf(hardfile.ptr,"	translation	0 %g 0\n",offset);
   fprintf(hardfile.ptr,"      }\n");
   fprintf(hardfile.ptr,"      Text2 { \n");
   fprintf(hardfile.ptr,"        string \"Z\"\n");
@@ -312,42 +356,61 @@ void writeAxes() {
 
 void writeWireframe() {
 
+  Real x7[MAXDIM] ;
+  Real x8[MAXDIM] ;
+
   fprintf(hardfile.ptr,"  Separator {\n");
   fprintf(hardfile.ptr,"    Coordinate3 {\n");
-  fprintf(hardfile.ptr,"	point	[ -0.5 -0.5 -0.5,\n");
-  fprintf(hardfile.ptr,"                   0.5 -0.5 -0.5, \n");
-  fprintf(hardfile.ptr,"                   0.5 0.5 -0.5, \n");
-  fprintf(hardfile.ptr,"                   -0.5 0.5 -0.5, \n");
-  fprintf(hardfile.ptr,"                   -0.5 -0.5 -0.5, \n");
-  fprintf(hardfile.ptr,"                   -0.5 -0.5 0.5, \n");
-  fprintf(hardfile.ptr,"                   0.5 -0.5 0.5, \n");
-  fprintf(hardfile.ptr,"                   0.5 -0.5 -0.5 \n");
+  diff_add_vec(&x7[0],boxes[active_box].x5,boxes[active_box].x3,
+	  boxes[active_box].x1) ;
+  diff_add_vec(&x8[0],boxes[active_box].x6,boxes[active_box].x4,
+	  boxes[active_box].x2) ;
+  fprintf(hardfile.ptr,"	point	[ %g %g %g,\n",x8[0],x8[1],x8[2]);
+  fprintf(hardfile.ptr,"	           %g %g %g,\n",boxes[active_box].x6[0],
+	boxes[active_box].x6[1], boxes[active_box].x6[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g,\n",boxes[active_box].x5[0],
+	boxes[active_box].x5[1], boxes[active_box].x5[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g,\n",x7[0],x7[1],x7[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g,\n",x8[0],x8[1],x8[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g,\n",boxes[active_box].x2[0],
+	boxes[active_box].x2[1], boxes[active_box].x2[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g,\n",boxes[active_box].x4[0],
+	boxes[active_box].x4[1], boxes[active_box].x4[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g\n",boxes[active_box].x6[0],
+	boxes[active_box].x6[1], boxes[active_box].x6[2]) ;
   fprintf(hardfile.ptr,"                 ]\n");
   fprintf(hardfile.ptr,"    }\n");
   fprintf(hardfile.ptr,"    LineSet {\n");
   fprintf(hardfile.ptr,"      numVertices [ 8 ]\n");
   fprintf(hardfile.ptr,"    }\n");
   fprintf(hardfile.ptr,"    Coordinate3 {\n");
-  fprintf(hardfile.ptr,"	point	[ -0.5 -0.5 0.5,\n");
-  fprintf(hardfile.ptr,"                   -0.5 0.5 0.5, \n");
-  fprintf(hardfile.ptr,"                   -0.5 0.5 -0.5\n");
+  fprintf(hardfile.ptr,"	point	[ %g %g %g,\n",boxes[active_box].x2[0],
+	boxes[active_box].x2[1], boxes[active_box].x2[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g,\n",boxes[active_box].x1[0],
+	boxes[active_box].x1[1], boxes[active_box].x1[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g\n",x7[0],x7[1],x7[2]) ;
   fprintf(hardfile.ptr,"                ]\n");
   fprintf(hardfile.ptr,"    }\n");
   fprintf(hardfile.ptr,"    LineSet {\n");
   fprintf(hardfile.ptr,"      numVertices [ 3 ]\n");
   fprintf(hardfile.ptr,"    }\n");
   fprintf(hardfile.ptr,"    Coordinate3 {\n");
-  fprintf(hardfile.ptr,"	point	[ 0.5 -0.5 0.5,\n");
-  fprintf(hardfile.ptr,"                   0.5 0.5 0.5, \n");
-  fprintf(hardfile.ptr,"                   0.5 0.5 -0.5\n");
+  fprintf(hardfile.ptr,"	point	[ %g %g %g,\n",boxes[active_box].x4[0],
+	boxes[active_box].x4[1], boxes[active_box].x4[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g,\n",boxes[active_box].x3[0],
+	boxes[active_box].x3[1], boxes[active_box].x3[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g\n",boxes[active_box].x5[0],
+	boxes[active_box].x5[1], boxes[active_box].x5[2]) ;
   fprintf(hardfile.ptr,"                ]\n");
   fprintf(hardfile.ptr,"    }\n");
   fprintf(hardfile.ptr,"    LineSet {\n");
   fprintf(hardfile.ptr,"      numVertices [ 3 ]\n");
   fprintf(hardfile.ptr,"    }\n");
   fprintf(hardfile.ptr,"    Coordinate3 {\n");
-  fprintf(hardfile.ptr,"	point	[ -0.5 0.5 0.5,\n");
-  fprintf(hardfile.ptr,"                   0.5 0.5 0.5\n");
+  fprintf(hardfile.ptr,"	point	[ %g %g %g,\n",boxes[active_box].x1[0],
+	boxes[active_box].x1[1], boxes[active_box].x1[2]) ;
+  fprintf(hardfile.ptr,"	           %g %g %g\n",boxes[active_box].x3[0],
+	boxes[active_box].x3[1], boxes[active_box].x3[2]) ;
   fprintf(hardfile.ptr,"                ]\n");
   fprintf(hardfile.ptr,"    }\n");
   fprintf(hardfile.ptr,"    LineSet {\n");
