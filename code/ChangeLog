@@ -1,3 +1,8 @@
+Wed Jan 11 13:09:36 1995  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* Makefile.in (SRCS): added alloca.c so it will be included in the
+	distribution.
+
 Wed Dec 28 13:42:47 1994  Tom Quinn  <trq@hermes.astro.washington.edu>
 
 	* readmark.c: close file after it is read.

@@ -126,7 +126,7 @@ zplot_array.c arraystat.c writemark.c markgal.c xray_lum_load.c \
 loadsphere.c setsphere_sub.c xray.c xray_load_sub.c markarray.c heatcool.c \
 neutral.c meanmwt.c nsktrq.c vcenter.c shell_sub.c all_color.c showvec_sub.c \
 readvector.c xplot_mag.c yplot_mag.c zplot_mag.c view_mag.c magnitude_color.c \
-pcenter.c writebox_rot.c absorb.c markmass.c drift.c
+pcenter.c writebox_rot.c absorb.c markmass.c drift.c alloca.c
 
 $(OBJS): defs.h
 main.o:  main.h
