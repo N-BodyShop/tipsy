@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.14.4.1  2000/06/22 21:26:12  nsk
+ * Revision 1.14.4.2  2000/07/07 03:23:47  nsk
+ * Added variable-oriented command: set_var, delete_var, print.  (maf/cm)
+ * Added xverbose command. (maf)
+ * Added openmanifest, closemanifest commands.   (maf)
+ *
+ * Revision 1.14.4.1  2000/06/22  21:26:12  nsk
  * Added setcolormap command. (maf)
  *
  * Revision 1.14  1999/08/25  22:05:25  nsk
@@ -104,10 +109,12 @@ extern void clearall() ;
 extern void clearrot();
 extern void closeascii() ;
 extern void closebinary() ;
+extern void closemanifest() ;
 
 extern void commands() ;
 extern void cooling_sub() ;
 extern void delete_macro() ;
+extern void delete_var() ;
 extern void delete_window() ;
 extern void drift();
 extern void eps_sub() ;
@@ -140,9 +147,11 @@ extern void oldreadascii() ;
 extern void openascii() ;
 
 extern void openbinary() ;
+extern void openmanifest() ;
 extern void pcenter();
 extern void plot_sub() ;
 extern void point_size_sub() ;
+extern void print();
 extern void printhelp() ;
 extern void profile() ;
 
@@ -171,6 +180,7 @@ extern void showboxes_sub() ;
 extern void showdark_sub() ;
 extern void showgas_sub() ;
 extern void showstar_sub() ;
+extern void set_var();
 
 extern void showvec_sub() ;
 extern void showvel_sub() ;
@@ -218,6 +228,7 @@ extern void xplot_pot() ;
 extern void xplot_star() ;
 extern void xplot_rad() ;
 extern void xray() ;
+extern void xverbose_sub() ;
 extern void xray_load_sub() ;
 
 extern void xypoints() ;
@@ -267,6 +278,8 @@ struct comm c_list[] = {
      {"closeascii",  closeascii,	0},
      {"closeb",      closebinary,       0},
      {"closebinary", closebinary,	0},
+     {"closemanifest", closemanifest,	0},
+     {"closem",      closemanifest,	0},
      {"colorbarlabel",colorbar_label,	1},
      {"colorlabel",  colorbar_label,	1},
      {"commands",    commands,		0},
@@ -274,6 +287,7 @@ struct comm c_list[] = {
      {"coolout",     cooling_sub,       0},
 
      {"crot",        clearrot,		0},
+     {"delete",      delete_var,        0},
      {"deletemacro", delete_macro,	0},
      {"deletewin",   delete_window,	1},
      {"dmac",        delete_macro,	0},
@@ -325,11 +339,14 @@ struct comm c_list[] = {
      {"openascii",   openascii,		0},
      {"openb",       openbinary,	0},
      {"openbinary",  openbinary,	0},
+     {"openmanifest",openmanifest,	0},
+     {"openm",       openmanifest,	0},
      {"pcenter",     pcenter,		0},
      {"phelp",       printhelp,		0},
      {"plot",        plot_sub,		1},
 
      {"pointsize",   point_size_sub,	1},
+     {"print",       print,             0},
      {"printhelp",   printhelp,		0},
      {"profile",     profile,		0},
      {"psize",       point_size_sub,	1},
@@ -354,6 +371,7 @@ struct comm c_list[] = {
      {"sbox",	     showboxes_sub,	0},
      {"scale",	     scale_sub,		0},
      {"sdark",       showdark_sub,	0},
+     {"set",         set_var,           0},
      {"setbox",      setbox_sub,	0},
      {"setc",        setcolormap_sub,	1},
      {"setcolormap", setcolormap_sub,	1},
@@ -437,6 +455,7 @@ struct comm c_list[] = {
      {"xrayload",    xray_load_sub,	0},
      {"xstar",       xplot_star,	1},
      {"xrad",        xplot_rad,		1},
+     {"xverbose",    xverbose_sub,	0},
      {"xypoints",    xypoints,		1},
 
      {"xyzpoints",   xyzpoints,		0},
