@@ -18,6 +18,7 @@ openbinary(job)
 	    }
 	    else {
 		binaryopen = OPEN ;
+		ismanifest = FALSE ;
 		cool_loaded = NO ;
 		visc_loaded = NO ;
 		form_loaded = NO ;
