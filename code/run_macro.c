@@ -1,6 +1,12 @@
 /* $Header$
  * $Log$
- * Revision 1.1.1.1.6.1  2000/07/07 03:31:20  nsk
+ * Revision 1.1.1.1.6.2  2000/07/13 01:19:05  nsk
+ * Fixed bug in nested loops, allowed escaped dollar signs.
+ * Fixed error in variable substitution--despite original declaration,
+ *   "job" in command_interp is not of length MAXCOMM.  Need to copy
+ *    values to new string instead.  (maf)
+ *
+ * Revision 1.1.1.1.6.1  2000/07/07  03:31:20  nsk
  * Changes to substitute macro parameters, use for-loops, and
  *   expand variables.   (maf/cm)
  *
@@ -21,12 +27,17 @@
 
 #include "defs.h"
 #include "fdefs.h"
+#include <stdlib.h>
+
 
 int sub_val_for_param(char job[], 
 		  struct macro_list *macro, 
 		  char macro_arg[][MAXTOK], 
 		  char jobcpy[]);
-extern int assign_var(char vname[], char val[]);
+void free_command_list(struct command_list *list);
+int execute_command_list(struct command_list *list, 
+		     struct macro_list *macro, 
+		     char macro_arg[][MAXTOK]);
 
 
 
@@ -34,15 +45,13 @@ void
 run_macro(job)
      char *job;
 {
-  int i, len, remaining, status;
+  int i, remaining;
   char command[MAXCOMM]; 
   char macro_name[MAXCOMM];
   char jobcpy[MAXCOMM];
   char token[MAXTOK]; 
   char rest[MAXCOMM]; 
   char macro_arg[MAXARG][MAXTOK];
-  char *arg_index;
-  struct command_list *list;
   struct macro_list *macro;
 
 
@@ -69,14 +78,10 @@ run_macro(job)
     remaining = 1;
     while ( remaining > 0) {
       remaining = sscanf(jobcpy, "%s %[^\n]", token, rest);
-      /*printf("remaining: %d\n", remaining);*/
       if (remaining > 0) {
-	/*printf("token: |%s|\n", token);
-	printf("remainder: |%s|\n", rest);*/
 	strcpy(jobcpy, rest);
 	if (i > -1) {
 	  strcpy(macro_arg[i], token);
-	  /*printf("macro arg: |%s|\n", macro_arg[i]);*/
 	}
       }
       i++;
@@ -93,17 +98,6 @@ run_macro(job)
 
   /* execute commands in macro */
   execute_command_list(macro->start, macro, macro_arg);
-  /*
-  for (list = macro->start ; list != NULL ; list = list->next) {
-
-    if ( !sub_val_for_param(list->command, macro, macro_arg, jobcpy) ) {
-      printf("<Error parsing macro line, %s:>\n<%s>\n", title, list->command);
-      return;
-    }
-    printf("about to execute following: \n|%s|\n", jobcpy);
-    command_interp(jobcpy) ;
-  
-    }*//*end macro command loop*/
 
 }
 
@@ -112,12 +106,13 @@ run_macro(job)
    a new list of commands and spawn a recursive call to execute those.
    Returns 1 for success, 0 for failure.
    */
+
 int
 execute_command_list(struct command_list *list, 
 		     struct macro_list *macro, 
 		     char macro_arg[][MAXTOK]) {
 
-  int status;
+  int status, nesting;
   struct command_list *item;
   char jobcpy[MAXCOMM];
   char vname[MAXVAR];
@@ -126,7 +121,7 @@ execute_command_list(struct command_list *list,
   char expr[MAXVAR];
   char *edum, *dum; 
   double loopvar, start, stop, step;
-  struct command_list *loopstart, *loopitem, *prev, *save;
+  struct command_list *loopstart = NULL, *loopitem, *prev;
   
 
   for (item = list; item != NULL; item = item->next) {
@@ -152,7 +147,7 @@ execute_command_list(struct command_list *list,
       /* if so, parse line to get loop parameters*/
       if ( (dum=strchr(item->command,'$')) == NULL) {
 	printf("<Incorrect variable syntax: missing $ >\n");
-	return;
+	return 0;
       }
       if ( (edum=strchr(item->command,'=')) == NULL || edum < dum ) {
 	printf("<Incorrect loop syntax: missing = >\n");
@@ -168,8 +163,7 @@ execute_command_list(struct command_list *list,
       }
 
       dum = edum+1;
-      strcpy(jobcpy, dum);
-      if ( !sub_val_for_var(jobcpy) ) {
+      if ( !sub_val_for_var(dum, jobcpy) ) {
 	printf("<Error parsing for command, %s:>\n<%s>\n", 
 	       title, item->command);
 	return 0;
@@ -212,34 +206,48 @@ execute_command_list(struct command_list *list,
 
       /*read in statements until loop end reached*/
       prev = NULL;
+      nesting = 1;
       while ((item = item->next) != NULL) {
+
 	sscanf(item->command, "%s", command);
-	if (strcmp(command, "done") != 0) {
-	  if ( (loopitem = 
-		(struct command_list *) malloc(sizeof(struct command_list)) )
-	       == NULL) {
-	    printf("<sorry, no memory for commands %s>\n",title) ;
-	    return 0;
+	if (strcmp(command, "for") == 0) {
+	  nesting++;
+	} else if (strcmp(command, "done") == 0) {
+	  nesting--;
+	  if (nesting == 0) {
+	    loopitem->next = NULL;
+	    break;
 	  }
-	  if ( (loopitem->command = (char *) malloc(1+strlen(item->command)) )
-	       == NULL) {
-	    printf("<sorry, no memory for commands %s>\n",title) ;
-	    return 0;
-	  }
-	  strcpy(loopitem->command, item->command);
-	  if (prev == NULL) {
-	    loopstart = loopitem;
-	  } else {
-	    prev->next = loopitem;
-	  }
-	  prev = loopitem;
-	} else {
-	  loopitem->next == NULL;
-	  break;
 	}
-      }
+
+	/* not done with loop, so store command */
+	if ( (loopitem = 
+	      (struct command_list *) malloc(sizeof(struct command_list)) )
+	     == NULL) {
+	  printf("<sorry, no memory for commands %s>\n",title) ;
+	  free_command_list(loopstart);
+	  return 0;
+	}
+	loopitem->next = NULL;  /* in case we need to abort */
+	if ( (loopitem->command = (char *) malloc(1+strlen(item->command)) )
+	     == NULL) {
+	  printf("<sorry, no memory for commands %s>\n",title) ;
+	  free_command_list(loopstart);
+	  return 0;
+	}
+	strcpy(loopitem->command, item->command);
+	if (prev == NULL) {
+	  loopstart = loopitem;
+	} else {
+	  prev->next = loopitem;
+	}
+	prev = loopitem;
+
+      }/*end read loop*/
+
       if (item == NULL) {
-	printf("<sorry, loop not properly terminated, %s>\n");
+	printf("<sorry, loop not properly terminated, %s>\n", title);
+	free_command_list(loopstart);
 	return 0;
       }
 
@@ -248,17 +256,13 @@ execute_command_list(struct command_list *list,
 	sprintf(val, "%g", loopvar);
 	assign_var(vname, val);
 	status = execute_command_list(loopstart, macro, macro_arg);
-	if (!status) return 0;
+	if (!status) {
+	  free_command_list(loopstart);
+	  return 0;
+	}
       }
 
-      /* reclaim memory */
-      loopitem = loopstart;
-      while (loopitem != NULL) {
-	save = loopitem->next;
-	free(loopitem->command);
-	free(loopitem);
-	loopitem = save;
-      }
+      free_command_list(loopstart);
 
     }/* end "for" branch*/
   }/*end command list loop*/
@@ -267,7 +271,20 @@ execute_command_list(struct command_list *list,
 }
 
 
+/* reclaim memory */
+void free_command_list(struct command_list *list) {
 
+  struct command_list *item, *save;
+
+  item = list;
+  while (item != NULL) {
+    save = item->next;
+    free(item->command);
+    free(item);
+    item = save;
+  }
+
+}
 
 
 /* 
@@ -291,77 +308,93 @@ sub_val_for_param(char job[],
 
   remainder = job;
   while ( (dum=strchr(remainder,'$')) != NULL) {
-    /* copy part before variable */
-    len = dum-remainder;
-    len0 = strlen(jobcpy);
-    strncat(jobcpy, remainder, len);
-    jobcpy[len0+len] = '\0';
-    dum++;
-    remainder += len+1;
 
-      /* get variable name */
-    if (strlen(dum) == 0) {
-      printf("<Error in variable syntax, %s>\n", title);
-      printf("Received: <%s>\n", job);
-      return 0;
-    }
-    if (*dum != '{') {
-      /* standard method */
-      if (sscanf(dum, "%[0-9a-zA-z]", token) < 1) {
-	printf("<Error in variable syntax, %s>\n", title);
-	printf("Received: <%s>\n", job);
-	return 0;
-      }
-      remainder += strlen(token);  
+    if (dum == 0 || *(dum-1) != '\\') {
 
-      /* replace parameter $i with macro_arg[i] */
-      index=atoi(token)-1;
-      if (index < 0) {
-	/* failed to find index, assume it's a variable */ 
-	strcat(jobcpy, "$");
-	strcat(jobcpy, token);
-      } else if (index >= macro->n_params) {
-	printf("<sorry, only %d parameters in macro %s, %s>\n", 
-	       macro->n_params, macro->name, title);
-	return 0;
-      } else {
-	/* found macro index, write argument*/
-	strcat(jobcpy, macro_arg[index]);
-      }
-    } else {
-      /* braces method */
-      remainder++;
-      if ( (dum = strchr(remainder,'}')) == NULL) {
-	printf("<Error in variable syntax, %s>\n", title);
-	printf("Received: <%s>\n", job);
-	return;
-      }
+      /* copy part before variable */
       len = dum-remainder;
-      strncpy(token, remainder, len);
-      token[len] = '\0';
+      len0 = strlen(jobcpy);
+      strncat(jobcpy, remainder, len);
+      jobcpy[len0+len] = '\0';
+      dum++;
       remainder += len+1;
 
-      /* replace parameter $i with macro_arg[i] */
-      index=atoi(token)-1;
-      if (index < 0) {
-	/* failed to find index, assume it's a variable */ 
-	strcat(jobcpy, "${");
-	strcat(jobcpy, token);
-	strcat(jobcpy, "}");
-      } else if (index >= macro->n_params) {
-	printf("<sorry, only %d parameters in macro %s, %s>\n", 
-	       macro->n_params, macro->name, title);
-	return;
-      } else {
-	/* found macro index, write argument*/
-	strcat(jobcpy, macro_arg[index]);
+      /* get variable name */
+      if (strlen(dum) == 0) {
+	printf("<Error in variable syntax, %s>\n", title);
+	printf("Received: <%s>\n", job);
+	return 0;
       }
+      if (*dum != '{') {
+	/* standard method */
+	if (sscanf(dum, "%[0-9a-zA-z]", token) < 1) {
+	  printf("<Error in variable syntax, %s>\n", title);
+	  printf("Received: <%s>\n", job);
+	  return 0;
+	}
+	remainder += strlen(token);  
+
+      /* replace parameter $i with macro_arg[i] */
+	index=atoi(token)-1;
+	if (index < 0) {
+	  /* failed to find index, assume it's a variable */ 
+	  strcat(jobcpy, "$");
+	  strcat(jobcpy, token);
+	} else if (index >= macro->n_params) {
+	  printf("<sorry, only %d parameters in macro %s, %s>\n", 
+		 macro->n_params, macro->name, title);
+	  return 0;
+	} else {
+	  /* found macro index, write argument*/
+	  strcat(jobcpy, macro_arg[index]);
+	}
+      } else {
+	/* braces method */
+	remainder++;
+	if ( (dum = strchr(remainder,'}')) == NULL) {
+	  printf("<Error in variable syntax, %s>\n", title);
+	  printf("Received: <%s>\n", job);
+	  return 0;
+	}
+	len = dum-remainder;
+	strncpy(token, remainder, len);
+	token[len] = '\0';
+	remainder += len+1;
+
+	/* replace parameter $i with macro_arg[i] */
+	index=atoi(token)-1;
+	if (index < 0) {
+	  /* failed to find index, assume it's a variable */ 
+	  strcat(jobcpy, "${");
+	  strcat(jobcpy, token);
+	  strcat(jobcpy, "}");
+	} else if (index >= macro->n_params) {
+	  printf("<sorry, only %d parameters in macro %s, %s>\n", 
+		 macro->n_params, macro->name, title);
+	  return 0;
+	} else {
+	  /* found macro index, write argument*/
+	  strcat(jobcpy, macro_arg[index]);
+	}
+      }
+
+    } else {
+
+      /* escaped dollar sign, leave it alone */
+      dum++;
+      len = dum-remainder;
+      len0 = strlen(jobcpy);
+      strncat(jobcpy, remainder, len);
+      jobcpy[len0+len] = '\0';
+      remainder += len;
+
     }
-
-
   }/*end loop over dollar signs*/
 
   /* copy any additional part */
   strcat(jobcpy, remainder);
+  return 1;
+
 }
+
 
