@@ -1,48 +1,44 @@
 
 
 
-VISTA(1)                 TIPSY COMMANDS                  VISTA(1)
+VISTA(1)		  TIPSY	COMMANDS		 VISTA(1)
 
 
+NNAAMMEE
+       vista - make FITS images
 
-NAME
-     vista - make FITS images
+SSYYNNOOPPSSIISS
+       vviissttaa _t_y_p_e _l_o_w _h_i_g_h _f_i_l_e	_s_i_z_e _[ _v_e_l_-_m_i_n _v_e_l_m_a_x _]
 
-SYNOPSIS
-DESCRIPTION
-SEE ALSO
+DDEESSCCRRIIPPTTIIOONN
+       vviissttaa creates a fits image of _s_i_z_e pixels on a side of the
+       current projection and writes it	to _f_i_l_e_.  The  values  in
+       the  fits  file	are  base 10 logarithms	of various smooth
+       quantities and are limited to values between _l_o_w	and _h_i_g_h_.
+       _t_y_p_e  determines	what variables are output, and is one of:
+       _d_e_n_s_i_t_y	(gas  density),	 _t_e_m_p_e_r_a_t_u_r_e  (gas  temperature),
+       _p_r_e_s_s_u_r_e	(gas pressure),	_c_o_o_l_i_n_g	(gas cooling time), _f_o_r_m_-
+       _s_t_a_r (star formation rate),  _s_t_a_r  (star	 density),  _l_u_m_i_,
+       _l_u_m_v_,  _l_u_m_b_,  _l_u_m_u_,  _l_u_m_u_u  (I, V, B, U or UU band stellar
+       luminosity), _d_a_r_k (dark matter density),	_h_n_e_u_t_r_a_l (neutral
+       hydrogen	 column	density), _h_e_I (neutral helium column den-
+       sity), and _h_e_I_I (singly ionized helium column density).
 
+       All smoothed quantities are calculated by  projecting  the
+       particles  onto	the grid using a Smooth	Particle Hydrody-
+       namics technique	with a spline softening	kernel.	 For  gas
+       quantities  the	smoothing  length   is set by the _h_s_m_o_o_t_h
+       parameter of each particle.  For	dark or	star  quantities,
+       the smoothing parameters	can be set by the ssmmooootthh command.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+       For the species column densities,  velocity  cuts  can  be
+       made with the optional parameters _v_e_l_-_m_i_n and _v_e_l_-_m_a_x_.  to
+       simulate	emmission seen within a	limited	spectral range.
 
 
-
-
-
-
-
+SSEEEE AALLSSOO
+       ccoooollccoonnssttaannttss(1), ffoorrmmccoonnssttaannttss(1), lluummccoonnssttaannttss(1),  rreedd--
+       sshhiifftt(1), ssmmooootthh((11)) vviissccccoonnssttaannttss(1)
 
 
 
@@ -57,10 +53,14 @@ SEE ALSO
 
 
 
-Katz and Quinn ReleasLeas2t.0change: 22 MARCH 1994                  1
 
 
 
 
+
+
+
+
+Katz and Quinn Release 2.022 MARCH 1994				1
 
 
