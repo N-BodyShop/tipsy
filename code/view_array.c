@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/03/24 18:49:10  trq
+ * Revision 1.3  1997/01/17 21:24:06  trq
+ * Added more informative error messages.
+ *
+ * Revision 1.2  1995/03/24  18:49:10  trq
  * Added "revrain" colormap.
  *
  * divv.c: included malloc.h.
@@ -147,7 +150,7 @@ view_array(job)
 	    plot_sub(job) ;
 	}
 	else {
-	    printf("<inconsistent input for a array plot, %s>\n",title) ;
+	    input_error(command) ;
 	}
     }
     else {

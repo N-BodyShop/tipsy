@@ -1,7 +1,10 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.4  1996/04/11 21:28:00  trq
+ * Revision 1.5  1997/01/17 21:24:09  trq
+ * Added more informative error messages.
+ *
+ * Revision 1.4  1996/04/11  21:28:00  trq
  * view_star.c: fixed bug in abox vs. density calculation.
  * activatebox.c: hsmdivv is independent of abox.
  * divv.c, smooth.c, smooth.h, view_gas.c: Use tree to calculate hsmdivv[].
@@ -239,7 +242,7 @@ view_star(job)
 	    plot_sub(job) ;
 	}
 	else {
-	    printf("<inconsistent input for a star plot, %s>\n",title) ;
+	    input_error(command) ;
 	}
     }
     else {
