@@ -1,44 +1,40 @@
 
 
 
-READVECTOR(1)            TIPSY COMMANDS             READVECTOR(1)
+READVECTOR(1)             TIPSY COMMANDS            READVECTOR(1)
 
 
+NNAAMMEE
+       readvector - read a vector
 
-NAME
-     readvector - read a vector
+SSYYNNOOPPSSIISS
+       rreeaaddvveeccttoorr _f_i_l_e_n_a_m_e
 
-SYNOPSIS
-     readvector _f_i_l_e_n_a_m_e
+DDEESSCCRRIIPPTTIIOONN
+       rreeaaddvveeccttoorr  reads  in  a three dimensional vector for each
+       particle from the file _f_i_l_e_n_a_m_e for use by  commands  like
+       vviieewwmmaagg and vviieewwrraadd..  Using the sshhoowwvveecc command the vector
+       field can be displayed in plots.
 
-DESCRIPTION
-     readvector reads in a three dimensional vector for each par-
-     ticle  from  the  file  _f_i_l_e_n_a_m_e  for  use  by commands like
-     viewmag and viewrad. Using the showvec  command  the  vector
-     field can be displayed in plots.
-
-     The file _f_i_l_e_n_a_m_e must be an ascii file.  The file should be
-     of the form:
-
-          ntotal
-
-          x_vector(i), i = 1 to ntotal
-
-          y_vector(i), i = 1 to ntotal
-
-          z_vector(i), i = 1 to ntotal
-
-     where ntotal is the total number of  particles.   Therefore,
-     the total file length is 3*ntotal+1 lines.
-
-     The readarray command is used to read in scalars.
-
-SEE ALSO
-     readarray (1), showvec (1), viewmag (1), viewrad (1)
+       The file _f_i_l_e_n_a_m_e must be an ascii file.  The file  should
+       be of the form:
 
 
+              ntotal
 
+              x_vector(i), i = 1 to ntotal
 
+              y_vector(i), i = 1 to ntotal
+
+              z_vector(i), i = 1 to ntotal
+
+       where ntotal is the total number of particles.  Therefore,
+       the total file length is 3*ntotal+1 lines.
+
+       The rreeaaddaarrrraayy command is used to read in scalars.
+
+SSEEEE AALLSSOO
+       readarray (1), showvec (1), viewmag (1), viewrad (1)
 
 
 
@@ -60,7 +56,11 @@ SEE ALSO
 
 
 
-KQ Release 2.0     Last change: 22 MARCH 1994                   1
 
+
+
+
+
+KQ Release 2.0            22 MARCH 1994                         1
 
 

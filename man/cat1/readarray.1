@@ -1,39 +1,35 @@
 
 
 
-READARRAY(1)             TIPSY COMMANDS              READARRAY(1)
+READARRAY(1)              TIPSY COMMANDS             READARRAY(1)
 
 
+NNAAMMEE
+       readarray - read an array from a file
 
-NAME
-     readarray - read an array from a file
+SSYYNNOOPPSSIISS
+       rreeaaddaarrrraayy _f_i_l_e_n_a_m_e
 
-SYNOPSIS
-     readarray _f_i_l_e_n_a_m_e
+DDEESSCCRRIIPPTTIIOONN
+       rreeaaddaarrrraayy  reads  in an array of scalars for each particle
+       from the file _f_i_l_e_n_a_m_e for use by commands like aarrrraayyssttaatt,,
+       mmaarrkkaarrrraayy,, and vviieewwaarrrraayy..
 
-DESCRIPTION
-     readarray reads in an array of  scalars  for  each  particle
-     from  the  file _f_i_l_e_n_a_m_e for use by commands like arraystat,
-     markarray, and viewarray.
-
-     The file _f_i_l_e_n_a_m_e must be an ascii file. The file should  be
-     of the form:
-
-          ntotal
-
-          array_value(i), i = 1 to ntotal
-
-     where ntotal is the total number of  particles.   Therefore,
-     the total file length is ntotal+1 lines.
-
-     The readvector command is used to read in vectors.
-
-SEE ALSO
-     arraystat(1), markarray(1), readvector(1), viewarray(1)
+       The  file  _f_i_l_e_n_a_m_e must be an ascii file. The file should
+       be of the form:
 
 
+              ntotal
 
+              array_value(i), i = 1 to ntotal
 
+       where ntotal is the total number of particles.  Therefore,
+       the total file length is ntotal+1 lines.
+
+       The rreeaaddvveeccttoorr command is used to read in vectors.
+
+SSEEEE AALLSSOO
+       aarrrraayyssttaatt(1), mmaarrkkaarrrraayy(1), rreeaaddvveeccttoorr(1), vviieewwaarrrraayy(1)
 
 
 
@@ -60,7 +56,11 @@ SEE ALSO
 
 
 
-KQ Release 2.0     Last change: 22 MARCH 1994                   1
 
+
+
+
+
+KQ Release 2.0            22 MARCH 1994                         1
 
 

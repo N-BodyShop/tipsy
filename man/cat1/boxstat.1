@@ -1,56 +1,52 @@
 
 
 
-BOXSTAT(1)               TIPSY COMMANDS                BOXSTAT(1)
+BOXSTAT(1)                TIPSY COMMANDS               BOXSTAT(1)
 
 
+NNAAMMEE
+       boxstat - print the physical parameters of a box
 
-NAME
-     boxstat - print the physical parameters of a box
+SSYYNNOOPPSSIISS
+       bbooxxssttaatt _b_o_x_-_n_u_m_b_e_r _p_a_r_t_i_c_l_e
 
-SYNOPSIS
-     boxstat _b_o_x-_n_u_m_b_e_r _p_a_r_t_i_c_l_e
+DDEESSCCRRIIPPTTIIOONN
+       bbooxxssttaatt  prints  physical parameters of the specified box,
+       _b_o_x_-_n_u_m_b_e_r_.  These parameters are for particles within the
+       box of type _p_a_r_t_i_c_l_e_.  Parameters that are listed are: the
+       mass, the density, the volume of the box, the size of  the
+       box,  the  center  of mass coordinates, the center of mass
+       velocity, and the angular momentum per unit  mass  in  the
+       center  of  mass frame.  If the box is not loaded an error
+       is generated.
 
-DESCRIPTION
-     boxstat prints physical parameters  of  the  specified  box,
-     _b_o_x-_n_u_m_b_e_r.  These  parameters  are for particles within the
-     box of type _p_a_r_t_i_c_l_e. Parameters that are  listed  are:  the
-     mass,  the  density,  the volume of the box, the size of the
-     box, the center of mass  coordinates,  the  center  of  mass
-     velocity,  and  the  angular  momentum  per unit mass in the
-     center of mass frame.  If the box is not loaded an error  is
-     generated.
+OOPPTTIIOONNSS
+   PPaarrttiiccllee
+       The possible choices for _p_a_r_t_i_c_l_e are:
 
-OPTIONS
-  Particle
-     The possible choices for _p_a_r_t_i_c_l_e are:
+              aallll
+                 Show the physical parameters of all  the  parti-
+                 cles in box _b_o_x_-_n_u_m_b_e_r
 
-          all
-             Show the physical parameters of all the particles in
-             box _b_o_x-_n_u_m_b_e_r
+              ssttaarr
+                 Show  the  physical  parameters of only the star
+                 and gas particles in box _b_o_x_-_n_u_m_b_e_r
 
-          star
-             Show the physical parameters of only  the  star  and
-             gas particles in box _b_o_x-_n_u_m_b_e_r
+              ddaarrkk
+                 Show the physical parameters of  only  the  dark
+                 matter particles in box _b_o_x_-_n_u_m_b_e_r
 
-          dark
-             Show the physical parameters of only the dark matter
-             particles in box _b_o_x-_n_u_m_b_e_r
+              ggaass
+                 Show  the  physical  parameters  of only the gas
+                 particles in box _b_o_x_-_n_u_m_b_e_r
 
-          gas
-             Show the physical parameters of only the gas  parti-
-             cles in box _b_o_x-_n_u_m_b_e_r
+              ssttaarr
+                 Show the physical parameters of  only  the  star
+                 particles in box _b_o_x_-_n_u_m_b_e_r
 
-          star
-             Show the physical parameters of only the star parti-
-             cles in box _b_o_x-_n_u_m_b_e_r
-
-SEE ALSO
-     loadall(1), makebox(1), markstat(1), setbox(1), setsphere(1)
-
-
-
-
+SSEEEE AALLSSOO
+       llooaaddaallll(1),   mmaakkeebbooxx(1),   mmaarrkkssttaatt(1),  sseettbbooxx(1),  sseett--
+       sspphheerree(1)
 
 
 
@@ -60,7 +56,11 @@ SEE ALSO
 
 
 
-KQ Release 2.0     Last change: 22 MARCH 1994                   1
 
+
+
+
+
+KQ Release 2.0            22 MARCH 1994                         1
 
 

@@ -1,45 +1,41 @@
 
 
 
-SETSPHERE(1)             TIPSY COMMANDS              SETSPHERE(1)
+SETSPHERE(1)              TIPSY COMMANDS             SETSPHERE(1)
 
 
+NNAAMMEE
+       setsphere  - make and load a spherical "box" from the com-
+       mand line
 
-NAME
-     setsphere - make and load a spherical "box" from the command
-     line
+SSYYNNOOPPSSIISS
+       sseettsspphheerree _b_o_x _x_c_e_n_t_e_r _y_c_e_n_t_e_r _z_c_e_n_t_e_r _r_a_d_i_u_s
 
-SYNOPSIS
-     setsphere _b_o_x _x_c_e_n_t_e_r _y_c_e_n_t_e_r _z_c_e_n_t_e_r _r_a_d_i_u_s
+DDEESSCCRRIIPPTTIIOONN
+       sseettsspphheerree is used to define the boundaries of _b_o_x  through
+       the command line.  The requested box must be between 1 and
+       _M_A_X_B_O_X or an error will be generated.  The value of _M_A_X_B_O_X
+       can  be  found by using the vveerrssiioonn command.  The box is a
+       sphere of radius _r_a_d_i_u_s centered on the coordinates _(_x_c_e_n_-
+       _t_e_r_, _y_c_e_n_t_e_r_, _z_c_e_n_t_e_r_)_.
 
-DESCRIPTION
-     setsphere is used to define the boundaries  of  _b_o_x  through
-     the  command  line.  The requested box must be between 1 and
-     _M_A_X_B_O_X or an error will be generated.  The value  of  _M_A_X_B_O_X
-     can  be  found  by  using the version command.  The box is a
-     sphere  of  radius  _r_a_d_i_u_s  centered  on   the   coordinates
-     (_x_c_e_n_t_e_r, _y_c_e_n_t_e_r, _z_c_e_n_t_e_r).
+       Once  a  box  is made and loaded it still isn't the active
+       box for plotting until the aaccttiivvaatteebbooxx  command  is  used.
+       Boxes are removed using the uunnllooaadd command.
 
-     Once a box is made and loaded it still isn't the active  box
-     for  plotting  until the activatebox command is used.  Boxes
-     are removed using the unload command.
+       Boxes with numbers greater than box 0 cannot be made until
+       box 0 is loaded.  Boxes can also be made and loaded  using
+       the  mmaakkeebbooxx  and sseettbbooxx commands.  Box 0 can also be made
+       and loaded using the llooaaddaallll command.
 
-     Boxes with numbers greater than box 0 cannot be  made  until
-     box  0  is  loaded.  Boxes can also be made and loaded using
-     the makebox and setbox commands.  Box 0 can also be made and
-     loaded using the loadall command.
+SSEEEE AALLSSOO
+       aaccttiivvaatteebbooxx((11)),,   llooaaddaallll((11)),,    mmaakkeebbooxx((11)),,    sseettbbooxx((11)),,
+       uunnllooaadd((11)),, vveerrssiioonn((11))
 
-SEE ALSO
-     activatebox(1),    loadall(1),    makebox(1),     setbox(1),
-     unload(1), version(1)
-
-BUGS
-     The volume of the box is not done correctly in commands such
-     as  boxstat  and  the  box  is  not  plotted  correctly when
-     showboxes is _y_e_s if the box is spherical.
-
-
-
+BBUUGGSS
+       The  volume  of  the box is not done correctly in commands
+       such as bbooxxssttaatt and the box is not plotted correctly  when
+       sshhoowwbbooxxeess is _y_e_s if the box is spherical.
 
 
 
@@ -60,7 +56,11 @@ BUGS
 
 
 
-KQ Release 2.0     Last change: 22 MARCH 1994                   1
 
+
+
+
+
+KQ Release 2.0            22 MARCH 1994                         1
 
 

@@ -1,66 +1,41 @@
 
 
 
-MARKMASS(1)              TIPSY COMMANDS               MARKMASS(1)
+MARKMASS(1)               TIPSY COMMANDS              MARKMASS(1)
 
 
+NNAAMMEE
+       markmass - mark particles according to their mass
 
-NAME
-     markmass - mark particles according to their mass
+SSYYNNOOPPSSIISS
+       mmaarrkkmmaassss _b_o_x_-_n_u_m_b_e_r _m_i_n_i_m_u_m _m_a_x_i_m_u_m
 
-SYNOPSIS
-     markmass _b_o_x-_n_u_m_b_e_r _m_i_n_i_m_u_m _m_a_x_i_m_u_m
+DDEESSCCRRIIPPTTIIOONN
+       mmaarrkkmmaassss  marks  all  the particles in box _b_o_x_-_n_u_m_b_e_r that
+       have masses between _m_i_n_i_m_u_m and  _m_a_x_i_m_u_m_,  inclusive.   If
+       box _b_o_x_-_n_u_m_b_e_r is not loaded an error is generated.
 
-DESCRIPTION
-     markmass marks all the particles in box _b_o_x-_n_u_m_b_e_r that have
-     masses  between  _m_i_n_i_m_u_m and _m_a_x_i_m_u_m, inclusive. If box _b_o_x-
-     _n_u_m_b_e_r is not loaded an error is generated.
+       To  unmark particles use either the uunnmmaarrkkaallll or uunnmmaarrkkbbooxx
+       commands.  Remember, marked particles are  always  plotted
+       in  green.   Particles  remain marked even when a new time
+       frame is loaded but after a new time frame is loaded   any
+       particles  that were marked in the previous time frame can
+       only be unmarked using the uunnmmaarrkkaallll command.  Marked par-
+       ticles  can  be written to a file using the wwrriitteemmaarrkk com-
+       mand or read from a file using the rreeaaddmmaarrkk command.  Par-
+       ticles can also be marked using the mmaarrkkaarrrraayy,, mmaarrkkbbooxx and
+       mmaarrkkggaall commands.  Statistics about marked  particles  can
+       be determined using the mmaarrkkssttaatt ccoommmmaanndd..
 
-     To unmark particles use either the  unmarkall  or  unmarkbox
-     commands.   Remember, marked particles are always plotted in
-     green.  Particles remain marked even when a new  time  frame
-     is  loaded  but after a new time frame is loaded  any parti-
-     cles that were marked in the previous time frame can only be
-     unmarked  using the unmarkall command.  Marked particles can
-     be written to a file using the  writemark  command  or  read
-     from  a  file using the readmark command. Particles can also
-     be marked using the markarray, markbox and markgal commands.
-     Statistics  about  marked  particles can be determined using
-     the markstat command.
-
-SEE ALSO
-     markbox(1), markarray(1), markgal(1),  markstat(1),  readar-
-     ray(1), unmarkall(1), unmarkbox(1), writemark(1)
-
-
-
+SSEEEE AALLSSOO
+       mmaarrkkbbooxx(1), mmaarrkkaarrrraayy(1), mmaarrkkggaall(1), mmaarrkkssttaatt(1), rreeaaddaarr--
+       rraayy(1), uunnmmaarrkkaallll(1), uunnmmaarrkkbbooxx(1), wwrriitteemmaarrkk(1)
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-KQ Release 2.0     Last change: 22 MARCH 1994                   1
-
+KQ Release 2.0            22 MARCH 1994                         1
 
 
