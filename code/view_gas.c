@@ -1,8 +1,13 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:31  trq
- * Initial revision
+ * Revision 1.2  1996/04/11 21:27:59  trq
+ * view_star.c: fixed bug in abox vs. density calculation.
+ * activatebox.c: hsmdivv is independent of abox.
+ * divv.c, smooth.c, smooth.h, view_gas.c: Use tree to calculate hsmdivv[].
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:32  trq
+ * Import to CVS
  *
  * Revision 2.9  1994/09/26  23:05:26  trq
  * Added hneutral fraction plots.
@@ -242,7 +247,9 @@ view_gas(job)
 		    divv() ;
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-		    particle_color[i] = (int)(color_slope * hsmdivv[i] +
+		    gp = boxlist[active_box].gp[i] ;
+		    particle_color[i] = (int)(color_slope
+					      * hsmdivv[gp-gas_particles] +
 			    color_offset +0.5) ;
 		}
 	    }
@@ -262,8 +269,8 @@ view_gas(job)
 		      *msolunit*MSOLG/kpcunit/KPCCM;
 		    c1 = sqrt(GAMMA / tconst) ;
 		    gp = boxlist[active_box].gp[i] ;
-		    if(hsmdivv[i] < 0.){
-			c2 = hsmdivv[i] * gp->hsmooth ;
+		    if(hsmdivv[gp-gas_particles] < 0.){
+			c2 = hsmdivv[gp-gas_particles] * gp->hsmooth ;
 		    }
 		    else{
 			c2 = 0. ;
@@ -289,8 +296,8 @@ view_gas(job)
 		      *msolunit*MSOLG/kpcunit/KPCCM;
 		    c1 = sqrt(GAMMA / tconst) ;
 		    gp = boxlist[active_box].gp[i] ;
-		    if(hsmdivv[i] < 0.){
-			c2 = -hsmdivv[i] * gp->hsmooth ;
+		    if(hsmdivv[gp-gas_particles] < 0.){
+			c2 = -hsmdivv[gp-gas_particles] * gp->hsmooth ;
 			particle_color[i] = (int)(color_slope * log10(((alpha *
 				c1 * sqrt(gp->temp) * c2 + beta * c2 * c2)
 				/ gp->rho)) + color_offset +0.5) ;

@@ -1,37 +1,34 @@
 #include "defs.h"
+#include "fdefs.h"
 #include <malloc.h>
+
+PROTO(void, smDivvSym, (SMX smx, int pi, int nSmooth, int *pList,
+			float *fList));
 
 void
 divv()
 {
-    struct gas_particle *pp ;
     struct gas_particle *gp ;
-    int i,j ;
-    int iwsm ;
-    int iwsm1 ;
-    double dot_product() ;
-    double hsminv ;
-    double dwnorm ;
-    double distnorm ;
-    double dr2 ;
-    double dr2i ;
-    double dr2p ;
-    double drw ;
-    double drw1 ;
-    double dwsm ;
-    double dwsm1 ;
-    double dwmass ;
-    double dwmass1 ;
-    Real dr[MAXDIM] ;
-    Real dv[MAXDIM] ;
-    double vdotdr ;
+    KD kd;
+    int n_smooth = 64;
+    float period[MAXDIM];
+    int i;
 
     if(!dkernel_loaded){
 	dkernel_load() ;
     }
+    if(!redshift_loaded){
+	load_redshift() ;
+    }
+    if(boxlist[0].ngas != header.nsph) {
+	printf("<Warning, box 0 does not contain all particles, %s>\n", title);
+	printf("<Reloading box 0, %s>\n", title);
+	loadall();
+    }
+
     if(hsmdivv != NULL) free(hsmdivv);
-    if(boxlist[active_box].ngas != 0) {
-	hsmdivv = (double *)malloc(boxlist[active_box].ngas *sizeof(*hsmdivv));
+    if(boxlist[0].ngas != 0) {
+	hsmdivv = (double *)malloc(boxlist[0].ngas *sizeof(*hsmdivv));
 	if(hsmdivv == NULL) {
 	    printf("<sorry, no memory for hsmdivv, %s>\n",title) ;
 	    return ;
@@ -40,18 +37,72 @@ divv()
     else
       hsmdivv = NULL;
     
-    for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+    if(box0_smx) {
+	kdFinish(box0_smx->kd);
+	smFinish(box0_smx);
+	box0_smx = NULL;
+    }
 
-	pp = boxlist[active_box].gp[i] ;
-	hsmdivv[i] = 0. ;
-	hsminv = 1.0 / pp->hsmooth ;
-	dwnorm = hsminv * hsminv * hsminv * hsminv * hsminv / PI ;
-	distnorm = hsminv * hsminv * deldr2i ;
-	for (j = 0 ;j < boxlist[active_box].ngas ;j++) {
-	    if(j != i){
-		gp = boxlist[active_box].gp[j] ;
-		sub_vec(dr,pp->pos,gp->pos) ;
-		dr2 = dot_product(dr,dr) ;
+    printf("<Building tree, %s>\n", title);
+    kdInit(&kd);
+    kdReadBox(kd, &boxlist[0], 0, 1, 0);
+    kdBuildTree(kd);
+    if(periodic)
+	period[0] = period[1] = period[2] = period_size;
+    else
+	period[0] = period[1] = period[2] = 1e37;
+
+    printf("<Calculating divv, %s>\n", title);
+
+    smInit(&box0_smx,kd,n_smooth,period);
+    smSetBallh(box0_smx);
+    smReSmooth(box0_smx,smDivvSym);
+
+    kdOrder(kd);
+    for(i = 0; i < boxlist[0].ngas; i++) {
+	gp = boxlist[0].gp[i];
+	hsmdivv[i] = 0.5*kd->p[i].fDensity/gp->rho;
+    }
+    divv_loaded = YES ;
+}
+
+void smDivvSym(smx, pi, nSmooth, pList, fList)
+     SMX smx;
+     int pi;
+     int nSmooth;
+     int *pList;
+     float *fList;
+{
+    int i ;
+    int iwsm ;
+    double dot_product() ;
+    double hsminv ;
+    double hsminv2 ;
+    double dwnorm ;
+    double distnorm ;
+    double dr2 ;
+    double dr2p ;
+    double drw ;
+    double dwsm ;
+    double dwmass ;
+    Real dr[MAXDIM] ;
+    Real dv[MAXDIM] ;
+    double vdotdr ;
+    int pj;
+    PARTICLE *p = smx->kd->p;
+
+/*
+ * N.B.  fBall2 is (2*hsmooth)^2.
+ */
+	hsminv2 = 4.0 / p[pi].fBall2 ;
+	hsminv = sqrt(hsminv2);
+	dwnorm = hsminv2 * hsminv2 * hsminv / PI ;
+	distnorm = hsminv2 * deldr2i ;
+	for (i = 0; i < nSmooth; i++) {
+	        pj = pList[i];
+		if(pj == pi)
+		    continue;
+		dr2 = fList[i];
 		dr2p = dr2 * distnorm ;
 		if(dr2p < NINTERP){
 		    iwsm = (int)dr2p ;
@@ -59,32 +110,13 @@ divv()
 		    drw = dr2p - iwsm ;
 		    dwsm = (1.- drw) * dwsmooth[iwsm] + drw * dwsmooth[1+iwsm] ;
 		    dwmass = dwnorm * dwsm ;
-		}
-		else{
-		    dwmass = 0. ;
-		}
-		dr2i = dr2 * deldr2i / (gp->hsmooth) / (gp->hsmooth) ;
-		if(dr2i < NINTERP){
-		    iwsm1 = (int)dr2i ;
-		    iwsm1 = min(NINTERP,iwsm1) ;
-		    drw1 = dr2i - iwsm1 ;
-		    dwsm1 = (1.-drw1) * dwsmooth[iwsm1] + drw1 *
-			    dwsmooth[1+iwsm1] ;
-		    dwmass1 = 1. / PI / ((gp->hsmooth) * (gp->hsmooth) *
-			    (gp->hsmooth) * (gp->hsmooth) * (gp->hsmooth)) *
-			    dwsm1 ;
-		}
-		else{
-		    dwmass1 = 0. ;
-		}
-		if(dwmass != 0. || dwmass1 != 0.){
-		    sub_vec(dv,pp->vel,gp->vel) ;
+		    sub_vec(dr,p[pi].p.gp->pos, p[pj].p.gp->pos) ;
+		    sub_vec(dv,p[pi].p.gp->vel, p[pj].p.gp->vel) ;
 		    vdotdr = dot_product(dv,dr) ;
-		    hsmdivv[i] -= gp->mass * 0.5 * (dwmass + dwmass1) * vdotdr ;
+		    smx->kd->p[pi].fDensity -=
+			smx->kd->p[pj].p.gp->mass * dwmass * vdotdr ;
+		    smx->kd->p[pj].fDensity -=
+			smx->kd->p[pi].p.gp->mass * dwmass * vdotdr ;
 		}
-	    }
 	}
-	hsmdivv[i] /= pp->rho ;
-    }
-    divv_loaded = YES ;
 }

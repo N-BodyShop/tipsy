@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1995/12/11 20:00:44  nsk
+ * Revision 1.4  1996/04/11 21:27:53  trq
+ * view_star.c: fixed bug in abox vs. density calculation.
+ * activatebox.c: hsmdivv is independent of abox.
+ * divv.c, smooth.c, smooth.h, view_gas.c: Use tree to calculate hsmdivv[].
+ *
+ * Revision 1.3  1995/12/11  20:00:44  nsk
  * added helium, dark absorb,  integral for elcetronic heating,
  * and read in 6 numbers for background
  *
@@ -56,6 +61,7 @@ PROTO(void, diff_add_vec, (Real a[MAXDIM], Real b[MAXDIM], Real
 			 c[MAXDIM], Real d[MAXDIM]));
 PROTO(double, distance, (Real *x1, Real *x2));
 PROTO(void, divv, ());
+PROTO(void, dkernel_load, ());
 PROTO(double, dot_product, (Real *x1,Real *x2));
 PROTO(void, draworient, ());
 PROTO(void, draw_label, ());
@@ -94,6 +100,9 @@ PROTO(void, mass_add_vec, (Real *a, Real *b, double mass_b, Real *c,
 PROTO(void, matrix_matrix_mult, (double a[MAXDIM][MAXDIM],
 				 double b[MAXDIM][MAXDIM],
 				 double c[MAXDIM][MAXDIM])) ;
+PROTO(void, matrix_vector_mult, (double mat[MAXDIM][MAXDIM],
+				 Real a[MAXDIM],
+				 Real b[MAXDIM])) ;
 PROTO(void, maxpos, (Real *xmax, Real *xmin));
 PROTO(void, meanmwt_func, ());
 PROTO(void, old2binary, (FILE *infile, FILE *outfile));

@@ -42,7 +42,7 @@ starform_func()
     
     for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 	gp = boxlist[active_box].gp[i] ;
-	if(hsmdivv[i] < 0.) {
+	if(hsmdivv[gp-gas_particles] < 0.) {
 				/* G internal == 1 */
  	    tdyn = time_unit/sqrt(4.*(gp->rho/cosmof3)*PI);
 	    tcool = 1.5*KBOLTZ*gp->temp

@@ -1,7 +1,12 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.3  1995/06/06 17:48:00  trq
+ * Revision 1.4  1996/04/11 21:28:00  trq
+ * view_star.c: fixed bug in abox vs. density calculation.
+ * activatebox.c: hsmdivv is independent of abox.
+ * divv.c, smooth.c, smooth.h, view_gas.c: Use tree to calculate hsmdivv[].
+ *
+ * Revision 1.3  1995/06/06  17:48:00  trq
  * dump_pixmap.c: Cleaned up declarations.
  *
  * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
@@ -196,16 +201,20 @@ view_star(job)
 		calc_density(&box0_smx, 0, 0, 1);
 		kd = box0_smx->kd;
 		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
+		    sp = boxlist[active_box].sp[i] ;
 		    particle_color[i] = (int)(color_slope * 
-			    log10(kd->p[i].fDensity) + color_offset +0.5);
+			    log10(kd->p[sp-star_particles].fDensity)
+					      + color_offset +0.5);
 		}
 	    }
 	    else if(strcmp(type,"rho") == 0){
 		calc_density(&box0_smx, 0, 0, 1);
 		kd = box0_smx->kd;
 		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
+		    sp = boxlist[active_box].sp[i] ;
 		    particle_color[i] = (int)(color_slope * 
-			    kd->p[i].fDensity + color_offset +0.5);
+			    kd->p[sp-star_particles].fDensity +
+					      color_offset +0.5);
 		}
 	    }
 	    else {

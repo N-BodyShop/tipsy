@@ -1,4 +1,7 @@
 #include "defs.h"
+#include "fdefs.h"
+
+void
 vel_sigma(job)
     char job[MAXCOMM] ;
 {

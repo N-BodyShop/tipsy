@@ -102,6 +102,7 @@ PROTO(void, smOutVelDisp, (SMX,FILE *));
 PROTO(void, smOutPhase, (SMX,FILE *));
 PROTO(void, smOutMach, (SMX,FILE *));
 PROTO(void, smOutSpeed, (SMX,FILE *));
+PROTO(void, smSetBallh, (SMX smx));
 
 #endif
 

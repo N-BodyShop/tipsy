@@ -292,6 +292,11 @@ int smBallGather(smx, fBall2, ri)
 				if (fDist2 < fBall2) {
 					smx->fList[nCnt] = fDist2;
 					smx->pList[nCnt++] = pj;
+					if(nCnt >= smx->nListSize) {
+					    smx->nListSize *= 2;
+					    smx->fList = realloc(smx->fList, smx->nListSize*sizeof(*smx->fList));
+					    smx->pList = realloc(smx->pList, smx->nListSize*sizeof(*smx->pList));
+					    }
 					}
 				}
 			}
@@ -473,6 +478,27 @@ void smSetBall(smx, ball_size)
 
     for (pi=0;pi<smx->kd->nActive;++pi) {
 	smx->kd->p[pi].fBall2 = fBall2;
+	}
+}
+    
+/*
+ * Set search ball from sph smoothing length.
+ */
+void smSetBallh(smx)
+     SMX smx;
+{
+    int pi;
+    double fBall;
+    
+    assert(header.nsph == smx->kd->nActive);
+
+
+    for (pi=0;pi<smx->kd->nActive;++pi) {
+	/*
+	 * Search ball is twice smoothing length for spline kernel.
+	 */
+	fBall = 2.0*smx->kd->p[pi].p.gp->hsmooth;
+	smx->kd->p[pi].fBall2 = fBall*fBall;
 	}
 }
     

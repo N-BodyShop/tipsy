@@ -1,4 +1,6 @@
 #include "defs.h"
+#include "fdefs.h"
+
 void
 matrix_vector_mult(mat,a,b)
     double mat[MAXDIM][MAXDIM] ;

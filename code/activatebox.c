@@ -1,8 +1,13 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:22  trq
- * Initial revision
+ * Revision 1.2  1996/04/11 21:27:50  trq
+ * view_star.c: fixed bug in abox vs. density calculation.
+ * activatebox.c: hsmdivv is independent of abox.
+ * divv.c, smooth.c, smooth.h, view_gas.c: Use tree to calculate hsmdivv[].
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:23  trq
+ * Import to CVS
  *
  * Revision 2.4  1994/09/22  16:21:07  trq
  * Removed hneutral_loaded.  Gone to unload_all()
@@ -29,7 +34,6 @@ activatebox(job)
 	    if(active_box >= 0 && active_box <= MAXBOX
 		    && boxes_loaded[i] ) {
 		active_box = i ;
-		divv_loaded = NO ;
 		cooling_loaded = NO ;
 		meanmwt_loaded = NO ;
 		starform_loaded = NO ;
