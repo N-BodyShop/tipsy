@@ -15,8 +15,8 @@ meanmwt_func()
 	load_uv() ;
     }
     if(meanmwt != NULL) free(meanmwt);
-    if(boxlist[active_box].ngas != 0) {
-	meanmwt = (double *)malloc(boxlist[active_box].ngas
+    if(boxlist[0].ngas != 0) {
+	meanmwt = (double *)malloc(boxlist[0].ngas
 				    *sizeof(*meanmwt));
 	if(meanmwt == NULL) {
 	    printf("<sorry, no memory for meanmwt, %s>\n",title) ;
@@ -26,8 +26,8 @@ meanmwt_func()
     else
       meanmwt = NULL;
 
-    for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-	gp = boxlist[active_box].gp[i] ;
+    for (i = 0 ;i < boxlist[0].ngas ;i++) {
+	gp = boxlist[0].gp[i] ;
 	if(!uniform){
 	    calc_uv(gp) ;
 	}

@@ -1,7 +1,11 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.6  2000/06/07 23:32:10  trq
+ * Revision 1.7  2001/07/11 19:45:53  nsk
+ *       Fixed bugs with array sizes for meanmwt, cooling, and starformation.
+ *       Used to be only for active box now for all of box zero.
+ *
+ * Revision 1.6  2000/06/07  23:32:10  trq
  * Added "cooling time" argument to viewgas.
  *
  * Revision 1.5  2000/01/12  22:55:27  nsk
@@ -62,6 +66,7 @@ view_gas(job)
     double drw ;
     int iwsm ;
     double cool_vec[COOLVECSIZE] ;
+    double tconst ;
 
     if (boxes_loaded[0]) {
 	if((num_read = sscanf(job,"%s %s %lf %lf %s",command,type,&low,&high,
@@ -288,10 +293,10 @@ view_gas(job)
 		    meanmwt_func() ;
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-		    double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[active_box].gp[i] ;
+		    tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		      *msolunit*MSOLG/kpcunit/KPCCM;
 		    c1 = sqrt(GAMMA / tconst) ;
-		    gp = boxlist[active_box].gp[i] ;
 		    if(hsmdivv[gp-gas_particles] < 0.){
 			c2 = hsmdivv[gp-gas_particles] * gp->hsmooth ;
 		    }
@@ -315,10 +320,10 @@ view_gas(job)
 		    meanmwt_func() ;
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-		    double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[active_box].gp[i] ;
+		    tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		      *msolunit*MSOLG/kpcunit/KPCCM;
 		    c1 = sqrt(GAMMA / tconst) ;
-		    gp = boxlist[active_box].gp[i] ;
 		    if(hsmdivv[gp-gas_particles] < 0.){
 			c2 = -hsmdivv[gp-gas_particles] * gp->hsmooth ;
 			particle_color[i] = (int)(color_slope * log10(((alpha *
@@ -340,10 +345,10 @@ view_gas(job)
 				/* See Katz and Gunn, 1991 */
 		c2 = (PI*epsgas_grav*cosmof) * (PI*epsgas_grav*cosmof) / 3. ;
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-		    double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[active_box].gp[i] ;
+		    tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		      *msolunit*MSOLG/kpcunit/KPCCM;
 		    c1 =  1. / .89553 / tconst  ;
-		    gp = boxlist[active_box].gp[i] ;
 		    particle_color[i] = (int)(color_slope * (pow(c1 * 
 			    gp->temp / pow(gp->rho/cosmof3,1./3.) + c2 *
 			    pow(gp->rho/cosmof3,2./3.),1.5)/gp->mass) +
@@ -360,10 +365,10 @@ view_gas(job)
 				/* See Katz and Gunn, 1991 */
 		c2 = (PI * epsgas_grav) * (PI * epsgas_grav) / 3. ;
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-		  double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[active_box].gp[i] ;
+		  tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		    *msolunit*MSOLG/kpcunit/KPCCM;
 		  c1 =  1. / .89553 / tconst  ;
-		    gp = boxlist[active_box].gp[i] ;
 		    particle_color[i] = (int)(color_slope * log10(pow(c1 * 
 			    gp->temp / pow(gp->rho/cosmof3,1./3.) + c2 *
 			    pow(gp->rho/cosmof3,2./3.),1.5)/gp->mass) +
@@ -398,11 +403,11 @@ view_gas(job)
 		    load_epsgas() ;
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-		  double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[active_box].gp[i] ;
+		  tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		    *msolunit*MSOLG/kpcunit/KPCCM;
 		  c1 = tconst * .89553 * (PI * epsgas_grav*cosmof) *
 			(PI * epsgas_grav*cosmof) / 3. ;
-		    gp = boxlist[active_box].gp[i] ;
 		    particle_color[i] = (int)(color_slope
 					      * (c1 * gp->rho /cosmof3
 					 / gp->temp) + color_offset +0.5) ;
@@ -416,11 +421,11 @@ view_gas(job)
 		    load_epsgas() ;
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-		  double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[active_box].gp[i] ;
+		  tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		    *msolunit*MSOLG/kpcunit/KPCCM;
 		  c1 = tconst * .89553 * (PI * epsgas_grav*cosmof) *
 			(PI * epsgas_grav*cosmof) / 3. ;
-		    gp = boxlist[active_box].gp[i] ;
 		    particle_color[i] = (int)(color_slope * log10(c1 * 
 			    gp->rho/cosmof3 / gp->temp) + color_offset +0.5) ;
 		}
@@ -435,8 +440,8 @@ view_gas(job)
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
 		    particle_color[i] = (int)(color_slope * (gp->hsmooth *
-			    c1 * sqrt(meanmwt[i] * gp->rho / gp->temp)) +
-			    color_offset +0.5) ;
+			    c1 * sqrt(meanmwt[gp-gas_particles] *
+			    gp->rho / gp->temp)) + color_offset +0.5) ;
 		}
 	    }
 	    else if ( strcmp(type,"logtsound") == 0) {
@@ -450,8 +455,8 @@ view_gas(job)
 		    gp = boxlist[active_box].gp[i] ;
 		    particle_color[i] = (int)(color_slope *
 			    log10(gp->hsmooth * c1 *
-			    sqrt(meanmwt[i] * gp->rho / gp->temp)) +
-					      color_offset +0.5) ;
+			    sqrt(meanmwt[gp-gas_particles] * gp->rho /
+			    gp->temp)) + color_offset +0.5) ;
 		}
 	    }
 	    else if ( strcmp(type,"coolingrate") == 0 ||
@@ -461,8 +466,8 @@ view_gas(job)
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
-		    particle_color[i] = (int)(-color_slope*cooling[i]
-					      + color_offset +0.5) ;
+		    particle_color[i] = (int)(-color_slope
+			    *cooling[gp-gas_particles] + color_offset +0.5) ;
 		}
 	    }
 	    else if ( strcmp(type,"logcoolingrate") == 0 ||
@@ -472,10 +477,10 @@ view_gas(job)
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
-		    if(cooling[i] < 0.){
+		    if(cooling[gp-gas_particles] < 0.){
 			particle_color[i] = (int)(color_slope
-						  *log10(-cooling[i])
-						  + color_offset +0.5) ;
+		        	*log10(-cooling[gp-gas_particles])
+				+ color_offset +0.5) ;
 		    }
 		    else{
 			particle_color[i] = 0 ;
@@ -491,7 +496,7 @@ view_gas(job)
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
 		    particle_color[i] = (int)(-color_slope*c1*gp->mass/gp->rho*
-			    cooling[i] + color_offset +0.5) ;
+			    cooling[gp-gas_particles] + color_offset +0.5) ;
 		}
 	    }
 	    else if ( strcmp(type,"logcooling") == 0 ||
@@ -502,10 +507,10 @@ view_gas(job)
 		c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
-		    if(cooling[i] < 0.){
+		    if(cooling[gp-gas_particles] < 0.){
 			particle_color[i] = (int)(color_slope
 						  *log10(-c1*gp->mass/gp->rho*
-						  cooling[i])
+						  cooling[gp-gas_particles])
 						  + color_offset +0.5) ;
 		    }
 		    else{
@@ -565,7 +570,7 @@ view_gas(job)
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
-		    if(cooling[i] > 0.){
+		    if(cooling[gp-gas_particles] > 0.){
 			particle_color[i] = (int)(color_slope
 						  *log10(cooling[i])
 						  + color_offset +0.5) ;
@@ -581,8 +586,8 @@ view_gas(job)
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
-		    particle_color[i] = (int)(color_slope*meanmwt[i]
-					      + color_offset +0.5) ;
+		    particle_color[i] = (int)(color_slope*
+			    meanmwt[gp-gas_particles] + color_offset +0.5) ;
 		}
 	    }
 	    else if ( strcmp(type,"hneutral") == 0) {
@@ -646,8 +651,9 @@ view_gas(job)
 		    starform_func() ;
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+		    gp = boxlist[active_box].gp[i] ;
 		    particle_color[i] = (int)(color_slope *
-			    starform[i] + color_offset +0.5) ;
+			    starform[gp-gas_particles] + color_offset +0.5) ;
 		}
 	    }
 	    else if ( strcmp(type,"logformstar") == 0 ||
@@ -656,9 +662,11 @@ view_gas(job)
 		    starform_func() ;
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-		    if(starform[i] > 0.){
+		    gp = boxlist[active_box].gp[i] ;
+		    if(starform[gp-gas_particles] > 0.){
 			particle_color[i] = (int)(color_slope *
-				log10(starform[i]) + color_offset +0.5) ;
+				log10(starform[gp-gas_particles]) +
+				color_offset +0.5) ;
 		    }
 		    else if(clip_flag){
 			particle_color[i] = 0 ;

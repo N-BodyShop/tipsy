@@ -1,7 +1,11 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.1  1999/08/25 22:05:31  nsk
+ * Revision 1.2  2001/07/11 19:45:55  nsk
+ *       Fixed bugs with array sizes for meanmwt, cooling, and starformation.
+ *       Used to be only for active box now for all of box zero.
+ *
+ * Revision 1.1  1999/08/25  22:05:31  nsk
  * added center to boxstat, checks for periodic in smooth, prints out
  * cooling stuff, vista makes plots
  *
@@ -55,6 +59,7 @@ write_gas(job)
     double temp ;
     double drw ;
     int iwsm ;
+    double tconst ;
 
     if((sscanf(job,"%s %d %s %s",command,&box,type,filename)) == 4) {
 	if (boxes_loaded[box]) {
@@ -228,10 +233,10 @@ write_gas(job)
 		    meanmwt_func() ;
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
-		    double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[box].gp[i] ;
+		    tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		      *msolunit*MSOLG/kpcunit/KPCCM;
 		    c1 = sqrt(GAMMA / tconst) ;
-		    gp = boxlist[box].gp[i] ;
 		    if(hsmdivv[gp-gas_particles] < 0.){
 			c2 = hsmdivv[gp-gas_particles] * gp->hsmooth ;
 		    }
@@ -255,10 +260,10 @@ write_gas(job)
 		    meanmwt_func() ;
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
-		    double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[box].gp[i] ;
+		    tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		      *msolunit*MSOLG/kpcunit/KPCCM;
 		    c1 = sqrt(GAMMA / tconst) ;
-		    gp = boxlist[box].gp[i] ;
 		    if(hsmdivv[gp-gas_particles] < 0.){
 			c2 = -hsmdivv[gp-gas_particles] * gp->hsmooth ;
 			fprintf(outfile,"%g\n",log10(((alpha *
@@ -280,10 +285,10 @@ write_gas(job)
 				/* See Katz and Gunn, 1991 */
 		c2 = (PI*epsgas_grav*cosmof) * (PI*epsgas_grav*cosmof) / 3. ;
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
-		    double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[box].gp[i] ;
+		    tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		      *msolunit*MSOLG/kpcunit/KPCCM;
 		    c1 =  1. / .89553 / tconst  ;
-		    gp = boxlist[box].gp[i] ;
 		    fprintf(outfile,"%g\n",(pow(c1 * 
 			    gp->temp / pow(gp->rho/cosmof3,1./3.) + c2 *
 			    pow(gp->rho/cosmof3,2./3.),1.5)/gp->mass)) ;
@@ -299,10 +304,10 @@ write_gas(job)
 				/* See Katz and Gunn, 1991 */
 		c2 = (PI * epsgas_grav) * (PI * epsgas_grav) / 3. ;
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
-		  double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[box].gp[i] ;
+		  tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		    *msolunit*MSOLG/kpcunit/KPCCM;
 		  c1 =  1. / .89553 / tconst  ;
-		    gp = boxlist[box].gp[i] ;
 		    fprintf(outfile,"%g\n",log10(pow(c1 * 
 			    gp->temp / pow(gp->rho/cosmof3,1./3.) + c2 *
 			    pow(gp->rho/cosmof3,2./3.),1.5)/gp->mass)) ;
@@ -336,11 +341,11 @@ write_gas(job)
 		    load_epsgas() ;
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
-		  double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[box].gp[i] ;
+		  tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		    *msolunit*MSOLG/kpcunit/KPCCM;
 		  c1 = tconst * .89553 * (PI * epsgas_grav*cosmof) *
 			(PI * epsgas_grav*cosmof) / 3. ;
-		    gp = boxlist[box].gp[i] ;
 		    fprintf(outfile,"%g\n",(c1 * gp->rho /cosmof3
 					 / gp->temp)) ;
 		}
@@ -353,11 +358,11 @@ write_gas(job)
 		    load_epsgas() ;
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
-		  double tconst = meanmwt[i]*MHYDR*GCGS/KBOLTZ
+		    gp = boxlist[box].gp[i] ;
+		  tconst = meanmwt[gp-gas_particles]*MHYDR*GCGS/KBOLTZ
 		    *msolunit*MSOLG/kpcunit/KPCCM;
 		  c1 = tconst * .89553 * (PI * epsgas_grav*cosmof) *
 			(PI * epsgas_grav*cosmof) / 3. ;
-		    gp = boxlist[box].gp[i] ;
 		    fprintf(outfile,"%g\n",log10(c1 * 
 			    gp->rho/cosmof3 / gp->temp)) ;
 		}
@@ -372,7 +377,8 @@ write_gas(job)
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
 		    gp = boxlist[box].gp[i] ;
 		    fprintf(outfile,"%g\n",(gp->hsmooth *
-			    c1 * sqrt(meanmwt[i] * gp->rho / gp->temp))) ;
+			    c1 * sqrt(meanmwt[gp-gas_particles] *
+			    gp->rho / gp->temp))) ;
 		}
 	    }
 	    else if ( strcmp(type,"logtsound") == 0) {
@@ -385,7 +391,8 @@ write_gas(job)
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
 		    gp = boxlist[box].gp[i] ;
 		     fprintf(outfile,"%g\n",log10(gp->hsmooth * c1 *
-			    sqrt(meanmwt[i] * gp->rho / gp->temp))) ;
+			    sqrt(meanmwt[gp-gas_particles] * gp->rho /
+			    gp->temp))) ;
 		}
 	    }
 	    else if ( strcmp(type,"cooling") == 0 ||
@@ -395,7 +402,7 @@ write_gas(job)
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
 		    gp = boxlist[box].gp[i] ;
-		    fprintf(outfile,"%g\n",cooling[i]) ;
+		    fprintf(outfile,"%g\n",cooling[gp-gas_particles]) ;
 		}
 	    }
 	    else if ( strcmp(type,"logcooling") == 0 ||
@@ -405,8 +412,9 @@ write_gas(job)
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
 		    gp = boxlist[box].gp[i] ;
-		    if(cooling[i] < 0.){
-			fprintf(outfile,"%g\n",log10(-cooling[i])) ;
+		    if(cooling[gp-gas_particles] < 0.){
+			fprintf(outfile,"%g\n",
+				log10(-cooling[gp-gas_particles])) ;
 		    }
 		    else{
 			fprintf(outfile,"%g\n",-HUGE);
@@ -420,8 +428,9 @@ write_gas(job)
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
 		    gp = boxlist[box].gp[i] ;
-		    if(cooling[i] > 0.){
-			fprintf(outfile,"%g\n",log10(cooling[i])) ;
+		    if(cooling[gp-gas_particles] > 0.){
+			fprintf(outfile,"%g\n",
+				log10(cooling[gp-gas_particles])) ;
 		    }
 		    else{
 			fprintf(outfile,"%g\n",-HUGE);
@@ -434,7 +443,7 @@ write_gas(job)
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
 		    gp = boxlist[box].gp[i] ;
-		    fprintf(outfile,"%g\n",meanmwt[i]) ;
+		    fprintf(outfile,"%g\n",meanmwt[gp-gas_particles]) ;
 		}
 	    }
 	    else if ( strcmp(type,"hneutral") == 0) {
@@ -492,7 +501,8 @@ write_gas(job)
 		    starform_func() ;
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
-		    fprintf(outfile,"%g\n",starform[i]) ;
+		    gp = boxlist[box].gp[i] ;
+		    fprintf(outfile,"%g\n",starform[gp-gas_particles]) ;
 		}
 	    }
 	    else if ( strcmp(type,"logformstar") == 0 ||
@@ -501,8 +511,10 @@ write_gas(job)
 		    starform_func() ;
 		}
 		for (i = 0 ;i < boxlist[box].ngas ;i++) {
-		    if(starform[i] > 0.){
-			fprintf(outfile,"%g\n",log10(starform[i])) ;
+		    gp = boxlist[box].gp[i] ;
+		    if(starform[gp-gas_particles] > 0.){
+			fprintf(outfile,"%g\n",
+				log10(starform[gp-gas_particles])) ;
 		    }
 		    else{
 			fprintf(outfile,"%g\n",-HUGE) ;

@@ -38,7 +38,7 @@ starform_func()
     if(starform != NULL) free(starform);
     if(boxlist[active_box].ngas != 0) {
 	starform =
-	  (double *)malloc(boxlist[active_box].ngas *sizeof(*starform));
+	  (double *)malloc(boxlist[0].ngas *sizeof(*starform));
 	if(starform == NULL) {
 	    printf("<sorry, no memory for starform, %s>\n",title) ;
 	    return ;
@@ -47,23 +47,25 @@ starform_func()
     else
       starform = NULL;
     
-    for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-	gp = boxlist[active_box].gp[i] ;
+    for (i = 0 ;i < boxlist[0].ngas ;i++) {
+	gp = boxlist[0].gp[i] ;
 	if(hsmdivv[gp-gas_particles] < 0.) {
  	    tdyn = GYRSEC*time_unit/sqrt(4.*(gp->rho/cosmof3)*PI);
-	    adiabatic = -KBOLTZ*gp->temp*gp->rho/(MHYDR*meanmwt[i])*
+	    adiabatic = -KBOLTZ*gp->temp*
+		    gp->rho/(MHYDR*meanmwt[gp-gas_particles])*
 	    	    (hsmdivv[gp-gas_particles]/gp->hsmooth)*MSOLG*msolunit/
 		    (cosmof3*pow(kpcunit*KPCCM, 3.0))/time_unit/GYRSEC ;
 	    adiabatic = dudt[gp-gas_particles]*(gp->rho) /(kpcunit*KPCCM) /
 		    (time_unit*GYRSEC*time_unit*GYRSEC*time_unit*GYRSEC) ;
 	    tcool = 1.5*KBOLTZ*gp->temp*MSOLG*msolunit*gp->rho/
-		    (MHYDR*meanmwt[i])/(cosmof3*pow(kpcunit*KPCCM, 3.0))/
-		     (cooling[i] + adiabatic) ;
+		    (MHYDR*meanmwt[gp-gas_particles])/
+		    (cosmof3*pow(kpcunit*KPCCM, 3.0))/
+		     (cooling[gp-gas_particles] + adiabatic) ;
 	    tsound = kpcunit*KPCCM*gp->hsmooth*cosmof
-		/ sqrt(GAMMA*KBOLTZ*gp->temp/(MHYDR*meanmwt[i])) ;
+		/sqrt(GAMMA*KBOLTZ*gp->temp/(MHYDR*meanmwt[gp-gas_particles])) ;
 	    soft = .89553 * (PI*epsgas_grav*cosmof)*(PI*epsgas_grav*cosmof) /
-		    2. * meanmwt[i]*MHYDR*(gp->rho / (KBOLTZ*gp->temp))
-		      *(kpcunit*kpcunit*KPCCM*KPCCM
+		    2. * meanmwt[gp-gas_particles]*MHYDR*(gp->rho /
+		    (KBOLTZ*gp->temp)) *(kpcunit*kpcunit*KPCCM*KPCCM
 			/time_unit/time_unit/GYRSEC/GYRSEC) ;
 	    if((tdyn > fabs(tcool) || gp->temp <= temppar)){
 		formtime = tdyn ;

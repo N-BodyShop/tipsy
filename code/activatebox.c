@@ -1,7 +1,11 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.2  1996/04/11 21:27:50  trq
+ * Revision 1.3  2001/07/11 19:45:42  nsk
+ *       Fixed bugs with array sizes for meanmwt, cooling, and starformation.
+ *       Used to be only for active box now for all of box zero.
+ *
+ * Revision 1.2  1996/04/11  21:27:50  trq
  * view_star.c: fixed bug in abox vs. density calculation.
  * activatebox.c: hsmdivv is independent of abox.
  * divv.c, smooth.c, smooth.h, view_gas.c: Use tree to calculate hsmdivv[].
@@ -34,9 +38,6 @@ activatebox(job)
 	    if(active_box >= 0 && active_box <= MAXBOX
 		    && boxes_loaded[i] ) {
 		active_box = i ;
-		cooling_loaded = NO ;
-		meanmwt_loaded = NO ;
-		starform_loaded = NO ;
 		current_project = NO;
 		current_color = NO;
 	    }

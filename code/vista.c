@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.19  2000/01/12 22:55:28  nsk
+ * Revision 1.20  2001/07/11 19:45:54  nsk
+ *       Fixed bugs with array sizes for meanmwt, cooling, and starformation.
+ *       Used to be only for active box now for all of box zero.
+ *
+ * Revision 1.19  2000/01/12  22:55:28  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
  *
@@ -172,6 +176,7 @@ vista(job)
     double cool_vec[COOLVECSIZE] ;
     double cool_tot ;
     double vol ;
+    int aoffset;
 
     if(!ikernel_loaded){
 	ikernel_load() ;
@@ -261,6 +266,9 @@ vista(job)
 	      else if(strcmp(type,"sz") == 0){
 		  vista_type = SZ ;
 	      }
+	      else if(strcmp(type,"array") == 0){
+		  vista_type = ARRAY ;
+	      }
 	      else {
 		  printf("<sorry, %s is not a proper type, %s>\n",type,title) ;
 		  return ;
@@ -284,7 +292,7 @@ vista(job)
 	      if(vista_type != RHO && vista_type != XRAY && vista_type
 		 != VDARK && vista_type != VSTAR && vista_type != VALL
 		 && vista_type != LUMSTAR && vista_type != COOL &&
-		 vista_type != LYA){
+		 vista_type != LYA && vista_type != ARRAY){
 		  quantity = (float **)malloc(vista_size*sizeof(*quantity));
 		  if(quantity == NULL)
 		    {
@@ -450,12 +458,19 @@ vista(job)
 		    c2 = msys*fhydrogen*SIGMAES*1.e5/C ;
 		}
 	    }
+	    else if(vista_type == ARRAY){
+		if(array_size == 0){
+		    printf("<Sorry %s, there is no array loaded\n",title);
+		    return;
+                }
+	    }
 	    if(vista_type == RHO || vista_type == TEMP || vista_type == PRESS ||
 		    vista_type == COOL || vista_type == JEANS || 
 		    vista_type == FSTAR || vista_type == XRAY ||
 		    vista_type == HNEUT || vista_type == HEI ||
 		    vista_type == HEII || vista_type == SZ ||
-		    vista_type == VALL || vista_type == LYA){
+		    vista_type == VALL || vista_type == LYA ||
+		    vista_type == ARRAY){
 		if(vista_type == LYA || vista_type == COOL){
 		    c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
 		}
@@ -543,7 +558,7 @@ vista(job)
 				    delta_d = cool_tot ;
 				}
 				else if(vista_type == FSTAR){
-				    delta_d = starform[i] ;
+				    delta_d = starform[gp-gas_particles] ;
 				}
 				else if(vista_type == HNEUT){
 				    delta_d = c1*hneutral[gp-gas_particles]*
@@ -557,6 +572,10 @@ vista(job)
 				    delta_d = c1*heII[gp-gas_particles]*
 					(gp->mass);
 				}
+				else if(vista_type == ARRAY){
+				    aoffset = gp-gas_particles ;
+				    delta_d = array[aoffset] ;
+				}
 				else {
 				    delta_d = (gp->mass) ;
 				}
@@ -567,7 +586,7 @@ vista(job)
 				    delta_q = (gp->mass)*(gp->temp)*(gp->rho) ;
 				}
 				else if(vista_type == JEANS){
-				    c1_i = sqrt(meanmwt[i])*c1 ;
+				    c1_i = sqrt(meanmwt[gp-gas_particles])*c1 ;
 				    delta_q = gp->mass * gp->hsmooth*c1_i*
 					sqrt(gp->rho / gp->temp);
 				}
@@ -669,7 +688,8 @@ vista(job)
 			 vista_type != HNEUT && vista_type != HEI &&
 			 vista_type != HEII && vista_type != SZ &&
 		         vista_type != VALL && vista_type != COOL &&
-			 vista_type != LYA  && vista_type != FSTAR){
+			 vista_type != LYA  && vista_type != FSTAR &&
+			 vista_type != ARRAY){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
 			    if(density[kx][ky] != 0.){
@@ -1002,7 +1022,7 @@ vista(job)
 	    if(vista_type != RHO && vista_type != XRAY && vista_type
 		 != VDARK && vista_type != VSTAR && vista_type != VALL
 		 && vista_type != LUMSTAR && vista_type != COOL &&
-		 vista_type != LYA){
+		 vista_type != LYA && vista_type != ARRAY){
 		free(*quantity);
 		free(quantity);
 	    }

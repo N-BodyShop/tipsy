@@ -8,6 +8,7 @@ starform_sub(job)
     int i,j ;
     int box ;
     int nbodies ;
+    struct gas_particle *gp ;
 
     if (sscanf(job,"%s %s",command,file) == 2) { 
 	box = active_box ;
@@ -29,7 +30,8 @@ starform_sub(job)
 	    fprintf(hardfile.ptr,"%d\n",header.ndim) ;
 	    fprintf(hardfile.ptr,"%.6e\n",header.time) ;
 	    for (i = 0 ;i < boxlist[box].ngas ;i++) {
-		fprintf(hardfile.ptr,"%g\n",starform[i]) ;
+		gp = boxlist[active_box].gp[i] ;
+		fprintf(hardfile.ptr,"%g\n",starform[gp-gas_particles]) ;
 	    }
 	    fclose(hardfile.ptr) ;
 	}

@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.19  2000/01/12 22:55:04  nsk
+ * Revision 1.20  2001/07/11 19:45:44  nsk
+ *       Fixed bugs with array sizes for meanmwt, cooling, and starformation.
+ *       Used to be only for active box now for all of box zero.
+ *
+ * Revision 1.19  2000/01/12  22:55:04  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
  *
@@ -193,6 +197,7 @@
 #define SZ 15
 #define VALL 16
 #define LYA 17
+#define ARRAY 18
 #define NOSPH 0
 #define SPH 1
 #define PREC_JACOBI 1.e-8 ;

@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1999/05/03 21:29:24  trq
+ * Revision 1.4  2001/07/11 19:45:56  nsk
+ *       Fixed bugs with array sizes for meanmwt, cooling, and starformation.
+ *       Used to be only for active box now for all of box zero.
+ *
+ * Revision 1.3  1999/05/03  21:29:24  trq
  * Added comments about file format.
  *
  * Revision 1.2  1997/12/06  22:01:00  trq
@@ -22,7 +26,6 @@
 #include "xray.h"
 struct xray_table *xray_lums = NULL ;
 double *temp_spline = NULL ;
-int number_bands;
 int xray_spline_n;
 /*
  * Read in the spline coefficients for spline interpolating the X-ray

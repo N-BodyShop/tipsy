@@ -28,6 +28,11 @@ calc_dudt()
   int i;
   double rsys, vsys;
 
+  if (boxlist[0].ngas != header.nsph) {
+    printf("<Warning, box 0 does not contain all particles, %s>\n", title);
+    printf("<Reloading box 0, %s>\n", title);
+    loadall();
+  }
   if (!dkernel_loaded){
     dkernel_load() ;
   }
@@ -51,11 +56,6 @@ calc_dudt()
   vsys = sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
   hsys = rsys*hubble_constant/vsys;
 
-  if (boxlist[0].ngas != header.nsph) {
-    printf("<Warning, box 0 does not contain all particles, %s>\n", title);
-    printf("<Reloading box 0, %s>\n", title);
-    loadall();
-  }
 
   if (dudt != NULL){
       free(dudt);

@@ -337,7 +337,7 @@ profile(job)
 			density[bin] += (gp->mass) * (gp->rho) ;
 			temp[bin] += (gp->mass) * (gp->temp) ;
 			pressure[bin] += (gp->mass) * gasconst
-			    * (gp->temp/meanmwt[i]) * (gp->rho) ;
+			    * (gp->temp/meanmwt[gp-gas_particles]) * (gp->rho) ;
 			entropy[bin] += (gp->mass) *
 			    log10(pow(gp->temp, 1.5)/(gp->rho)) ;
 			if(array)

@@ -16,7 +16,7 @@ cool_func()
     }
     if(cooling != NULL) free(cooling);
     if(boxlist[active_box].ngas != 0) {
-	cooling = (double *)malloc(boxlist[active_box].ngas *sizeof(*cooling));
+	cooling = (double *)malloc(boxlist[0].ngas *sizeof(*cooling));
 	if(cooling == NULL) {
 	    printf("<sorry, no memory for cooling, %s>\n",title) ;
 	    return ;
@@ -25,8 +25,8 @@ cool_func()
     else
       cooling = NULL;
 
-    for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-	gp = boxlist[active_box].gp[i] ;
+    for (i = 0 ;i < boxlist[0].ngas ;i++) {
+	gp = boxlist[0].gp[i] ;
 	if(!uniform){
 	    calc_uv(gp) ;
 	}
