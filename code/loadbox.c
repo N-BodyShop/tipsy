@@ -1,8 +1,12 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:25  trq
- * Initial revision
+ * Revision 1.2  1996/04/24 23:40:35  trq
+ * balls_loaded variable to keep track of balls.
+ * Fixed smoothing length bug.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:26  trq
+ * Import to CVS
  *
  * Revision 2.4  94/04/20  09:00:38  trq
  * Check for no particles in the box.
@@ -137,6 +141,7 @@ loadbox(box)
 		boxlist[box].sp[boxlist[box].nstar++] = sp ;
 	    }
 	}
+	balls_loaded = NO;
     }
     else {
 	boxlist[box].ngas = boxlist[0].ngas ;

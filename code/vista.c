@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.7  1995/07/24 20:51:17  trq
+ * Revision 1.8  1996/04/24 23:40:38  trq
+ * balls_loaded variable to keep track of balls.
+ * Fixed smoothing length bug.
+ *
+ * Revision 1.7  1995/07/24  20:51:17  trq
  * Fixed bug in load_cool.c.
  * vista now has a velocity cut.
  *
@@ -636,7 +640,10 @@ vista(job)
 		}
 	    }
 	    else if(vista_type == VSTAR){
-		calc_balls(&box0_smx, 0, 0 , 1);
+		if(balls_loaded != STAR) {
+		    calc_balls(&box0_smx, 0, 0 , 1);
+		    balls_loaded = STAR;
+		}
 		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
 		    sp = boxlist[active_box].sp[i] ;
 		    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
@@ -654,7 +661,7 @@ vista(job)
 			    }
 			    if(!(periodic) || (part_pos[2] < period_size/2.
 				    && part_pos[2] >= -period_size/2.)){
-			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2)/2.0;
 			    if(hsmooth > size_pixel){
 				thsmooth = 2. * hsmooth ;
 				distnorm = 1. / (hsmooth * hsmooth) ;
@@ -712,7 +719,10 @@ vista(job)
 		}
 	    }
 	    else if(vista_type == LUMSTAR){
-		calc_balls(&box0_smx, 0, 0 , 1);
+		if(balls_loaded != STAR) {
+		    calc_balls(&box0_smx, 0, 0 , 1);
+		    balls_loaded = STAR;
+		}
 		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
 		    sp = boxlist[active_box].sp[i] ;
 		    luminosity = star_lum_redshift(sp->mass,sp->tform,
@@ -732,7 +742,7 @@ vista(job)
 			    }
 			    if(!(periodic) || (part_pos[2] < period_size/2.
 				    && part_pos[2] >= -period_size/2.)){
-			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2)/2.0;
 			    if(hsmooth > size_pixel){
 				thsmooth = 2. * hsmooth ;
 				distnorm = 1. / (hsmooth * hsmooth) ;
@@ -790,7 +800,10 @@ vista(job)
 		}
 	    }
 	    else if(vista_type == VDARK){
-		calc_balls(&box0_smx, 1, 0 , 0);
+		if(balls_loaded != DARK) {
+		    calc_balls(&box0_smx, 1, 0 , 0);
+		    balls_loaded = DARK;
+		}
 		for (i = 0 ;i < boxlist[active_box].ndark ;i++) {
 		    dp = boxlist[active_box].dp[i] ;
 		    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
@@ -808,7 +821,7 @@ vista(job)
 			    }
 			    if(!(periodic) || (part_pos[2] < period_size/2.
 				    && part_pos[2] >= -period_size/2.)){
-			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2)/2.0;
 			    if(hsmooth > size_pixel){
 				thsmooth = 2. * hsmooth ;
 				distnorm = 1. / (hsmooth * hsmooth) ;

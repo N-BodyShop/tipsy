@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.8  1996/04/24 23:29:16  nsk
+ * Revision 1.9  1996/04/24 23:40:32  trq
+ * balls_loaded variable to keep track of balls.
+ * Fixed smoothing length bug.
+ *
+ * Revision 1.8  1996/04/24  23:29:16  nsk
  *     changed units etc.
  *
  * Revision 1.7  1996/04/19  19:10:46  nsk
@@ -510,10 +514,13 @@ absorb(job)
 	rsys = cosmof*kpcunit/1.e3 ;
 	vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
 	if(plot_type == DARKM){
-	calc_balls(&box0_smx, 1, 0 , 0);
+	if(balls_loaded != DARK) {
+	    calc_balls(&box0_smx, 1, 0 , 0);
+	    balls_loaded = DARK;
+	}
 	for (i = 0 ;i < boxlist[0].ndark ;i++) {
 	    dp = boxlist[0].dp[i] ;
-	    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+	    hsmooth = sqrt(box0_smx->kd->p[i].fBall2)/2.0;
 	    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
 	      for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
 		for(irep[2] = -1; irep[2] <= 1; irep[2]++) {

@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.6  1995/12/11 20:00:43  nsk
+ * Revision 1.7  1996/04/24 23:40:33  trq
+ * balls_loaded variable to keep track of balls.
+ * Fixed smoothing length bug.
+ *
+ * Revision 1.6  1995/12/11  20:00:43  nsk
  * added helium, dark absorb,  integral for elcetronic heating,
  * and read in 6 numbers for background
  *
@@ -313,6 +317,7 @@ extern struct list boxlist[MAXBOX+1] ;
 extern SMX box0_smx;
 extern Real ball_size;
 extern int ball_size_loaded;
+extern int balls_loaded;
 extern int n_smooth;
 
 struct command_list {

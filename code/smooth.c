@@ -17,6 +17,7 @@ void smooth_sub(job)
     if (sscanf(job,"%s %f %d",command,&ball_size, &n_smooth) == 3 ) {
 	if(ball_size >= 0.0)
 	    ball_size_loaded = YES ;
+	balls_loaded = NO;
     }
     else {
 	input_error(command) ;
