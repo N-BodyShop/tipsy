@@ -7,9 +7,8 @@ load_color_table()
     int i ;
     int size;
 
-  if(mono != YES) 
-    {
-    if (array_plot) {
+  if(mono != YES) {
+    if (!cmap && array_plot) {
       for(i = 2; i < CMAPSIZE-1; i++)
 	{
 	    clist[i].red = arraymap_red[i-2] << 8 ;
@@ -17,8 +16,7 @@ load_color_table()
 	    clist[i].blue = arraymap_blue[i-2] << 8 ;
 	    size = 127;
         }
-    }
-    else if (radial_plot) {
+    } else if ( (cmap==CM_RAINBOW) || (!cmap && radial_plot) ) {
       for(i = 2; i < CMAPSIZE-1; i++)
 	{
 	    clist[i].red = rainbow_red[i-2] << 8 ;
@@ -26,8 +24,16 @@ load_color_table()
 	    clist[i].blue = rainbow_blue[i-2] << 8 ;
 	    size = 127;
         }
-    }
-    else if(gas_plot || star_plot || potential_plot || magnitude_plot){
+    } else if (cmap==CM_REVRAIN) {
+      for(i = 2; i < CMAPSIZE-1; i++)
+	{
+	    clist[i].red = revrain_red[i-2] << 8 ;
+	    clist[i].green = revrain_green[i-2] << 8 ;
+	    clist[i].blue = revrain_blue[i-2] << 8 ;
+	    size = 127;
+        }
+    } else if ( (cmap==CM_WRBB) || 
+      (!cmap && (gas_plot || star_plot || potential_plot || magnitude_plot))) {
       for(i = 2; i < CMAPSIZE-1; i++)
 	{
 	    clist[i].red = wrbb_red[i-2] << 8 ;
@@ -35,8 +41,15 @@ load_color_table()
 	    clist[i].blue = wrbb_blue[i-2] << 8 ;
 	    size = 127;
 	}
-    }
-    else{
+    } else if (cmap==CM_TEMP) {
+      for(i = 2; i < CMAPSIZE-1; i++)
+	{
+	    clist[i].red = temp_red[i-2] << 8 ;
+	    clist[i].green = temp_green[i-2] << 8 ;
+	    clist[i].blue = temp_blue[i-2] << 8 ;
+	    size = 127;
+	}
+    } else {
       for(i = 0; i < CMAPSIZE-1; i++)
 	{
 	    clist[i].red = colormap_red[i] << 8;

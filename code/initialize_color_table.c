@@ -1,7 +1,10 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.2  1995/03/24 18:49:08  trq
+ * Revision 1.2.6.1  2000/06/22 21:14:46  nsk
+ * Added red temperature table. (maf)
+ *
+ * Revision 1.2  1995/03/24  18:49:08  trq
  * Added "revrain" colormap.
  *
  * divv.c: included malloc.h.
@@ -28,7 +31,7 @@ initialize_color_table()
     int i,j ;
     double slope ;
     double offset ;
-
+ 
     slope = 205./42. ;
     for(i = 0 ;i < 43 ;i++){
 	rainbow_red[i] = 255 ;
@@ -113,7 +116,33 @@ initialize_color_table()
 	wrbb_green[i] = 255 ;
 	wrbb_blue[i] = (int)(slope * (double)(i) + offset + .5) ;
     }
+
+
+    slope = 255./86. ;
+    for (i=0; i<125; i++) {
+      j = (int)(slope * (double)i );
+      if (j > 255) j = 255;
+      temp_red[i] = j;
+    }
+    slope = 255./66. ;
+    for (i=0; i<125; i++) {
+      j = (int)(slope * (double)(i - 58.) );
+      if (j > 255) j = 255;
+      if (j < 0) j = 0;
+      temp_green[i] = j;
+    }
+    slope = 255./32. ;
+    for (i=0; i<125; i++) {
+      j = (int)(slope * (double)(i - 92.) );
+      if (j > 255) j = 255;
+      if (j < 0) j = 0;
+      temp_blue[i] = j;
+    }
+
     for (i = 125, j = 0 ; j < 125 ;i++, j++) {
+	temp_red[i] = temp_red[j] ;
+	temp_green[i] = temp_green[j] ;
+	temp_blue[i] = temp_blue[j] ;
 	wrbb_red[i] = wrbb_red[j] ;
 	wrbb_green[i] = wrbb_green[j] ;
 	wrbb_blue[i] = wrbb_blue[j] ;
