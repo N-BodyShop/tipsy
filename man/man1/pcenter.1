@@ -29,7 +29,14 @@ the particles in box
 If the box
 .I box-number
 is not loaded an error is generated.
+
+Note that if the origional box 0 is not centered at (0,0,0), a
+.B loadall
+or a
+.B setbox 0
+will be needed after the
+.B pcenter
+command.
 .SH SEE ALSO
-.BR drift (1),
 .BR hubble (1),
 .BR vcenter (1)
