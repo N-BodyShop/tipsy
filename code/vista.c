@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.14  1997/12/18 17:57:14  trq
+ * Revision 1.15  1998/03/27 17:12:12  trq
+ * Free memory in correct order.
+ *
+ * Revision 1.14  1997/12/18  17:57:14  trq
  * Added VALL vista plot: total mass density.
  *
  * Revision 1.13  1997/10/24  22:14:45  trq
@@ -265,9 +268,9 @@ vista(job)
 			vista_size*sizeof(**quantity));
 		  if(*quantity == NULL)
 		    {
+		      free(*density);
 		      free(density);
 		      free(quantity);
-		      free(*density);
 		      printf("<sorry, no memory for image, %s>\n",title) ;
 		      return ;
 		    }
@@ -284,9 +287,10 @@ vista(job)
 		  quantity2 = (float **)malloc(vista_size*sizeof(*quantity2));
 		      if(quantity2 == NULL)
 			{
-			  free(density);
-			  free(quantity);
 			  free(*density);
+			  free(density);
+			  free(*quantity);
+			  free(quantity);
 			  printf("<sorry, no memory for image, %s>\n",title) ;
 			  return ;
 			}
@@ -294,10 +298,10 @@ vista(job)
                         vista_size*sizeof(**quantity2));
                   if(*quantity2 == NULL)
                     {
-                      free(density);
-                      free(quantity);
                       free(*density);
+                      free(density);
                       free(*quantity);
+                      free(quantity);
                       free(quantity2);
                       printf("<sorry, no memory for image, %s>\n",title) ;
                       return ;
@@ -366,8 +370,8 @@ vista(job)
 		if(wavelength > 8800 || wavelength < 1940){
 		    printf("<sorry, redshift too large for") ;
 		    printf(" color band, %s>\n",title);
-		    free(density);
 		    free(*density);
+		    free(density);
 		    return ;
 		}
 		if(!lum_loaded){
@@ -944,17 +948,17 @@ vista(job)
 		fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name1) ;
 	    }
-	    free(density);
 	    free(*density);
+	    free(density);
 	    if(vista_type != RHO && vista_type != XRAY && vista_type
 		 != VDARK && vista_type != VSTAR && vista_type != VALL
 		 && vista_type != LUMSTAR){
-		free(quantity);
 		free(*quantity);
+		free(quantity);
 	    }
 	    if(vista_type == HNEUT){
-		free(quantity2);
 		free(*quantity2);
+		free(quantity2);
 	    }
 	}
 	else {
