@@ -2,7 +2,61 @@
 .SH NAME
 viewstar \- plot particles according to star properties
 .SH SYNOPSIS
+.B viewstar
+.I plot_type
+.I min
+.I max
+.I [clip]
 .SH ALIASES
 .B vstar
 .SH DESCRIPTION
+.B viewstar
+plots the star particles colored according to the star property
+specified by
+.I plot_type.
+.I Plot_type
+is one of
+.I luminosityv, lumv,
+(V band luminosity)
+.I luminosityb, lumb,
+(B band luminosity)
+.I luminosityu, lumu,
+(U band luminosity)
+.I luminosityuu, lumuu,
+(UU band luminosity)
+.I magnitudev, magv,
+(V band magnitude)
+.I magnitudeb, magb,
+(B band magnitude)
+.I magnitudeu, magu,
+(U band magnitude)
+.I magnitudeuu, maguu,
+(UU band magnitude)
+.I tform,
+(formation time)
+.I logtform,
+(log(formation time))
+.I age,
+.I logage.
+.I logmass,
+.I rho,
+(density)
+or
+.I logrho
+(log(density)).
+.I min
+and
+.I max
+determine the value of the minimum and maximum color, respectively.
+
+.PP
+.I clip
+can be either
+.I cliplo, clipup,
+or
+.I clipboth
+to suppress plotting particles either below the minimum, above the
+maximum, or both.
+
 .SH SEE ALSO
+.BR vista(1)
