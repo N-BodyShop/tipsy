@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.27  2002/12/28 17:28:25  trq
+ * Added "readbinvector" command for reading in binary vector file.
+ *
  * Revision 1.26  2002/12/23 19:44:03  trq
  * Added "readbinarray" command to read binary arrays.  Only native formats
  * are supported.
@@ -341,10 +344,13 @@ arguments(job)
 	printf("readarray filename\n") ;
     }
     else if ( strcmp(command,"readbinarray") == 0) {
-	printf("readarray filename type\n") ;
+	printf("readbinarray filename type\n") ;
     }
     else if ( strcmp(command,"readvector") == 0) {
 	printf("readvector filename\n") ;
+    }
+    else if ( strcmp(command,"readbinvector") == 0) {
+	printf("readbinvector filename type\n") ;
     }
     else if ( strcmp(command,"readascii") == 0 ) {
 	printf("readascii filename\n") ;

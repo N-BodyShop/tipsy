@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.5  2002/12/28 17:28:26  trq
+ * Added "readbinvector" command for reading in binary vector file.
+ *
  * Revision 1.4  2002/08/15 22:33:13  trq
  * Fixed bugs in freeing arrays on bad input.
  *
@@ -85,6 +88,130 @@ readvector(job)
 		}
 		count++;
 	    }
+	}
+    }
+    else {
+	input_error(command) ;
+    }
+}
+
+void
+readbinvector(job)
+     char *job;
+     
+{
+  char command[MAXCOMM] ;
+  char filename[MAXCOMM] ;
+  char type[MAXCOMM] ;
+  FILE *infile;
+  int j;
+  int i;
+  int k;
+  int count;
+  int nbodies;
+  int btype;
+  int check;
+
+  if (sscanf(job,"%s %s %s",command,filename,type) == 3) {
+      if(!strcmp(type, "packedfloat")){
+	  btype = -1;
+      }
+      else if(!strcmp(type, "packeddouble")) {
+	  btype = -2;
+      }
+      else if(!strcmp(type, "float")){
+	  btype = 1;
+      }
+      else if(!strcmp(type, "double")){
+	  btype = 2;
+      }
+      else {
+	  input_error(command) ;
+      }
+    infile = fopen(filename, "r");
+    if(infile == NULL)
+      {
+        printf("<Sorry %s, file does not exist>\n",title);
+	return;
+      }
+	count=fread(&nbodies, sizeof(int), 1, infile) ;
+	if ( (count == EOF) || (count==0) ){
+	    printf("<Sorry %s, file format is wrong>\n",title);
+	    return;
+	}
+    if(vector != NULL) free(vector);
+    vector = (struct vec *)malloc(nbodies*sizeof(*vector));
+    vector_size = nbodies;
+    if(vector == NULL) 
+      {
+	printf("<Sorry %s, no room for array>\n",title);
+	return;
+      }
+	for(j = 0; j < MAXDIM; j++){
+	    for(i = 0, count = 0; i < nbodies; i++){
+				/* skip line if a partial box was
+				   loaded and this particle is not in
+				   it */
+		if(box0_pi && box0_pi[count] != i) {
+		    switch (btype) {
+		    float fdummy[3];
+		    double ddummy[3];
+		    case -1:
+			fread(fdummy, sizeof(float), 3, infile) ;
+			break;
+		    case -2:
+			fread(fdummy, sizeof(double), 3, infile) ;
+			break;
+		    case 1:
+			fread(fdummy, sizeof(float), 1, infile) ;
+			break;
+		    case 2:
+			fread(ddummy, sizeof(double), 1, infile) ;
+		    }
+
+		  continue;
+		}
+		else {
+		  if(count >= header.nbodies) {
+			printf("<Sorry %s, file format is wrong>\n",title);
+			vector_size = 0 ;
+			free(vector) ;
+			vector = NULL;
+			break;
+		  }
+		}
+		switch (btype) {
+		float fdummy[3];
+		double ddummy[3];
+		case -2:
+		    check = fread(ddummy, sizeof(double), 3, infile) ;
+		    for(k = 0; k < 3; k++)
+			vector[count].v[k] = ddummy[k];
+		    break;
+		case -1:
+		    check = fread(fdummy, sizeof(float), 3, infile) ;
+		    for(k = 0; k < 3; k++)
+			vector[count].v[k] = fdummy[k];
+		    break;
+		case 1:
+		    check = fread(&fdummy, sizeof(float), 1, infile) ;
+		    vector[count].v[j] = fdummy[0];
+		    break;
+		case 2:
+		    check = fread(&ddummy, sizeof(double), 1, infile) ;
+		    vector[count].v[j] = ddummy[0];
+		}
+		if(check == EOF) {
+		    printf("<Sorry %s, file format is wrong>\n",title);
+		    vector_size = 0 ;
+		    free(vector) ;
+		    vector = NULL;
+		    break;
+		}
+		count++;
+	    }
+	    if(btype < 0)
+		break;
 	}
     }
     else {
