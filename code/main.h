@@ -1,7 +1,12 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.14.2.1  2000/06/22 21:17:25  nsk
+ * Revision 1.14.2.2  2000/07/07 03:25:27  nsk
+ * Initialize variable list to null.  (cm/maf)
+ * Added ismanifest variable.   (maf)
+ * Added xverbose variable.   (maf)
+ *
+ * Revision 1.14.2.1  2000/06/22  21:17:25  nsk
  * Added variables for setting colormap. (maf)
  *
  * Revision 1.14  2000/01/12  22:55:17  nsk
@@ -128,6 +133,7 @@ struct list boxlist[MAXBOX+1] ;
 struct uv_source *uv_sources = NULL ;
 int *box0_pi = NULL;
 
+struct var_list *vars = NULL;
 struct macro_list *macros = NULL;
 
 SMX box0_smx = NULL;
@@ -143,6 +149,10 @@ int showboxes = OFF ;
 int showaxes = OFF ;
 int showvel = OFF ;
 int showvec = OFF ;
+int xverbose = OFF ;
+
+int manifest_length = 0 ;
+struct manifest_entry *manifest = NULL;
 
 int boxes_loaded[MAXBOX+1] ;
 int mark_box[MAXBOX+1] ;
@@ -156,6 +166,7 @@ int vector_size = 0;
 int active_box = 0 ;
 int asciiopen = CLOSED ;
 int binaryopen = CLOSED ;
+int ismanifest = FALSE ;
 int binary_loaded = UNLOADED ;
 int current_project = NO;
 int current_color = NO;
@@ -210,6 +221,7 @@ double axes_coord[6][MAXDIM] = {
     {0.,0.,0.},
     {0.,0.,1.}
 } ;
+double scrollval_save = 0.0;
 
 double point_size_gas = 0.0 ;
 double point_size_dark = 0.0 ;
