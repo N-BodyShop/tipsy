@@ -1,4 +1,7 @@
+
 #include "defs.h"
+#include "fdefs.h"
+
 void
 openbinary(job)
     char job[MAXCOMM] ;
