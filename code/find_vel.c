@@ -1,4 +1,6 @@
 #include "defs.h"
+
+void
 find_vel(particle_type,box,center_vel,center_angular_mom)
     int box ;
     Real center_vel[MAXDIM] ;
@@ -21,8 +23,12 @@ find_vel(particle_type,box,center_vel,center_angular_mom)
 	center_angular_mom[i] = 0. ;
     }
     if (strcmp(particle_type,"dark") == 0 ||
+	    strcmp(particle_type,"mark") == 0 ||
 	    strcmp(particle_type,"all") ==0) {
 	for (i = 0 ;i < boxlist[box].ndark ; i++) {
+	    if(strcmp(particle_type,"mark") == 0 &&
+	       mark_dark[boxlist[box].dpi[i]] == 0)
+		continue;
 	    dp = boxlist[box].dp[i] ;
 	    if(ell_distance(dp->pos) <= fit_radius){
 		mass_r += dp->mass ;
@@ -34,8 +40,12 @@ find_vel(particle_type,box,center_vel,center_angular_mom)
 	}
     }
     if (strcmp(particle_type,"star") == 0 ||
+	    strcmp(particle_type,"mark") == 0 ||
 	    strcmp(particle_type,"all") ==0) {
 	for (i = 0 ;i < boxlist[box].nstar ; i++) {
+	    if(strcmp(particle_type,"mark") == 0 &&
+	       mark_star[boxlist[box].spi[i]] == 0)
+		continue;
 	    sp = boxlist[box].sp[i] ;
 	    if(ell_distance(sp->pos) <= fit_radius){
 		mass_r += sp->mass ;
@@ -47,8 +57,12 @@ find_vel(particle_type,box,center_vel,center_angular_mom)
 	}
     }
     if (strcmp(particle_type,"gas") == 0 ||
+	    strcmp(particle_type,"mark") == 0 ||
 	    strcmp(particle_type,"all") ==0) {
 	for (i = 0 ;i < boxlist[box].ngas ; i++) {
+	    if(strcmp(particle_type,"mark") == 0 &&
+	       mark_gas[boxlist[box].gpi[i]] == 0)
+		continue;
 	    gp = boxlist[box].gp[i] ;
 	    if(ell_distance(gp->pos) <= fit_radius){
 		mass_r += gp->mass ;

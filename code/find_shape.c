@@ -1,4 +1,5 @@
 #include "defs.h"
+void
 find_shape(particle_type,box,center)
     int box ;
     char particle_type[MAXCOMM] ;
@@ -31,8 +32,12 @@ find_shape(particle_type,box,center)
 	}
     }
     if (strcmp(particle_type,"dark") == 0 ||
+	    strcmp(particle_type,"mark") == 0 ||
 	    strcmp(particle_type,"all") ==0) {
 	for (i = 0 ;i < boxlist[box].ndark ; i++) {
+	    if(strcmp(particle_type,"mark") == 0 &&
+	       mark_dark[boxlist[box].dpi[i]] == 0)
+		continue;
 	    dp = boxlist[box].dp[i] ;
 	    radius = distance(center,dp->pos) ;
 	    if (radius < fit_radius) {
@@ -48,8 +53,12 @@ find_shape(particle_type,box,center)
 	}
     }
     if (strcmp(particle_type,"star") == 0 ||
+	    strcmp(particle_type,"mark") == 0 ||
 	    strcmp(particle_type,"all") ==0) {
 	for (i = 0 ;i < boxlist[box].nstar ; i++) {
+	    if(strcmp(particle_type,"mark") == 0 &&
+	       mark_star[boxlist[box].spi[i]] == 0)
+		continue;
 	    sp = boxlist[box].sp[i] ;
 	    radius = distance(center,sp->pos) ;
 	    if (radius < fit_radius) {
@@ -65,8 +74,12 @@ find_shape(particle_type,box,center)
 	}
     }
     if (strcmp(particle_type,"gas") == 0 ||
+	    strcmp(particle_type,"mark") == 0 ||
 	    strcmp(particle_type,"all") ==0) {
 	for (i = 0 ;i < boxlist[box].ngas ; i++) {
+	    if(strcmp(particle_type,"mark") == 0 &&
+	       mark_gas[boxlist[box].gpi[i]] == 0)
+		continue;
 	    gp = boxlist[box].gp[i] ;
 	    radius = distance(center,gp->pos) ;
 	    if (radius < fit_radius) {
@@ -156,8 +169,12 @@ find_shape(particle_type,box,center)
 	    }
 	}
 	if (strcmp(particle_type,"dark") == 0 ||
+		strcmp(particle_type,"mark") == 0 ||
 		strcmp(particle_type,"all") ==0) {
 	    for (i = 0 ;i < boxlist[box].ndark ; i++) {
+		if(strcmp(particle_type,"mark") == 0 &&
+		   mark_dark[boxlist[box].dpi[i]] == 0)
+		    continue;
 		dp = boxlist[box].dp[i] ;
 		radius = ell_distance(dp->pos) ;
 		if (radius < fit_radius) {
@@ -173,8 +190,12 @@ find_shape(particle_type,box,center)
 	    }
 	}
 	if (strcmp(particle_type,"star") == 0 ||
+		strcmp(particle_type,"mark") == 0 ||
 		strcmp(particle_type,"all") ==0) {
 	    for (i = 0 ;i < boxlist[box].nstar ; i++) {
+		if(strcmp(particle_type,"mark") == 0 &&
+		   mark_star[boxlist[box].spi[i]] == 0)
+		    continue;
 		sp = boxlist[box].sp[i] ;
 		radius = ell_distance(sp->pos) ;
 		if (radius < fit_radius) {
@@ -190,8 +211,12 @@ find_shape(particle_type,box,center)
 	    }
 	}
 	if (strcmp(particle_type,"gas") == 0 ||
+		strcmp(particle_type,"mark") == 0 ||
 		strcmp(particle_type,"all") ==0) {
 	    for (i = 0 ;i < boxlist[box].ngas ; i++) {
+		if(strcmp(particle_type,"mark") == 0 &&
+		   mark_gas[boxlist[box].spi[i]] == 0)
+		    continue;
 		gp = boxlist[box].gp[i] ;
 		radius = ell_distance(gp->pos) ;
 		if (radius < fit_radius) {
