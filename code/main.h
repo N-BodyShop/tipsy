@@ -1,7 +1,10 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.14  2000/01/12 22:55:17  nsk
+ * Revision 1.14.2.1  2000/06/22 21:17:25  nsk
+ * Added variables for setting colormap. (maf)
+ *
+ * Revision 1.14  2000/01/12  22:55:17  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
  *
@@ -283,6 +286,7 @@ double eps_H ;
 double eps_He ;
 double eps_Hep ;
 
+int cmap = CM_NONE;
 unsigned char wrbb_red[256] ;
 unsigned char wrbb_green[256] ;
 unsigned char wrbb_blue[256] ;
@@ -295,6 +299,9 @@ unsigned char rainbow_blue[256] ;
 unsigned char colormap_red[256] ;
 unsigned char colormap_green[256] ;
 unsigned char colormap_blue[256] ;
+unsigned char temp_red[256] ;
+unsigned char temp_green[256] ;
+unsigned char temp_blue[256] ;
 unsigned char *arraymap_red;
 unsigned char *arraymap_green;
 unsigned char *arraymap_blue;
