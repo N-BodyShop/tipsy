@@ -12,6 +12,10 @@
  <number of spline points> <min. temperature> <delta temperature> (the
  temperatures are log10(Kelvin).)
  <number of bands>
+<y spline coefficients for band 1>
+<y'' spline coefficients for band 1>
+<y spline coefficients for band 2>
+...
  
  This version allows you to read the spline file from the command line
  with a call to: xrayload splinefile

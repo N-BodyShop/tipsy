@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1997/12/06 22:01:00  trq
+ * Revision 1.3  1999/05/03 21:29:24  trq
+ * Added comments about file format.
+ *
+ * Revision 1.2  1997/12/06  22:01:00  trq
  * Updated xray stuff to use spline emmission files.
  *
  * Revision 1.1.1.1  1995/01/10  22:57:36  trq
@@ -30,6 +33,10 @@ Comment line
 <number of spline points> <min. temperature> <delta temperature> (the
 temperatures are log10(Kelvin).)
 <number of bands>
+<y spline coefficients for band 1>
+<y'' spline coefficients for band 1>
+<y spline coefficients for band 2>
+...
 
  */
 int xray_lum_load()
