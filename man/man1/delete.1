@@ -1,0 +1,23 @@
+.TH DELETE  1 "10 JULY 2000"  "HWTipsy Release 1.0" "TIPSY COMMANDS"
+.SH NAME
+delete \- delete a global variable
+.SH SYNOPSIS
+.B delete
+.I variable
+.SH DESCRIPTION
+.B delete
+removes a variable from the list of global variables.  
+Example:
+   delete $name
+.br
+There are a couple reasons to remove a variable.  One is to reduce
+the confusion created by the global scope.  If you forget to
+reset a variable, you will get its previous 
+value.  If you have removed it, you will get an error message and
+an empty string instead.
+You might also want to remove a variable for efficiency.  
+Variables are currently stored in a linked list, and no effort has
+been made to apply efficient search techniques.
+.SH SEE ALSO
+.BR set (1),
+.BR print (1)

@@ -1,4 +1,4 @@
-.TH READMACRO  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.TH READMACRO  1 "23 JUNE 2000"  "HWTipsy Release 1.0" "TIPSY COMMANDS"
 .SH NAME
 readmacro \- read a macro file
 .SH SYNOPSIS
@@ -15,12 +15,42 @@ The file
 can contain many different macro's.  A macro is a sequential list of tipsy
 commands.  In the file
 .I macro-filename
-each macro must have as it first line the name of the macro and as its
+each macro must have as its first line the name of the macro and as its
 last line "end".  If a macro with that name already exists it is
 deleted when the new macro is read.  In the file put one command per line.
 Many different macro's can be in the one file
 .I macro-filename
 one after the other.
+
+The 
+.I for 
+construct can be used inside macros. Example:
+.po +5
+for $i = 1, 9 
+.br
+    print $i 
+.br
+done 
+.br
+.po -5
+This sets a variable $i.  Note that this is a global variable, like all 
+tipsy variables.  A step size can also be defined:
+.po +5
+for $i = 10, 0, -2 
+.br
+.po -5
+Loops can be nested inside each other.
+
+The environent variable
+.B TIPSYMACROPATH
+can be used to provide a list of directories to be searched for the macro 
+.I macro-filename.
+The format of this variable is a set of colon-separated directories,
+generally starting with a period for current directory.  Example:
+.P
+$ setenv 
+.B TIPSYMACROPATH 
+ \ .:/usr1/joeuser/tipsy/macros
 
 Macro's can be executed using the
 .B macro

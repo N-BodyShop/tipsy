@@ -1,0 +1,43 @@
+.TH SETCOLORMAP  1 "23 JUNE 2000"  "HWTipsy Release 1.0" "TIPSY COMMANDS"
+.SH NAME
+setcolormap \- set or unset the color map
+.SH SYNOPSIS
+.B setcolormap
+.I colormap-name
+.SH ALIASES
+.B setc
+.SH DESCRIPTION
+.B setcolormap
+set the current colormap to 
+.I colormap-name.
+The choices are 
+.I default, rainbow 
+(or 
+.I r),  
+.I reverse_rainbow
+(or 
+.I revrain 
+or 
+.I rr), 
+.I wrbb
+(or 
+.I w),
+.I temperature
+(or 
+.I temp), and
+.I none.
+If the colormap is set to 
+.I none,
+the colormap used in any plotting routine is the default for that
+routine.  
+Despite the name, the 
+.I default
+colormap (which varies rapidly as a function of color index) 
+is only the default for particular routines such as viewarray.  The
+wrbb colormap is the default for the viewgas routine and is heavy on
+purples and magentas.
+.SH SEE ALSO
+.BR view (1),
+.BR viewall (1),
+.BR viewgas (1),
+.BR viewarray (1)

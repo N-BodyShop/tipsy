@@ -1,0 +1,44 @@
+.TH EXPOSE  1 "11 JULY 2000"  "HWTipsy Release 1.0" "TIPSY COMMANDS"
+.SH NAME
+expose \- expose internal Tipsy globals as user variables
+.SH SYNOPSIS
+.B expose
+.I [yes/no]
+.SH DESCRIPTION
+.B expose
+is used to gain direct access to certain Tipsy variables.  This ability
+can be useful in constructing macros.  By convention, internal Tipsy
+variables have uppercase names.  At time of writing the variables
+exposed in this way are 
+TIME, NBODIES, NSPH, NDARK, NSTAR, BOX_CENTER_0, BOX_CENTER_1, BOX_CENTER_2,
+BOX_SIZE_0, BOX_SIZE_1, BOX_SIZE_2, BOX_CM_0, BOX_CM_1, BOX_CM_2.
+The first set of variables are obtained directly from the header
+of the Tipsy binary file.  
+Note the variable TIME is generally actually cosmic scale factor.
+The variables relating to the boxes apply only to the currently active
+box; if there is no box loaded they are undefined.  Each member of the
+sets of three variables applies to the X, Y, and Z direction
+respectively.  The three sets are for the center, size, and center of
+mass.
+
+The command 
+.I expose y 
+is equivalent to simply saying expose.  The command
+.I expose n
+can be used to hide the variables again, reducing variable clutter.
+
+Example: 
+.br
+.po +5
+expose y
+.br
+set $z = 1. / $TIME - 1.
+.br
+redshift $z comove 500. 1.0 0.0 v 1
+.br
+.po -5
+.SH SEE ALSO
+.BR set (1),
+.BR delete (1),
+.BR print (1)
+
