@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.11  1997/09/05 01:02:25  nsk
+ * Revision 1.12  1997/09/25 21:46:09  trq
+ * Fix bug in summing "quantity".
+ *
+ * Revision 1.11  1997/09/05  01:02:25  nsk
  * streamlined vista (I hope it works), added neutralize command, added SZ
  * effect to vista.
  *
@@ -588,9 +591,9 @@ vista(job)
 						vista_type == FSTAR ||
 						vista_type == HNEUT
 						|| vista_type == SZ){
+					    	quantity[kx][ky]
+						    += (float)(kernel*delta_q) ;
 					    }
-					    quantity[kx][ky] += (float)(kernel*
-						    delta_q) ;
 					    if(vista_type == HNEUT){
 						quantity2[kx][ky] +=
 						    (float)(kernel*delta_q2) ;
@@ -615,9 +618,9 @@ vista(job)
 					    vista_type == FSTAR ||
 					    vista_type == HNEUT
 					    || vista_type == SZ){
-					}
-					quantity[kx][ky] += (float)(kernel*
+					    quantity[kx][ky] += (float)(kernel*
 						delta_q) ;
+					}
 					if(vista_type == HNEUT){
 					    quantity2[kx][ky] +=
 						(float)(kernel*delta_q2) ;
