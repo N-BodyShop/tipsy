@@ -1,0 +1,66 @@
+
+
+
+drift(1)                 TIPSY COMMANDS                  drift(1)
+
+
+
+NAME
+     hubble - extrapolate particle positions in a box
+
+SYNOPSIS
+     drift _b_o_x-_n_u_m_b_e_r _p_a_r_t_i_c_l_e _d_e_l_t_a-_t
+
+DESCRIPTION
+     drift drifts the particles of  type  _p_a_r_t_i_c_l_e  in  box  _b_o_x-
+     _n_u_m_b_e_r for _d_e_l_t_a-_t using the particle's velocity.  This com-
+     mand is useful for interpolating between  time  frames  when
+     making  movies.   To  move  particles  forward in time use a
+     positive value for _d_e_l_t_a-_t and to move particles backward in
+     time  use  a  negative value for _d_e_l_t_a-_t. NOTE: this command
+     permanently changes the velocities of all the  particles  in
+     box  _b_o_x-_n_u_m_b_e_r.  To undo a drift command repeat the command
+     with a _d_e_l_t_a-_t of equal magnitude but of opposite sign.   If
+     the box _b_o_x-_n_u_m_b_e_r is not loaded an error is generated.
+
+OPTIONS
+  Particle
+     The possible choices for _p_a_r_t_i_c_l_e are:
+
+          all
+             Adjust the velocities of all the  particles  in  box
+             _b_o_x-_n_u_m_b_e_r.
+
+          baryon
+             Adjust the velocities of all the gas and star parti-
+             cles in box _b_o_x-_n_u_m_b_e_r.
+
+          dark
+             Adjust the velocities of only the dark matter parti-
+             cles in box _b_o_x-_n_u_m_b_e_r
+
+          gas
+             Adjust the velocities of only the gas  particles  in
+             box _b_o_x-_n_u_m_b_e_r.
+
+          star
+             Adjust the velocities of only the star particles  in
+             box _b_o_x-_n_u_m_b_e_r.
+
+SEE ALSO
+     hubble (1), pcenter (1), vcenter (1)
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

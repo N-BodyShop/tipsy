@@ -1,36 +1,33 @@
 
 
 
-PCENTER(1)                TIPSY COMMANDS               PCENTER(1)
-
-
-NNAAMMEE
-       pcenter - recenter a periodic box
-
-SSYYNNOOPPSSIISS
-       ppcceenntteerr  _b_o_x_-_n_u_m_b_e_r  _c_e_n_t_e_r___x  _c_e_n_t_e_r___y  _c_e_n_t_e_r___z _p_e_r_i_o_d___x
-       _p_e_r_i_o_d___y _p_e_r_i_o_d___z
-
-DDEESSCCRRIIPPTTIIOONN
-       ppcceenntteerr recenters the box _b_o_x_-_n_u_m_b_e_r  at  _(_c_e_n_t_e_r___x_,  _c_e_n_-
-       _t_e_r___y_, _c_e_n_t_e_r___z_) assuming periodic boundaries with a peri-
-       odic length in the x direction  of  _x___p_e_r_i_o_d_,  a  periodic
-       length  in  the  y  direction  of _y___p_e_r_i_o_d_, and a periodic
-       length in the z direction of _z___p_e_r_i_o_d_.  NOTE: this command
-       permanently  changes the positions of all the particles in
-       box _b_o_x_-_n_u_m_b_e_r_.  If the box _b_o_x_-_n_u_m_b_e_r is  not  loaded  an
-       error is generated.
-
-       Note  that  if  the  origional  box  0  is not centered at
-       (0,0,0), a llooaaddaallll or a sseettbbooxx 00 will be needed after  the
-       ppcceenntteerr command.
-
-SSEEEE AALLSSOO
-       hhuubbbbllee(1), vvcceenntteerr(1)
+PCENTER(1)               TIPSY COMMANDS                PCENTER(1)
 
 
 
+NAME
+     pcenter - recenter a periodic box
 
+SYNOPSIS
+     pcenter  _b_o_x-_n_u_m_b_e_r  _c_e_n_t_e_r__x  _c_e_n_t_e_r__y  _c_e_n_t_e_r__z   _p_e_r_i_o_d__x
+     _p_e_r_i_o_d__y _p_e_r_i_o_d__z
+
+DESCRIPTION
+     pcenter recenters the box _b_o_x-_n_u_m_b_e_r at (_c_e_n_t_e_r__x, _c_e_n_t_e_r__y,
+     _c_e_n_t_e_r__z)  assuming  periodic  boundaries  with  a  periodic
+     length in the x direction of _x__p_e_r_i_o_d, a periodic length  in
+     the  y direction of _y__p_e_r_i_o_d, and a periodic length in the z
+     direction  of  _z__p_e_r_i_o_d.  NOTE:  this  command   permanently
+     changes  the  positions  of  all  the  particles in box _b_o_x-
+     _n_u_m_b_e_r. If the box _b_o_x-_n_u_m_b_e_r is not loaded an error is gen-
+     erated.
+
+     Note that if the origional box 0 is not centered at (0,0,0),
+     a  loadall  or  a  setbox 0 will be needed after the pcenter
+     command.
+
+SEE ALSO
+     hubble(1), vcenter(1)
 
 
 
@@ -61,6 +58,9 @@ SSEEEE AALLSSOO
 
 
 
-KQ Release 2.0            22 MARCH 1994                         1
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
 
 

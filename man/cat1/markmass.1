@@ -1,22 +1,20 @@
 
 
 
-MARKARRAY(1)             TIPSY COMMANDS              MARKARRAY(1)
+MARKMASS(1)              TIPSY COMMANDS               MARKMASS(1)
 
 
 
 NAME
-     markarray - mark particles according to their array values
+     markmass - mark particles according to their mass
 
 SYNOPSIS
-     markarray _b_o_x-_n_u_m_b_e_r _m_i_n_i_m_u_m _m_a_x_i_m_u_m
+     markmass _b_o_x-_n_u_m_b_e_r _m_i_n_i_m_u_m _m_a_x_i_m_u_m
 
 DESCRIPTION
-     markarray marks all the particles  in  box  _b_o_x-_n_u_m_b_e_r  that
-     have array values between _m_i_n_i_m_u_m and _m_a_x_i_m_u_m, inclusive. If
-     no array is loaded an error is generated.  Arrays  are  read
-     in  using  the  readarray command.  If box _b_o_x-_n_u_m_b_e_r is not
-     loaded an error is also generated.
+     markmass marks all the particles in box _b_o_x-_n_u_m_b_e_r that have
+     masses  between  _m_i_n_i_m_u_m and _m_a_x_i_m_u_m, inclusive. If box _b_o_x-
+     _n_u_m_b_e_r is not loaded an error is generated.
 
      To unmark particles use either the  unmarkall  or  unmarkbox
      commands.   Remember, marked particles are always plotted in
@@ -26,13 +24,15 @@ DESCRIPTION
      unmarked  using the unmarkall command.  Marked particles can
      be written to a file using the  writemark  command  or  read
      from  a  file using the readmark command. Particles can also
-     be marked using the markbox, markmass and markgal  commands.
+     be marked using the markarray, markbox and markgal commands.
      Statistics  about  marked  particles can be determined using
      the markstat command.
 
 SEE ALSO
-     markbox(1), markgal(1),  markmass(1),  markstat(1),  readar-
+     markbox(1), markarray(1), markgal(1),  markstat(1),  readar-
      ray(1), unmarkall(1), unmarkbox(1), writemark(1)
+
+
 
 
 
