@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.14  2000/01/12 22:55:09  nsk
+ * Revision 1.14.2.1  2000/07/13 01:23:43  nsk
+ * Add assign_var, sub_val_for_var, expose_header, expose_box.  (maf)
+ *
+ * Revision 1.14  2000/01/12  22:55:09  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
  *
@@ -196,4 +199,9 @@ PROTO(void, xplot_array, (char *job));
 PROTO(int, xray_lum_load, ());
 PROTO(void, yplot_array, (char *job));
 PROTO(void, zplot_array, (char *job));
+PROTO(int, assign_var, (char vname[], char val[]));
+PROTO(int, sub_val_for_var, (char *job, char jobcpy[]));	  
+PROTO(void, expose_header, ());	  
+PROTO(void, expose_box, ());	  
+
      
