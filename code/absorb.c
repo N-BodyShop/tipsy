@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.11  1996/07/30 22:19:48  trq
+ * Revision 1.12  1997/08/29 17:20:05  nsk
+ * *** empty log message ***
+ *
+ * Revision 1.11  1996/07/30  22:19:48  trq
  * Fixed memory leak.
  *
  * Revision 1.10  1996/06/26  00:34:47  nsk
@@ -389,6 +392,7 @@ absorb(job)
 		free(temp_HeII);
 		return ;
 	      }
+	    /*
 	    if (!cool_loaded ){
 		load_cool() ;
 	    }
@@ -401,6 +405,7 @@ absorb(job)
 	    if (!divv_loaded ){
 		divv() ;
 	    }
+	    */
 	    for(i = 0; i < zbin; i++){
 		mass_tot[i] = 0.0;
 		mass_HI[i] = 0.0;
@@ -459,6 +464,16 @@ absorb(job)
 	      bound_min[k] = min(bound_min[k], box_coord[j][k]);
 	    }
 	}
+
+
+
+	printf("boundmin (x,y,z) = (%g,%g,%g)\n",bound_min[0],bound_min[1],
+		bound_min[2]) ;
+	printf("boundmax (x,y,z) = (%g,%g,%g)\n",bound_max[0],bound_max[1],
+		bound_max[2]) ;
+
+
+
 	for (j = 0 ;j < BOXPTS ;j++) {
 	    for(i = 0; i < header.ndim; i++){
 		for (rot_box[i] = 0.0,k = 0 ;k < header.ndim ;k++) {
@@ -476,6 +491,8 @@ absorb(job)
 	    zmin = min(zmin,box_coord[j][2]) ;
 	    zmax = max(zmax,box_coord[j][2]) ;
 	}
+	printf("zmin,zmax = %g, %g\n",zmin,zmax) ;
+	return ;
 	bin_size = (zmax - zmin)/zbin ;
 	zbox_min = HUGE ;
 	zbox_max = -HUGE ;
