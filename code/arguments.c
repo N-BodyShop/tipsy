@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.13  1997/09/05 01:02:19  nsk
+ * Revision 1.14  1997/09/12 18:43:04  nsk
+ * fixed arguments for redshift
+ *
+ * Revision 1.13  1997/09/05  01:02:19  nsk
  * streamlined vista (I hope it works), added neutralize command, added SZ
  * effect to vista.
  *
@@ -304,7 +307,7 @@ arguments(job)
 	printf("readoldbin filename\n") ;
     }
     else if ( strcmp(command,"redshift") == 0 ) {
-	printf("redshift z coordinates hubble-constant omega") ;
+	printf("redshift z coordinates hubble-constant omega lambda") ;
 	printf(" boundary period\n") ;
     }
     else if ( strcmp(command,"resetcolor") ==0 ||
