@@ -1,3 +1,7 @@
+Thu Apr 13 13:15:48 1995  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* zspace.c: new command to make redshift space particle plot.
+
 Wed Jan 11 13:09:36 1995  Tom Quinn  <trq@hermes.astro.washington.edu>
 
 	* Makefile.in (SRCS): added alloca.c so it will be included in the

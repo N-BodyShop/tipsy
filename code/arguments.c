@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1995/03/30 00:14:39  trq
+ * Revision 1.4  1995/04/25 17:59:42  trq
+ * New command: zspace
+ *
+ * Revision 1.3  1995/03/30  00:14:39  trq
  * Added "ruler" command.
  *
  * Revision 1.2  1995/03/02  23:27:18  trq
@@ -475,6 +478,9 @@ arguments(job)
     }
     else if ( strcmp(command,"zstar") == 0 ) {
 	printf("zstar plot_type min max (clip)\n") ;
+    }
+    else if ( strcmp(command,"zspace") == 0 ) {
+	printf("zspace box hubble-constant xcenter ycenter zcenter\n") ;
     }
     else if ( strcmp(command,"zrad") == 0 ) {
 	printf("zrad particle min max plot_type (clip)\n") ;

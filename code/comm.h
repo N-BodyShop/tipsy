@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/03/30 00:14:40  trq
+ * Revision 1.3  1995/04/25 17:59:43  trq
+ * New command: zspace
+ *
+ * Revision 1.2  1995/03/30  00:14:40  trq
  * Added "ruler" command.
  *
  * Revision 1.1.1.1  1995/01/10  22:57:21  trq
@@ -182,6 +185,7 @@ extern void zplot_pot() ;
 extern void zplot_rad() ;
 extern void zplot_star() ;
 extern void zoom_sub() ;
+extern void zspace() ;
 
 /* initialize command list here.  Create a new command by adding a new
 entry to this list and declaring it above. Also, do not forget to
@@ -379,6 +383,7 @@ struct comm c_list[] = {
      {"zpot",        zplot_pot,		1},
      {"zstar",       zplot_star,	1},
 
+     {"zspace",      zspace,		0},
      {"zrad",        zplot_rad,		1} } ;
 
 int ncomm = (sizeof(c_list)/sizeof(struct comm));
