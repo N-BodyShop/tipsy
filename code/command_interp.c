@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1.1.1.6.1  2000/07/07 03:27:54  nsk
+ * Revision 1.1.1.1.6.2  2000/07/13 01:19:34  nsk
+ * Fixed error in variable substitution--despite original declaration,
+ *   "job" in command_interp is not of length MAXCOMM.  Need to copy
+ *    values to new string instead.  (maf)
+ *
+ * Revision 1.1.1.1.6.1  2000/07/07  03:27:54  nsk
  * Implement variable substitution. allow macro execution without
  *   "macro" prefix.  (cm/maf)
  *
@@ -12,15 +17,14 @@
  * 
  */
 #include "defs.h"
+#include "fdefs.h"
 #include "comm.h"
-
-extern int sub_val_for_var(char job[]);
 
 void
 command_interp(job)
-    char job[MAXCOMM] ;
+    char *job ;
 {
-    char command[MAXCOMM],macro_job[MAXCOMM] ;
+    char jobcpy[MAXCOMM], command[MAXCOMM],macro_job[MAXCOMM] ;
     int i;
     struct macro_list *macro;
 
@@ -37,8 +41,8 @@ command_interp(job)
 	      /* don't replace for variable manipulation commands */
 	      if ((strcmp(command,"set") != 0) && 
 		  (strcmp(command,"delete") != 0)) {
-		if (sub_val_for_var(job)) 
-		  (*(c_list[i].funk))(job) ;
+		if (sub_val_for_var(job, jobcpy)) 
+		  (*(c_list[i].funk))(jobcpy) ;
 	      } else {
 		(*(c_list[i].funk))(job) ;
 	      }
@@ -53,8 +57,8 @@ command_interp(job)
     strcpy(macro_job,"macro ");
     for (macro=macros;macro != NULL;macro=macro->next) {
       if ( strcmp(macro->name,command) == 0) {
-	if (!sub_val_for_var(job)) return;
-	strcat(macro_job,job);
+	if (!sub_val_for_var(job, jobcpy)) return;
+	strcat(macro_job,jobcpy);
 	run_macro(macro_job);
 	return;
       }
