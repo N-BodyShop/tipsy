@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.23  2000/01/12 22:55:00  nsk
+ * Revision 1.24  2000/06/07 23:49:28  trq
+ * Added optional "mark" argument to the writebox command.
+ *
+ * Revision 1.23  2000/01/12  22:55:00  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
  *
@@ -505,7 +508,7 @@ arguments(job)
 	printf("writemacro macro-name macro-filename\n") ;
     }
     else if ( strcmp(command,"writemark") == 0 ) {
-	printf("writemark box filename\n") ;
+	printf("writemark box filename [mark]\n") ;
     }
     else if ( strcmp(command,"xall") == 0 ) {
 	printf("xall\n") ;
