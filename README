@@ -86,3 +86,15 @@ readascii run99.bin
 loadb 14
 xall
 
+-----------------------------------------------------
+Compiling FAQs:
+Q. When building the Tipsy binary it gives this error:
+
+rldefs.h:46:23: termcap.h: No such file or directory
+make[1]: *** [readline.o] Error 1
+make[1]: Leaving directory `/local/dana/tipsy-2.2.1/code/readline'
+make: *** [readline/libreadline.a] Error 2
+
+A. If you are on a RedHat linux box, you will need the
+libtermcap-devel RPM which includes the file "/usr/include/termcap.h".
+
