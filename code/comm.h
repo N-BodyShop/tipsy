@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.4  1995/06/06 17:47:50  trq
+ * Revision 1.5  1996/12/20 01:25:09  trq
+ * Added catbox command.
+ *
+ * Revision 1.4  1995/06/06  17:47:50  trq
  * dump_pixmap.c: Cleaned up declarations.
  *
  * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
@@ -60,6 +63,7 @@ extern void arraystat() ;
 extern void axesscale() ;
 extern void boxstat_sub() ;
 
+extern void catbox();
 extern void colorbar_label();
 extern void cconst_sub() ;
 extern void clearall() ;
@@ -211,6 +215,7 @@ struct comm c_list[] = {
      {"axesscale",   axesscale,		0},
      {"barlabel",    colorbar_label,	1},
      {"boxstat",     boxstat_sub,	0},
+     {"catbox",      catbox,		0},
      {"cconst",      cconst_sub,	0},
      {"clearall",    clearall,		1},
 

@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.6  1996/08/19 20:56:01  trq
+ * Revision 1.7  1996/12/20 01:25:10  trq
+ * Added catbox command.
+ *
+ * Revision 1.6  1996/08/19  20:56:01  trq
  * main.c, plot_all.c: allow use of pseudocolor visuals with depth >= 8.
  * nsktrq.c: include fdefs.h.
  *
@@ -53,6 +56,9 @@ PROTO(void, add_const_mult_vec, (Real *a,double constant, Real *b));
 PROTO(void, all_color, ());
 PROTO(void, arguments, (char *job));
 PROTO(void, array_color, ());
+PROTO(int, boxlist_alloc, (int box, int ngas, int ndark, int nstar));
+PROTO(void, boxlist_realloc, (int box));
+PROTO(void, box_cumulate, (int box));
 PROTO(void, calc_hneutral, (double temp, double density, double *hneutral_p,
 			     double *heneutral_p, double *heII_p));
 PROTO(double, calc_meanmwt, (double temp, double density));
@@ -117,6 +123,8 @@ PROTO(void, maxpos, (Real *xmax, Real *xmin));
 PROTO(void, meanmwt_func, ());
 PROTO(void, old2binary, (FILE *infile, FILE *outfile));
 PROTO(double, perp_distance, (Real *x1,Real *x2,Real *x3));
+PROTO(void, plane, (Real x1[MAXDIM], Real x2[MAXDIM], Real x3[MAXDIM],
+		    Real x4[MAXDIM], double constant[5])) ;
 PROTO(void, plot_all, (char *job));
 PROTO(void, plot_sub, (char *job));
 PROTO(void, pot_center, (Real *center, int box));
@@ -130,6 +138,7 @@ PROTO(void, rotate, (int direction,double angle));
 PROTO(void, setival, (int *a, int b));
 PROTO(void, setsize, (int box, Real *xmax, Real *xmin));
 PROTO(void, setvec, (Real *a, Real *b));
+PROTO(void, sift, (double constant[5], int box));
 PROTO(int, splinit, (float *x,float *y,float *k,int n,double q2b,double q2e));
 PROTO(void, starform_func, ());
 PROTO(void, star_history, (char *job));

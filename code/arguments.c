@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.9  1996/06/29 00:17:00  trq
+ * Revision 1.10  1996/12/20 01:25:08  trq
+ * Added catbox command.
+ *
+ * Revision 1.9  1996/06/29  00:17:00  trq
  * Changed loadbinary to load subboxes.
  *
  * Revision 1.8  1996/03/05  00:04:23  nsk
@@ -128,6 +131,9 @@ arguments(job)
     }
     else if ( strcmp(command,"boxstat") == 0 ) {
 	printf("boxstat box-number particle\n") ;
+    }
+    else if ( strcmp(command,"catbox") == 0 ) {
+	printf("catbox box1 box2 box3\n") ;
     }
     else if ( strcmp(command,"clearall") == 0 ) {
 	printf("clearall\n") ;

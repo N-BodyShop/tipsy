@@ -1,4 +1,7 @@
 #include "defs.h"
+#include "fdefs.h"
+
+void
 sift(constant,box)
     double constant[5] ;
     int box ;

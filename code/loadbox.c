@@ -1,7 +1,10 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.2  1996/04/24 23:40:35  trq
+ * Revision 1.3  1996/12/20 01:25:10  trq
+ * Added catbox command.
+ *
+ * Revision 1.2  1996/04/24  23:40:35  trq
  * balls_loaded variable to keep track of balls.
  * Fixed smoothing length bug.
  *
@@ -16,12 +19,8 @@
  * 
  */
 #include "defs.h"
+#include "fdefs.h"
 #include <stdlib.h>
-
-void plane();
-void sift();
-void add_const_mult_vec();
-void cross_product();
 
 void
 loadbox(box)
@@ -31,8 +30,6 @@ loadbox(box)
     double constant[5] ;
     double d ;
     double upper,lower ;
-    Real ang_mom[MAXDIM] ;
-    double distance() ;
     struct gas_particle *gp, *lastgp ;
     struct dark_particle *dp, *lastdp ;
     struct star_particle *sp, *lastsp ;
@@ -41,67 +38,8 @@ loadbox(box)
     lastgp = gas_particles + header.nsph ;
     lastdp = dark_particles + header.ndark ;
     lastsp = star_particles + header.nstar ;
-    if(boxlist[box].gpi != NULL) free(boxlist[box].gpi);
-    if(boxlist[box].gp != NULL) free(boxlist[box].gp);
-    if(header.nsph != 0) {
-	boxlist[box].gpi =
-	  (int *)malloc(header.nsph*sizeof(*boxlist[box].gpi));
-	if(boxlist[box].gpi == NULL) {
-	    printf("<sorry, no memory for gas particles in box, %s>\n",title) ;
-	    return ;
-	}
-	boxlist[box].gp = (struct gas_particle **)
-			    malloc(header.nsph*sizeof(*boxlist[box].gp));
-	if(boxlist[box].gp == NULL) {
-	    printf("<sorry, no memory for gas particles in box, %s>\n",title) ;
-	    return ;
-	}
-    }
-    else {
-	boxlist[box].gpi = NULL;
-	boxlist[box].gp = NULL;
-    }
-    
-    if(boxlist[box].dpi != NULL) free(boxlist[box].dpi);
-    if(boxlist[box].dp != NULL) free(boxlist[box].dp);
-    if(header.ndark != 0) {
-	boxlist[box].dpi = (int *)
-	                     malloc(header.ndark*sizeof(*boxlist[box].dpi));
-	if(boxlist[box].dpi == NULL) {
-	    printf("<sorry, no memory for dark particles in box, %s>\n",title) ;
-	    return ;
-	}
-	boxlist[box].dp = (struct dark_particle **)
-			    malloc(header.ndark*sizeof(*boxlist[box].dp));
-	if(boxlist[box].dp == NULL) {
-	    printf("<sorry, no memory for dark particles in box, %s>\n",title) ;
-	    return ;
-	}
-    }
-    else {
-	boxlist[box].dpi = NULL;
-	boxlist[box].dp = NULL;
-    }
-    if(boxlist[box].spi != NULL) free(boxlist[box].spi);
-    if(boxlist[box].sp != NULL) free(boxlist[box].sp);
-    if(header.nstar != 0) {
-	boxlist[box].spi =
-	  (int *)malloc(header.nstar*sizeof(*boxlist[box].spi));
-	if(boxlist[box].spi == NULL) {
-	    printf("<sorry, no memory for star particles in box, %s>\n",title) ;
-	    return ;
-	}
-	boxlist[box].sp = (struct star_particle **)
-			    malloc(header.nstar*sizeof(*boxlist[box].sp));
-	if(boxlist[box].sp == NULL) {
-	    printf("<sorry, no memory for star particles in box, %s>\n",title) ;
-	    return ;
-	}
-    }
-    else {
-	boxlist[box].spi = NULL;
-	boxlist[box].sp = NULL;
-    }
+    if(boxlist_alloc(box, header.nsph, header.ndark, header.nstar) == 0)
+      return;
     if(box == 0) {
 	lower = constant[3] ;
 	upper = constant[4] ;
@@ -165,6 +103,103 @@ loadbox(box)
     sift(constant,box) ;
     plane(boxes[box].x6,boxes[box].x5,boxes[box].x3,boxes[box].x1,constant) ;
     sift(constant,box) ;
+    boxlist_realloc(box);
+    boxes_loaded[box] = LOADED ;
+
+    boxes[box].size = 0.0 ;
+    d = distance(boxes[box].x1, boxes[box].x2) ;
+    boxes[box].volume = d ;
+    boxes[box].size = max(boxes[box].size, d) ;
+    d = distance(boxes[box].x1, boxes[box].x3) ;
+    boxes[box].volume *= d ;
+    boxes[box].size = max(boxes[box].size, d) ;
+    d = distance(boxes[box].x5, boxes[box].x3) ;
+    boxes[box].volume *= d ;
+    boxes[box].size = max(boxes[box].size, d) ;
+    for (i = 0 ; i < header.ndim ; i++ ) {
+	boxes[box].center[i] = (boxes[box].x1[i] +boxes[box].x6[i]) / 2.0 ;
+    }
+    box_cumulate(box);
+}
+
+/*
+ * Allocate memory for boxlists.
+ */
+int
+boxlist_alloc(box, ngas, ndark, nstar)
+     int box;
+     int ngas;
+     int ndark;
+     int nstar;
+{
+    if(boxlist[box].gpi != NULL) free(boxlist[box].gpi);
+    if(boxlist[box].gp != NULL) free(boxlist[box].gp);
+    if(ngas != 0) {
+	boxlist[box].gpi =
+	  (int *)malloc(ngas*sizeof(*boxlist[box].gpi));
+	if(boxlist[box].gpi == NULL) {
+	    printf("<sorry, no memory for gas particles in box, %s>\n",title) ;
+	    return 0;
+	}
+	boxlist[box].gp = (struct gas_particle **)
+			    malloc(ngas*sizeof(*boxlist[box].gp));
+	if(boxlist[box].gp == NULL) {
+	    printf("<sorry, no memory for gas particles in box, %s>\n",title) ;
+	    return 0;
+	}
+    }
+    else {
+	boxlist[box].gpi = NULL;
+	boxlist[box].gp = NULL;
+    }
+    
+    if(boxlist[box].dpi != NULL) free(boxlist[box].dpi);
+    if(boxlist[box].dp != NULL) free(boxlist[box].dp);
+    if(ndark != 0) {
+	boxlist[box].dpi = (int *)
+	                     malloc(ndark*sizeof(*boxlist[box].dpi));
+	if(boxlist[box].dpi == NULL) {
+	    printf("<sorry, no memory for dark particles in box, %s>\n",title) ;
+	    return 0;
+	}
+	boxlist[box].dp = (struct dark_particle **)
+			    malloc(ndark*sizeof(*boxlist[box].dp));
+	if(boxlist[box].dp == NULL) {
+	    printf("<sorry, no memory for dark particles in box, %s>\n",title) ;
+	    return 0;
+	}
+    }
+    else {
+	boxlist[box].dpi = NULL;
+	boxlist[box].dp = NULL;
+    }
+    if(boxlist[box].spi != NULL) free(boxlist[box].spi);
+    if(boxlist[box].sp != NULL) free(boxlist[box].sp);
+    if(nstar != 0) {
+	boxlist[box].spi =
+	  (int *)malloc(nstar*sizeof(*boxlist[box].spi));
+	if(boxlist[box].spi == NULL) {
+	    printf("<sorry, no memory for star particles in box, %s>\n",title) ;
+	    return 0;
+	}
+	boxlist[box].sp = (struct star_particle **)
+			    malloc(nstar*sizeof(*boxlist[box].sp));
+	if(boxlist[box].sp == NULL) {
+	    printf("<sorry, no memory for star particles in box, %s>\n",title) ;
+	    return 0;
+	}
+    }
+    else {
+	boxlist[box].spi = NULL;
+	boxlist[box].sp = NULL;
+    }
+    return 1;
+}
+
+void
+ boxlist_realloc(box)
+     int box;
+{
     if(boxlist[box].gpi) {
 	boxlist[box].gpi = (int *)realloc(boxlist[box].gpi,
 			    boxlist[box].ngas*sizeof(*boxlist[box].gpi));
@@ -183,21 +218,20 @@ loadbox(box)
 	boxlist[box].sp = (struct star_particle **)realloc(boxlist[box].sp,
 			    boxlist[box].nstar*sizeof(*boxlist[box].sp));
     }
-    boxes_loaded[box] = LOADED ;
+}
+/*
+ * Find cumulative quantities for a box.
+ */
+void
+box_cumulate(box)
+     int box;
+{
+  int i;
+  struct gas_particle *gp;
+  struct dark_particle *dp;
+  struct star_particle *sp;
+    Real ang_mom[MAXDIM] ;
 
-    boxes[box].size = 0.0 ;
-    d = distance(boxes[box].x1, boxes[box].x2) ;
-    boxes[box].volume = d ;
-    boxes[box].size = max(boxes[box].size, d) ;
-    d = distance(boxes[box].x1, boxes[box].x3) ;
-    boxes[box].volume *= d ;
-    boxes[box].size = max(boxes[box].size, d) ;
-    d = distance(boxes[box].x5, boxes[box].x3) ;
-    boxes[box].volume *= d ;
-    boxes[box].size = max(boxes[box].size, d) ;
-    for (i = 0 ; i < header.ndim ; i++ ) {
-	boxes[box].center[i] = (boxes[box].x1[i] +boxes[box].x6[i]) / 2.0 ;
-    }
     boxes[box].gas_mass = boxes[box].dark_mass = boxes[box].star_mass =
 	    boxes[box].total_mass = 0.0 ;
     for (i = 0 ; i < header.ndim ; i++) {
