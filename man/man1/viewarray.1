@@ -2,7 +2,50 @@
 .SH NAME
 viewarray \- plot particles according to array values
 .SH SYNOPSIS
+.B viewarray
+.I plot_type mapname min max [ clip ]
 .SH ALIASES
 .B varray
 .SH DESCRIPTION
+.B viewarray
+plots particles colored according to the value read in by the
+.B readarray
+command.
+.I Plot_type
+is one of
+.I dark,
+.I gas,
+.I star,
+.I all,
+.I logdark,
+.I loggas,
+.I logstar,
+or
+.I logall.
+If the "log" versions of the
+.I plot_type
+are used, the particles are colored by the log (base 10) of the array
+value.
+.I Mapname
+is the name of a color map to use, either
+.I wrbb
+.I rainbow
+.I reverse_rainbow
+or
+.I default.
+.I Min
+and
+.I max
+are the array values for the minimum and maximum colors to be
+plotted.  If
+.I clip
+is specified, either as
+.I cliplo,
+.I clipup,
+or
+.I clipboth,
+particles are not plotted at all if they lie outside the color range,
+below the minimum, or above the maximum, or either, respectively.
 .SH SEE ALSO
+.BR markarray (1),
+.BR readarray (1)
