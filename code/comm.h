@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.14  1999/08/25 22:05:25  nsk
+ * Revision 1.14.4.1  2000/06/22 21:26:12  nsk
+ * Added setcolormap command. (maf)
+ *
+ * Revision 1.14  1999/08/25  22:05:25  nsk
  * added center to boxstat, checks for periodic in smooth, prints out
  * cooling stuff, vista makes plots
  *
@@ -159,6 +162,7 @@ extern void ruler() ;
 extern void run_macro() ;
 extern void scale_sub() ;
 extern void setbox_sub() ;
+extern void setcolormap_sub() ;
 extern void setsphere_sub() ;
 
 extern void shell_sub();
@@ -351,6 +355,8 @@ struct comm c_list[] = {
      {"scale",	     scale_sub,		0},
      {"sdark",       showdark_sub,	0},
      {"setbox",      setbox_sub,	0},
+     {"setc",        setcolormap_sub,	1},
+     {"setcolormap", setcolormap_sub,	1},
      {"setsphere",   setsphere_sub,	0},
      {"sgas",        showgas_sub,	0},
 

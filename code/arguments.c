@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.24  2000/06/07 23:49:28  trq
+ * Revision 1.24.2.1  2000/06/22 21:24:54  nsk
+ * Added setcolormap command. (maf)
+ *
+ * Revision 1.24  2000/06/07  23:49:28  trq
  * Added optional "mark" argument to the writebox command.
  *
  * Revision 1.23  2000/01/12  22:55:00  nsk
@@ -373,6 +376,10 @@ arguments(job)
     }
     else if ( strcmp(command,"setbox") == 0 ) {
       printf("setbox box xcenter ycenter zcenter xradius yradius zradius\n");
+    }
+    else if ( strcmp(command,"setcolormap") == 0 ||
+	    strcmp(command,"setc") == 0 ) {
+	printf("setcolormap colormapname\n") ;
     }
     else if ( strcmp(command,"setsphere") == 0 ) {
 	printf("setsphere box xcenter ycenter zcenter radius\n") ;
