@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1996/02/16 17:19:25  trq
+ * Revision 1.3  1998/02/18 22:53:06  trq
+ * Always call canvas_resize_proc() to get new window height and width.
+ *
+ * Revision 1.2  1996/02/16  17:19:25  trq
  * Fixed bug in window for non-8 bit displays.
  * Added optional size arguments to the window command.
  *
@@ -169,8 +172,7 @@ window(job)
 					    mask, &win_atts);
 		  }
 	      }
-	    else
-	      canvas_resize_proc(canvases[winnum-1], &event, &params,
+	    canvas_resize_proc(canvases[winnum-1], &event, &params,
 				 &nparams);
 	    if(!popped[winnum-1])
 	      {
