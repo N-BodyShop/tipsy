@@ -290,6 +290,8 @@ profile(job)
 		}
 	    }
 	    for (i = 0 ;i < number_bins ;i++) {
+		if(mass[i] == 0) 
+		    continue;
 		if (strcmp(particle_type,"gas") == 0 || 
 			strcmp(particle_type,"baryon") ==0 ||
 			strcmp(particle_type,"all") == 0) {
@@ -306,8 +308,12 @@ profile(job)
 		}
 		vel_radial[i] /= mass[i] ;
 		vel_radial_sigma[i] /= mass[i] ;
-		vel_radial_sigma[i] = sqrt(vel_radial_sigma[i] - vel_radial[i] *
-			vel_radial[i]) ;
+		if(vel_radial_sigma[i] > vel_radial[i]*vel_radial[i])
+		    vel_radial_sigma[i] = sqrt(vel_radial_sigma[i]
+					       - vel_radial[i]*vel_radial[i]) ;
+		else
+		    vel_radial_sigma[i] = 0.0;
+		    
 		for (j = 0 ;j < MAXDIM ; j++) {
 		    angular_mom[i][j] /= mass[i] ;
 		}
@@ -426,6 +432,8 @@ profile(job)
 		}
 	    }
 	    for (i = 0 ;i < number_bins ;i++) {
+		if(mass[i] == 0.0)
+		    continue;
 		vel_tang_sigma[i] = sqrt(vel_tang_sigma[i] / mass[i]) ;
 	    }
 	    hardfile.ptr = fopen(hardfile.name,"w") ;
@@ -469,8 +477,11 @@ profile(job)
 		}
 		vel = sqrt(mass_r / radius) ;
 		ang = sqrt(dot_product(&angular_mom[i][0],&angular_mom[i][0])) ;
-		ang_theta = 180.*acos(angular_mom[i][2]/ang)/PI ;
-		ang_phi = 180.*atan(angular_mom[i][0]/angular_mom[i][1])/PI ;
+		if(ang > 0.0)
+		    ang_theta = 180.*acos(angular_mom[i][2]/ang)/PI ;
+		else
+		    ang_theta = 0.0;
+		ang_phi = 180.*atan2(angular_mom[i][0],angular_mom[i][1])/PI ;
 		vel_circ = ang / radius_mean ;
 		fprintf(hardfile.ptr,"%g %d %g %g %g %g %g %g %g %g %g %g",
 			radius,number[i],rho,mass_r,vel,vel_radial[i],
