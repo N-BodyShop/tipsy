@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1995/02/17 21:58:49  trq
+ * Revision 1.4  1995/03/02 17:30:29  nsk
+ * changed absorption cross section tb be done by integral
+ * added optical depth output and fixed bug in absorb
+ * added stellar mass plot to view_star
+ *
+ * Revision 1.3  1995/02/17  21:58:49  trq
  * Vista: changed ssprintf -> sprintf
  *
  * heatcool: fixed some comments.
@@ -825,7 +830,7 @@ vista(job)
 		for(i = 0; i < vista_size; i++){
 		    for(j = 0; j < vista_size; j++){
 			if(quantity[i][j] > 0. ){
-			    pixel = log10((double)(density[i][j]));
+			    pixel = log10((double)(quantity[i][j]));
 			}
 			else{
 			    pixel = low ;
@@ -840,11 +845,11 @@ vista(job)
 			size_pixel,low,high,name1) ;
                 sprintf(name1,"%s.temp",name) ;
                 low = 0.0 ;
-                high = 1.e10 ;
+                high = 10.0 ;
 		for(i = 0; i < vista_size; i++){
 		    for(j = 0; j < vista_size; j++){
 			if(quantity2[i][j] > 0. ){
-			    pixel = log10((double)(density[i][j]));
+			    pixel = log10((double)(quantity2[i][j]));
 			}
 			else{
 			    pixel = low ;

@@ -1,7 +1,12 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:22  trq
- * Initial revision
+ * Revision 1.2  1995/03/02 17:30:22  nsk
+ * changed absorption cross section tb be done by integral
+ * added optical depth output and fixed bug in absorb
+ * added stellar mass plot to view_star
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:23  trq
+ * Import to CVS
  *
  * Revision 2.2  94/04/20  08:14:47  trq
  * rationalized units.
@@ -25,6 +30,14 @@ cconst_sub(job)
 	cooling_loaded = NO ;
 	time_unit = sqrt(pow(kpcunit*KPCCM, 3.0)/(GCGS*msolunit*MSOLG));
 	time_unit /= GYRSEC;
+	if(jnu21 > 0.0){
+	    ionize() ;
+	}
+	else{
+	    gp0_H = 0.0 ;
+	    gp0_He = 0.0 ;
+	    gp0_Hep = 0.0 ;
+	}
 	lum_loaded = YES;
     }
     else {

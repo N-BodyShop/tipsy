@@ -1,7 +1,12 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:37  trq
- * Initial revision
+ * Revision 1.2  1995/03/02 17:30:21  nsk
+ * changed absorption cross section tb be done by integral
+ * added optical depth output and fixed bug in absorb
+ * added stellar mass plot to view_star
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:38  trq
+ * Import to CVS
  *
  * Revision 2.15  1994/11/01  00:35:27  nsk
  * added resolution column
@@ -86,6 +91,7 @@ absorb(job)
     Real *vel ;
     Real *temp ;
     Real *res ;
+    Real tau ;
     int plot_type;
     int i,j,k ;
     double part_pos[MAXDIM] ;
@@ -322,39 +328,45 @@ absorb(job)
 	zbox_max = -HUGE ;
 	plane(&box_coord[0][0],&box_coord[1][0],&box_coord[2][0],
 		&box_coord[4][0],constant);
-	zbox = (constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
-	if(zbox <= zmax && zbox >= zmin){
-	    zbox_min = min(zbox, zbox_min) ;
-	    zbox_max = max(zbox, zbox_max) ;
-	}
-	zbox = (constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
-	if(zbox <= zmax && zbox >= zmin){
-	    zbox_min = min(zbox, zbox_min) ;
-	    zbox_max = max(zbox, zbox_max) ;
-	}
+        if(constant[2] != 0.0){
+	    zbox=(constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
+	    if(zbox <= zmax && zbox >= zmin){
+		zbox_min = min(zbox, zbox_min) ;
+		zbox_max = max(zbox, zbox_max) ;
+	    }
+	    zbox=(constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
+	    if(zbox <= zmax && zbox >= zmin){
+		zbox_min = min(zbox, zbox_min) ;
+		zbox_max = max(zbox, zbox_max) ;
+	    }
+        }
 	plane(&box_coord[0][0],&box_coord[2][0],&box_coord[4][0],
 		&box_coord[5][0],constant);
-	zbox = (constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
-	if(zbox <= zmax && zbox >= zmin){
-	    zbox_min = min(zbox, zbox_min) ;
-	    zbox_max = max(zbox, zbox_max) ;
-	}
-	zbox = (constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
-	if(zbox <= zmax && zbox >= zmin){
-	    zbox_min = min(zbox, zbox_min) ;
-	    zbox_max = max(zbox, zbox_max) ;
+        if(constant[2] != 0.0){
+	    zbox=(constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
+	    if(zbox <= zmax && zbox >= zmin){
+		zbox_min = min(zbox, zbox_min) ;
+		zbox_max = max(zbox, zbox_max) ;
+	    }
+	    zbox=(constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
+	    if(zbox <= zmax && zbox >= zmin){
+		zbox_min = min(zbox, zbox_min) ;
+		zbox_max = max(zbox, zbox_max) ;
+	    }
 	}
 	plane(&box_coord[5][0],&box_coord[4][0],&box_coord[2][0],
 		&box_coord[0][0],constant);
-	zbox = (constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
-	if(zbox <= zmax && zbox >= zmin){
-	    zbox_min = min(zbox, zbox_min) ;
-	    zbox_max = max(zbox, zbox_max) ;
-	}
-	zbox = (constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
-	if(zbox <= zmax && zbox >= zmin){
-	    zbox_min = min(zbox, zbox_min) ;
-	    zbox_max = max(zbox, zbox_max) ;
+        if(constant[2] != 0.0){
+	    zbox=(constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
+	    if(zbox <= zmax && zbox >= zmin){
+		zbox_min = min(zbox, zbox_min) ;
+		zbox_max = max(zbox, zbox_max) ;
+	    }
+	    zbox=(constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
+	    if(zbox <= zmax && zbox >= zmin){
+		zbox_min = min(zbox, zbox_min) ;
+		zbox_max = max(zbox, zbox_max) ;
+	    }
 	}
 	bin_box_min = floor((zbox_min - zmin)/bin_size) ;
 	bin_box_max = floor((zbox_max - zmin)/bin_size) ;
@@ -746,10 +758,11 @@ absorb(job)
 	    }
 	}
 	for(i = 0; i < nvbin; i++){
-	    vbins[i] = exp(-LYCS*vbins[i]/vbin_size);
+	    tau=LYCS*vbins[i]/vbin_size ;
+	    vbins[i] = exp(-tau);
 	    vbins_t[i] = exp(-LYCS*vbins_t[i]/vbin_size);
-	    fprintf(fp, "%g %g %g\n", vmin + (i+0.5)*vbin_size,
-		    vbins[i],vbins_t[i]);
+	    fprintf(fp, "%g %g %g %g\n", vmin + (i+0.5)*vbin_size,
+		    vbins[i],vbins_t[i],tau) ;
 	}
 	fclose(fp);
 	free(vbins);

@@ -1,8 +1,13 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:32  trq
- * Initial revision
+ * Revision 1.2  1995/03/02 17:30:27  nsk
+ * changed absorption cross section tb be done by integral
+ * added optical depth output and fixed bug in absorb
+ * added stellar mass plot to view_star
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:33  trq
+ * Import to CVS
  *
  * Revision 2.3  94/04/20  08:46:20  trq
  * Added title variable.
@@ -166,6 +171,13 @@ view_star(job)
 		    sp = boxlist[active_box].sp[i] ;
 		    particle_color[i] = (int)(color_slope * 
 			    log10(header.time-(sp->tform)) + color_offset +0.5);
+		}
+	    }
+	    else if(strcmp(type,"logmass") == 0){
+		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
+		    sp = boxlist[active_box].sp[i] ;
+		    particle_color[i] = (int)(color_slope * 
+			    log10((sp->mass)) + color_offset +0.5);
 		}
 	    }
 	    else {

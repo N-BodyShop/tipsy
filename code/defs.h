@@ -1,7 +1,12 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:20  trq
- * Initial revision
+ * Revision 1.2  1995/03/02 17:30:23  nsk
+ * changed absorption cross section tb be done by integral
+ * added optical depth output and fixed bug in absorb
+ * added stellar mass plot to view_star
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:21  trq
+ * Import to CVS
  *
  * Revision 2.17  1994/11/01  19:19:21  nsk
  * removed vistasize and xraysize
@@ -409,6 +414,9 @@ extern double *xray_lum ;
 extern int number_bands ;
 extern double deldtempi ;
 extern int number_xray_data ;
+extern double gp0_H ;
+extern double gp0_He ;
+extern double gp0_Hep ;
 
 extern unsigned char wrbb_red[256] ;
 extern unsigned char wrbb_green[256] ;
