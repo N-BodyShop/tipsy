@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.6  1999/04/28 22:44:55  trq
+ * Revision 1.6.4.1  2000/07/07 03:25:52  nsk
+ * Add print statements for xverbose mode (preliminary version). (maf)
+ *
+ * Revision 1.6  1999/04/28  22:44:55  trq
  * Added limited support for truecolor visuals.
  *
  * Revision 1.5  1996/08/19  22:53:31  trq
@@ -151,6 +154,15 @@ void rotate_lr();
 void rotate_cc();
 void zoom_window();
 
+void zoom_report_down();
+void zoom_report_up();
+void ud_report_down();
+void ud_report_up();
+void lr_report_down();
+void lr_report_up();
+void cc_report_down();
+void cc_report_up();
+
 static char vpTranslations[] = 
   "<Expose>:	RedrawViewport() \n\
    <ConfigureNotify>:	canvas_resize_proc() \n\
@@ -224,6 +236,8 @@ int argc;
     Widget left_label;
     XTextProperty canvas_prop;
     char *canvas_name = "tipsy_canvas";
+
+    float x = 33.; /*test*/
 
 #ifdef __ksr__
     unsigned int plane_masks[1];
@@ -383,6 +397,10 @@ int argc;
 					      box, args, 2);
 	XtAddCallback(zoomscrollbar, XtNjumpProc, zoom_scroll,
 		      (XtPointer) zoomscrollbar);
+	XtAddEventHandler(zoomscrollbar, ButtonPressMask, 
+			  FALSE, zoom_report_down, (XtPointer) &x); /*test*/
+	XtAddEventHandler(zoomscrollbar, ButtonReleaseMask, 
+			  FALSE, zoom_report_up, (XtPointer) &x); /*test*/
 
 	XtSetArg( args[0], XtNlabel, "unzoom" );
 	XtSetArg( args[1], XtNfromHoriz, zoomscrollbar);
@@ -412,6 +430,10 @@ int argc;
 	XtSetArg( args[1], XtNlabel, "Up" );
 	label = XtCreateManagedWidget( "label", labelWidgetClass,
 					 box, args, 2);
+	XtAddEventHandler(udscrollbar, ButtonPressMask, 
+			  FALSE, ud_report_down, (XtPointer) &x); /*test*/
+	XtAddEventHandler(udscrollbar, ButtonReleaseMask, 
+			  FALSE, ud_report_up, (XtPointer) &x); /*test*/
 
 	XtSetArg( args[0], XtNfromVert, down_label);
 	XtSetArg( args[1], XtNlabel, "Left" );
@@ -429,6 +451,10 @@ int argc;
 	XtSetArg( args[2], XtNfromVert, down_label);
 	label = XtCreateManagedWidget( "label", labelWidgetClass,
 					 box, args, 3);
+	XtAddEventHandler(lrscrollbar, ButtonPressMask, 
+			  FALSE, lr_report_down, (XtPointer) &x); /*test*/
+	XtAddEventHandler(lrscrollbar, ButtonReleaseMask, 
+			  FALSE, lr_report_up, (XtPointer) &x); /*test*/
 
 	XtSetArg( args[0], XtNfromVert, left_label);
 	XtSetArg( args[1], XtNlabel, "Cntr" );
@@ -446,6 +472,10 @@ int argc;
 	XtSetArg( args[2], XtNfromVert, left_label);
 	label = XtCreateManagedWidget( "label", labelWidgetClass,
 					 box, args, 3);
+	XtAddEventHandler(ccscrollbar, ButtonPressMask, 
+			  FALSE, cc_report_down, (XtPointer) &x); /*test*/
+	XtAddEventHandler(ccscrollbar, ButtonReleaseMask, 
+			  FALSE, cc_report_up, (XtPointer) &x); /*test*/
 
 	XtRealizeWidget(toplevel);
 	currentview_xid = XtWindow(canvas);
@@ -730,6 +760,7 @@ ZoomIn(viewport, event, params, n_params)
 	zoom_window((int)x,(int)y) ;
 	plot_sub(NULL) ;
         draw_label();
+	if (xverbose) printf("Zooming in by factor %f\n", (float) ZOOMSCALE);/*test*/
 	if(make_box_flag == 5){
 	    make_box_flag = 4 ;
 	}
@@ -765,6 +796,7 @@ ZoomOut(viewport, event, params, n_params)
         reset_zoom_scroll();
 	zoom_window((int) x,(int) y) ;
 	plot_sub(NULL) ;
+	if (xverbose) printf("Zooming out by factor %f\n", (float) ZOOMSCALE);/*test*/
         draw_label();
 	if(make_box_flag == 5){
 	    make_box_flag = 4 ;
@@ -798,6 +830,7 @@ Pan(viewport, event, params, n_params)
     zoom_window(x,y) ;
     plot_sub(NULL) ;
     draw_label();
+    if (xverbose) printf("Panning to %f %f\n", (float) x, (float)y);/*test*/
     if(make_box_flag == 5){
       make_box_flag = 4 ;
     }
