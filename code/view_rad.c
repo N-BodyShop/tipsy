@@ -88,7 +88,7 @@ view_rad(job)
 	    plot_sub(job) ;
 	}
 	else {
-	    printf("<inconsistent input for a radial plot, %s>\n",title) ;
+	    input_error(command) ;
 	}
     }
     else {
