@@ -105,29 +105,29 @@ profile(job)
 	    if(center_box == -1)
 	      pot_center(center, box);
 	    if (strcmp(particle_type,"dark") == 0){
-	      if(center_box != -1)
-		setvec(center,boxes[center_box].dark_com) ;
+		if(center_box != -1)
+		    setvec(center,boxes[center_box].dark_com) ;
 		setvec(center_vel,boxes[box].dark_com_vel) ;
 		setvec(center_angular_mom,boxes[box].dark_angular_mom) ;
 	    }
 	    else if (strcmp(particle_type,"star") == 0){
-	      if(center_box != -1)
-		setvec(center,boxes[center_box].star_com) ;
+		if(center_box != -1)
+		    setvec(center,boxes[center_box].star_com) ;
 		setvec(center_vel,boxes[box].star_com_vel) ;
 		setvec(center_angular_mom,boxes[box].star_angular_mom) ;
 		color_filter = BBAND ;
 	    }
 	    else if (strcmp(particle_type,"gas") == 0){
-	      if(center_box != -1)
-		setvec(center,boxes[center_box].gas_com) ;
+		if(center_box != -1)
+		    setvec(center,boxes[center_box].gas_com) ;
 		setvec(center_vel,boxes[box].gas_com_vel) ;
 		setvec(center_angular_mom,boxes[box].gas_angular_mom) ;
 	    }
 	    else if (strcmp(particle_type,"baryon") == 0){
-	      if(center_box != -1)
-		mass_add_vec(center,boxes[center_box].gas_com,
-			boxes[center_box].gas_mass, 
-			boxes[center_box].star_com,boxes[center_box].star_mass) ;
+		if(center_box != -1)
+		    mass_add_vec(center,boxes[center_box].gas_com,
+				 boxes[center_box].gas_mass, 
+				 boxes[center_box].star_com,boxes[center_box].star_mass) ;
 		mass_add_vec(center_vel,boxes[box].gas_com_vel,
 			boxes[box].gas_mass,
 			boxes[box].star_com_vel, 
@@ -139,8 +139,8 @@ profile(job)
 		color_filter = VBAND ;
 	    }
 	    else{
-	      if(center_box != -1)
-		setvec(center,boxes[center_box].total_com) ;
+		if(center_box != -1)
+		    setvec(center,boxes[center_box].total_com) ;
 		setvec(center_vel,boxes[box].total_com_vel) ;
 		setvec(center_angular_mom,boxes[box].total_angular_mom) ;
 	    }
