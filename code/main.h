@@ -1,7 +1,10 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.14.2.2  2000/07/07 03:25:27  nsk
+ * Revision 1.14.2.3  2000/07/13 01:24:07  nsk
+ * Added "exposed" boolean.   (maf)
+ *
+ * Revision 1.14.2.2  2000/07/07  03:25:27  nsk
  * Initialize variable list to null.  (cm/maf)
  * Added ismanifest variable.   (maf)
  * Added xverbose variable.   (maf)
@@ -205,6 +208,7 @@ int color_type = ALL ;
 int vector_plot_type = VELOCITY ;
 int log_type = LIN ;
 int file_type = SPH ;
+int exposed = OFF;
 
 double rot_matrix[MAXDIM][MAXDIM] = {
     {1.0,0.0,0.0},
