@@ -1,4 +1,7 @@
 #include "defs.h"
+#include "fdefs.h"
+
+void
 make_ell_matrix()
 {
     double phi_rad ;

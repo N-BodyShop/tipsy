@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.11  1998/06/11 20:28:54  trq
+ * Revision 1.12  1998/11/26 01:06:20  trq
+ * Updated function declarations.
+ *
+ * Revision 1.11  1998/06/11  20:28:54  trq
  * Recover from read errors more gracefully.
  *
  * Revision 1.10  1997/12/06  22:00:55  trq
@@ -111,6 +114,8 @@ PROTO(double, heatcool, (double temp, double density));
 PROTO(void, hneutral_func, ());
 PROTO(void, ikernel_load, ());
 PROTO(void, input_error, (char *command));
+PROTO(void, jacobi, (double (*a)[4], int n, double *d, double (*v)[4],
+		     int *nrot));
 PROTO(void, load_color_table, ());
 PROTO(void, loadall, ());
 PROTO(int, loadbinary, (FILE *infile, double time));
@@ -128,6 +133,7 @@ PROTO(void, load_form, () );
 PROTO(void, load_visc, ());
      
 PROTO(void, magnitude_color, ());
+PROTO(void, make_ell_matrix, ());
 PROTO(void, mass_add_vec, (Real *a, Real *b, double mass_b, Real *c,
 			   double mass_c));
 PROTO(void, matrix_matrix_mult, (double a[MAXDIM][MAXDIM],

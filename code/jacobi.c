@@ -1,6 +1,7 @@
 #define ROTATE(a,i,j,k,l) g=a[i][j];h=a[k][l];a[i][j]=g-s*(h+g*tau);\
 	a[k][l]=h+s*(g-h*tau);
 #include "defs.h"
+#include "fdefs.h"
 
 void
 jacobi(a,n,d,v,nrot)
