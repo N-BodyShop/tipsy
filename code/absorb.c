@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.22  2005/03/18 13:04:01  trq
+ * Eric Agol added damping wings.
+ *
  * Revision 1.21  2004/07/20 21:55:27  trq
  * Added "STARM" plot, similar to DARKM plot.
  *
@@ -237,6 +240,8 @@ absorb(job)
     double bsys_He ;
     double z ;
     double b ;
+/* Eric Agol added 7-19-2004: */
+    double aonpi;
     double vbin_size ;
     double vlower ;
     double vupper ;
@@ -1001,6 +1006,7 @@ absorb(job)
 			    if(comove == YES){
 				vkernel /= PI*hsmooth ;
 			    }
+			    
 			    mass_tot[bin] += kernel*sp->mass ;
 			    vel_tot[bin] += kernel*(sp->mass)*vsys*vz ;
 			    if(comove == YES){
@@ -1483,6 +1489,13 @@ absorb(job)
 		t_interp = (temp_HI[ku] - temp_HI[kl])*(i + (((double)(j))+0.5)/
 			((double)(SUBBIN)) - (k + 0.5)) + temp_HI[kl] ;
 		b = bsys_H*sqrt(t_interp) ;
+/* Eric Agol added 7-19-2004
+   This line defines the "a-parameter" of the Voigt function:
+   H(a,x) = a/Pi \int^{-\infty}^\infty e^{-y^2}/(a^2+(u-y)^2) dy 
+   For hydrogen, a=alpha^3(2^10/3^9)(c/b), where alpha is the
+   fine structure constant.  I've defined the parameter aonpi = a/Pi
+   which is unitless: */
+		aonpi = 0.00193205/b ; 
 		if(comove == YES){
 		    v_interp += hubble_constant*z*rsys + voffset ;
 		}
@@ -1540,6 +1553,11 @@ absorb(job)
 					erf(abs_vupper)) ;
 			    }
 			}
+/* Eric Agol added 7-19-2004:
+  I've added in damping wings with the approximation to the 
+  Voigt function H(a,x)~= exp(-x^2)+aonpi*sqrt(pi)/(1+x^2): */
+			dvcol += aonpi/(double)SUBBIN*
+			    fabs(atan(vupper)-atan(vlower)) ;
 			dvcol_HI = mass_HI[i]*dvcol ;
 			vbins_HI[ibin] += dvcol_HI ;
 			if(plot_type == VELCOL){
