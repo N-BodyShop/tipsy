@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.10  1997/12/06 22:00:55  trq
+ * Revision 1.11  1998/06/11 20:28:54  trq
+ * Recover from read errors more gracefully.
+ *
+ * Revision 1.10  1997/12/06  22:00:55  trq
  * Updated xray stuff to use spline emmission files.
  *
  * Revision 1.9  1997/09/25  18:35:12  nsk
@@ -110,11 +113,13 @@ PROTO(void, ikernel_load, ());
 PROTO(void, input_error, (char *command));
 PROTO(void, load_color_table, ());
 PROTO(void, loadall, ());
-PROTO(void, loadbinary, (FILE *infile, double time));
-PROTO(void, loadbin_box, (FILE *infile,double time, Real *xmin, Real *xmax));
+PROTO(int, loadbinary, (FILE *infile, double time));
+PROTO(int, loadbin_box, (FILE *infile,double time, Real *xmin, Real *xmax));
 PROTO(void, loadbox, (int box));
 PROTO(void, load_redshift, ());
 PROTO(void, loadsphere, (int box, Real *center, double radius));
+PROTO(int, loadstandard, (FILE *infile, double time));
+PROTO(int, loadstd_box, (FILE *infile,double time, Real *xmin, Real *xmax));
 PROTO(void, load_cool, ());
 PROTO(void, load_uv, ());
 PROTO(void, load_eps, ());

@@ -24,7 +24,8 @@ loadbinary_sub(job)
 		xmax[k] = center[k] + xoffset[k] ;
 		xmin[k] = center[k] - xoffset[k] ;
 	    }
-	    loadbin_box(binaryfile.ptr, time, xmin, xmax);
+	    if(loadbin_box(binaryfile.ptr, time, xmin, xmax) == FALSE)
+		return;
 	    boxes_loaded[0] = NO ;
 	    unload_all() ;
 	    active_box = 0 ;
@@ -40,7 +41,8 @@ loadbinary_sub(job)
 	    xray_loaded = NO ;
 	}
 	else if (sscanf(job,"%s %lf",command,&time) == 2) {
-	    loadbinary(binaryfile.ptr,time);
+	    if(loadbinary(binaryfile.ptr,time) == FALSE)
+		return;
 	    boxes_loaded[0] = NO ;
 	    unload_all() ;
 	    active_box = 0 ;
@@ -84,7 +86,8 @@ loadstandard_sub(job)
 		xmax[k] = center[k] + xoffset[k] ;
 		xmin[k] = center[k] - xoffset[k] ;
 	    }
-	    loadstd_box(binaryfile.ptr, time, xmin, xmax);
+	    if(loadstd_box(binaryfile.ptr, time, xmin, xmax) == FALSE)
+		return;
 	    boxes_loaded[0] = NO ;
 	    unload_all() ;
 	    active_box = 0 ;
@@ -100,7 +103,8 @@ loadstandard_sub(job)
 	    xray_loaded = NO ;
 	}
 	else if (sscanf(job,"%s %lf",command,&time) == 2) {
-	    loadstandard(binaryfile.ptr,time);
+	    if(loadstandard(binaryfile.ptr,time) == FALSE)
+		return;
 	    boxes_loaded[0] = NO ;
 	    unload_all() ;
 	    active_box = 0 ;
