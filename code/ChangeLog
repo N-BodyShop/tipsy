@@ -1,0 +1,341 @@
+Wed Dec 28 13:42:47 1994  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* readmark.c: close file after it is read.
+
+	* main.c: RedrawViewport(): make can_size the maximum of
+	can_height and can_width.
+
+	* canvas_resize_proc.c: Same as above.
+
+Mon Dec  5 09:39:44 1994  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* xray_lum_load.c, star_lum.c, star_lum_redshift.c: Changed
+	argument to my_gets() to blank string.
+
+Fri Dec  2 08:21:50 1994  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* Makefile.in (READLINE_SRC): delete config.h.
+	(tipsy): added dependence on ALLOCA.
+
+	* fits.c: Added test for endianness.
+
+Thu Dec  1 15:14:58 1994  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* vista.c: fixed initialization of quantity[].
+
+	* find_shape.c: Forced inertia_cm to be symmetric.  This avoid
+	problems with jacobi().
+
+Tue Nov  1 11:26:56 1994  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* Makefile.in : fits_xray.c is now gone.  fits() is used instead.
+	defs.h, xray.c, vista.c, fits.c and arguments.c are also changed.
+
+Mon Oct 31 09:43:29 1994  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* main.c: RedrawColorbar(): fixed off-by-one drawing errors.
+
+Wed Oct 12 14:27:16 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* Created version 2.1.2.
+
+	* absorb.c: New function for calculating aborbtion spectra.
+
+Tue Sep  6 16:06:02 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* readline/: Replaced with readline-2.0 from prep.ai.mit.edu.
+
+	* my_gets.c: Changed cast to match new external from readline/.
+
+Fri Jul 29 10:25:49 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* project.c: Ensure that the axes projections do not overflow.
+
+Fri Jul 15 17:28:15 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* profile.c: Check to see if fopen() fails.
+
+Wed Jul 13 09:46:18 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* defs.h: Decreased INTMAX to 2^29-1.  (One bit for sign, one bit
+	to do INTMAX - (-INTMAX), and one bit for zoom out.
+
+Tue Jul 12 15:55:17 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* canvas_resize_proc.c: Call plot_sub() and draw_label() for
+	servers that automatically do backing store and don't generate an
+	expose event.
+
+	* main.c: ZoomIn(), ZoomOut(), Pan(), SetBox(): Ignore button
+	presses in inactive windows.
+	
+	* main.c, window.c: Changed ResizeRequest to ConfigureNotify.
+
+Sat Jun  4 13:12:06 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* fits.c, and fits_xray.c: Changed write() to fwrite() for
+	portability.
+
+Thu May  5 10:53:45 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* project.c: Increase clipping range of velocities to -2*INTMAX <
+	v < 2*INTMAX.
+	* defs.h: Change INTMAX to 2^30-1 to accommodate the above
+	clipping.
+
+Tue Apr 19 18:00:14 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* comm.h: NSK: added pcenter and writeboxrot commands.
+
+Mon Apr 18 14:14:45 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* main.c: Add "unzoom" button.
+
+Fri Apr 15 16:01:56 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* plot_all.c: Fixed bug with color of marked particles.
+	Deleted extra conversion to screen coordinates.
+	
+	* maxpos.c: Make the margins a little smaller.
+
+Thu Mar 31 14:03:11 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* plot_all.c: Changed XDrawArc to XFillArc for vector draws.
+
+Fri Mar  4 18:09:25 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* Added Neal's changes for read_vector() and "master".
+
+Mon Feb 28 11:51:39 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* openascii.c: Added code from Peter Teuben to uncompress files.
+
+Thu Feb 24 13:21:50 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* Changed current_plot logical to current_project and
+	current_color.
+
+Tue Feb 22 11:24:05 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* readline: Updated to readline from gdb-1.12
+
+Thu Feb 17 11:46:07 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* plot_all.c: Implimented a software "z-buffer".  Only draw
+	particles with the highest particle color.
+
+Wed Feb 16 13:21:35 1994  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* plot_all.c: Merged plot_all and plot_vel into one routine.  A
+	new routine all_color() is created.  Changes were also needed in
+	the view_*() routines.
+
+Sat Nov 13 11:35:01 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* readmark.c: Fixed typo for increasing ndark.
+
+Wed Nov  3 14:35:56 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* plot_all.c: Deleted skip of XClearWindow on first time through.
+
+Thu Oct 28 10:23:50 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* hard.c: Added movie parameter.
+
+Tue Oct 26 11:29:49 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* alloca.c: New file in case system doesn't provide alloca().
+
+	* vista.c: Included <stdlib.h> for malloc() definition.
+
+Mon Oct 25 19:16:52 1993  Tom Quinn  (trq@virgo)
+
+	* main.c: Attempt to find a depth 8 PseudoColor visual.
+
+Thu Oct 21 08:56:32 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* main.c: Set backgrounds of gc_color[] to black.
+
+Tue Oct 19 10:56:36 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* defs.h, main.h, make_macro.c, read_macro.c, write_macro.c
+	run_macro.c: re-vamped macro storage using linked lists.
+
+Mon Oct 18 15:11:34 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* draworient.c: Added cast from Arg to long.
+
+Fri Oct 15 10:04:49 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* readmark.c: Added a check for index < 1.
+
+	* plot_sub.c: Added a check for binary_loaded.
+	Added check for boxes_loaded[0].
+
+Wed Oct  6 09:13:49 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* zoom_window.c: Added zoom command.  Also changed comm.h and
+	arguments.c.
+
+Tue Oct  5 17:27:43 1993  Tom Quinn  (trq@hermes.astro.washington.edu
+	* shell_sub.c: New command.  Also changed comm.h, arguments.c and
+	Makefile.
+
+Sat Oct  2 11:09:54 1993  Tom Quinn  (trq@hermes.astro.washington.edu)
+
+	* readmark.c: Added check for binary_loaded.
+
+Tue May 25 17:40:27 1993  Tom Quinn  (trq at zeus)
+
+	* Plugged memory leaks in vista.c
+
+Fri May 14 12:52:31 1993  Tom Quinn  (trq at zeus)
+
+	* Added vcenter command.
+
+Fri May  7 13:49:27 1993  Tom Quinn  (trq at zeus)
+
+	* unload.c, comm.h: Changed unload() to unload_box() to avoid
+	conflict with OSF system library function.
+
+Mon Apr  5 12:19:48 1993  Tom Quinn  (trq at zeus)
+
+	* ascii2binary.c: Merged Neal's star formation changes.
+
+Wed Jan 13 17:02:11 1993  Tom Quinn  (trq at zeus)
+
+	* plot_sub.c: reproject if showvel has changed.
+
+Mon Dec 21 16:07:57 1992  Tom Quinn  (trq at zeus)
+
+	* plot_vel.c: fixed bug with clipping and marked gas particles.
+
+Thu Oct 22 10:13:41 1992  Tom Quinn  (trq at zeus)
+
+	* loadbinary.c: read in header in machine independent format.
+
+Sat Sep 26 16:14:31 1992  Tom Quinn  (trq at zeus)
+
+	* readmark.c: checked number of conversions on fscanf.
+
+Thu Jun 11 13:08:35 1992  Tom Quinn  (trq at zeus)
+
+	* array_color.c: Corrected "==" for "=" bug.
+
+	* view_array.c: Move to after everything is parsed correctly.
+
+	* fdefs.h: New file containing function prototypes.
+
+	* view_array.c: added a return if the colormap was unrecognizable.
+
+Mon Jul 22 15:18:49 1991  Tom Quinn  (trq at athena)
+
+	* colorbarlabel(): Added check for array_plot.
+
+Tue Jul 16 20:17:49 1991  Tom Quinn  (trq at zeus)
+
+	* window.c: fixed bug in getting canvas size when switching
+	windows.
+
+	* main.c: added fancy title.
+
+Tue Jul  2 14:49:17 1991  Tom Quinn  (trq at zeus)
+
+	* main() and window(): Added a request for backing store on the
+	canvas windows.
+
+	* plot_vel(): deleted limit on point size.
+
+Thu Jun  6 14:32:50 1991  Tom Quinn  (trq at alpheratz)
+
+	* added array support.
+
+	* added readmark support.
+
+Fri May 31 16:15:53 1991  Tom Quinn  (trq at alpheratz)
+
+	* merged changes from Neal.
+
+	* removed using "shown" in rotate_xx.c
+
+	* fixed bug in allocating tform in ascii2binary().
+
+	* fixed bug in command_completion in my_gets.c
+
+Sat May 11 10:38:19 1991  Tom Quinn  (trq at zeus)
+
+	* command_interp() and my_gets.c: Added command completion.
+
+	* main() and rotate_xx(): Added rotation bars.
+
+Thu May  9 18:07:32 1991  Tom Quinn  (trq at zeus)
+
+	* Added a rl_event_hook() function so we don't have to hack with
+	readline.  Also changed all calls to gets() to calls to my_gets()
+	so that everything can use command line editing.
+
+Wed May  8 21:35:43 1991  Tom Quinn  (trq at zeus)
+
+	* Added patches from Neal.
+
+Fri May  3 13:06:38 1991  Tom Quinn  (trq at zeus)
+
+	* Changed load_color_table() and change_color() so that they leave
+	colors 0 and 1 alone, so boxes will show up.
+
+Sat Apr 20 16:36:45 1991  Tom Quinn  (trq at zeus)
+
+	* Added support for alternative colormap if it is needed.
+
+Fri Apr 19 09:44:08 1991  Tom Quinn  (trq at zeus)
+
+	* Merged in Neal's changes to ascii2binary(), help and
+	star_history.
+
+Thu Apr 18 17:28:52 1991  Tom Quinn  (trq at athena)
+
+	* Made label and colorlabel command work. Fixed some problems with
+	hard.  Added the tipsy icon.
+
+Wed Apr 17 07:45:51 1991  Tom Quinn  (trq at zeus)
+
+	* Fixed small bug in change_color.c
+
+Fri Apr 12 12:56:14 1991  Tom Quinn  (trq at zeus)
+
+	* Fixed malloc(0) in loadbinary.c.  Same for loadbox.c, project.c,
+	view_gas.c, view_star.c, ascii2binary.c, cool_func.c, divv.c,
+	oldascii2binary.c, potential_color.c, starform_func.c, and
+	velocity_color.c
+
+Thu Apr 11 19:15:17 1991  Tom Quinn  (trq at zeus)
+
+	* Added some stuff from Neal.
+
+Fri Feb 22 15:26:27 1991  Tom Quinn  (trq at zeus)
+
+	* Declaration fix to fits.c.
+
+Tue Feb 12 18:28:02 1991  Tom Quinn  (trq at zeus)
+
+	* Declaration fixes to main.c, dkernal_load.c and ikernal_load.c.
+
+Mon Feb  4 18:50:56 1991  Tom Quinn  (trq at zeus)
+
+	* Made page in fits.c dynamically allocated.
+
+	* Made acsmooth, dwsmooth, and iwsmooth dynamically allocated.
+
+	* Added new function and command "window": dynamically creates
+	arbitrary numbers of drawing windows.
+
+Fri Feb  1 18:23:19 1991  Tom Quinn  (trq at zeus)
+
+	* Added code to main() and hard() to pop up a window.  Changed all
+	drawing calls to use "currentview_xid".
+
+Thu Jan 31 18:11:12 1991  Tom Quinn  (trq at zeus)
+
+	* Checked in version  2.0
+
+
