@@ -941,7 +941,7 @@ yyerror(char *s)
 
 /* calculator subroutine: called from set_var */
 
-char *calc(char *expression)
+char *calc(char *expression, char *format)
 {
   int i;
   char *val;
@@ -961,7 +961,12 @@ char *calc(char *expression)
     printf("out of memory\n");
     exit(-1);
   }
-  sprintf(val,"%lf",return_val);
+  /*sprintf(val,"%lf",return_val);*/
+  if (strlen(format) == 0) {
+    sprintf(val,"%g",return_val);
+  } else {
+    sprintf(val, format, return_val);
+  }
 
   return val;
 }
