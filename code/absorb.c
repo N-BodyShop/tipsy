@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.16  1997/09/25 18:35:07  nsk
+ * Revision 1.17  1998/06/11 20:24:18  trq
+ * Fixed typos.
+ *
+ * Revision 1.16  1997/09/25  18:35:07  nsk
  * added uv command and discrete uv sources
  *
  * Revision 1.15  1997/09/19  13:41:24  nsk
@@ -283,8 +286,6 @@ absorb(job)
 		if(res != NULL) free(mass_tot) ;
 		return ;
 	    }
-	    if(vel_tot == NULL)
-	    if(res == NULL)
 	    if (!cool_loaded ){
 		load_cool() ;
 	    }
