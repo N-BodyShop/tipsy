@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.5  1996/12/20 01:25:09  trq
+ * Revision 1.6  1997/08/28 20:29:18  nsk
+ *      Added the gasify command, chnged redshift to to do lambda
+ *
+ * Revision 1.5  1996/12/20  01:25:09  trq
  * Added catbox command.
  *
  * Revision 1.4  1995/06/06  17:47:50  trq
@@ -80,6 +83,7 @@ extern void epsgas_sub() ;
 extern void fconst_sub() ;
 
 extern void framepoints() ;
+extern void gasify() ;
 extern void hard() ;
 extern void help() ;
 extern void hubble() ;
@@ -238,6 +242,7 @@ struct comm c_list[] = {
      {"fconst",      fconst_sub,	0},
      {"formconstants",fconst_sub,	0},
      {"framepoints", framepoints,	0},
+     {"gasify",      gasify,            0},
      {"frp",         framepoints,	0},
      {"gravsoft",    eps_sub,		0},
 

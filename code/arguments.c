@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.11  1997/01/17 21:22:55  trq
+ * Revision 1.12  1997/08/28 20:29:17  nsk
+ *      Added the gasify command, chnged redshift to to do lambda
+ *
+ * Revision 1.11  1997/01/17  21:22:55  trq
  * Added optional argument to resetcolor command.
  *
  * Revision 1.10  1996/12/20  01:25:08  trq
@@ -179,6 +182,9 @@ arguments(job)
     else if ( strcmp(command,"framepoints") == 0 ||
 	    strcmp(command,"frp") == 0 ) {
 	printf("framepoints box-number particle filename-root\n") ;
+    }
+    else if ( strcmp(command,"gasify") == 0) {
+	printf("gasify gas_frac rhobar Tbar index RhoShock TShock metals\n");
     }
     else if ( strcmp(command,"gravsoft") == 0 ||
 	    strcmp(command,"eps") == 0) {

@@ -8,9 +8,11 @@ redshift_sub(job)
     char command[MAXCOMM] ;
     char coord[MAXCOMM] ;
     char boundary[MAXCOMM] ;
+    double lambda ;
+    double zp1 ;
 
-    if (sscanf(job,"%s %lf %s %lf %lf %s %lf", command,&redshift, coord,
-	    &hubble_constant,&omega,boundary,&period_size) == 7){
+    if (sscanf(job,"%s %lf %s %lf %lf %lf %s %lf", command,&redshift, coord,
+	    &hubble_constant,&omega,&lambda,boundary,&period_size) == 8){
 	if(strcmp(coord,"physical") == 0 || strcmp(coord,"p") == 0){
 	    cosmof3 = 1.0;
 	    cosmof = 1.0;
@@ -20,7 +22,9 @@ redshift_sub(job)
 	    cosmof = 1.0/(1.0 + redshift);
 	    cosmof3 = cosmof*cosmof*cosmof;
 	    comove = YES ;
-	    hubble_constant *= sqrt(1 + omega*redshift)*(1 + redshift) ;
+	    zp1 = 1. + redshift ;
+	    hubble_constant *= sqrt(omega*zp1*zp1*zp1+
+			       (1.-omega-lambda)*zp1*zp1+lambda) ;
 	}
 	else {
 	    printf("<sorry, %s is not a coordinate type, %s>\n",
