@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.13  1997/09/05 01:02:17  nsk
+ * Revision 1.14  1997/09/17 14:34:39  nsk
+ * Fixed bugs in gasify and absorb.
+ *
+ * Revision 1.13  1997/09/05  01:02:17  nsk
  * streamlined vista (I hope it works), added neutralize command, added SZ
  * effect to vista.
  *
@@ -161,6 +164,7 @@ absorb(job)
     double *res ;
     int plot_type;
     int i,j,k ;
+    int kl, ku ;
     double part_pos[MAXDIM] ;
     double distnorm ;
     double radius ;
@@ -484,68 +488,55 @@ absorb(job)
 	    zmax = max(zmax,box_coord[j][2]) ;
 	}
 
-	printf("zmin,zmax = %g, %g\n",zmin,zmax) ;
-
 	bin_size = (zmax - zmin)/zbin ;
 	zbox_min = HUGE ;
 	zbox_max = -HUGE ;
 	plane(&box_coord[0][0],&box_coord[1][0],&box_coord[2][0],
 		&box_coord[4][0],constant);
         if(constant[2] != 0.0){
-	    printf("in first\n") ;
 	    zbox=(constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
-	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	    zbox=(constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
-	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
         }
 	plane(&box_coord[0][0],&box_coord[2][0],&box_coord[4][0],
 		&box_coord[5][0],constant);
         if(constant[2] != 0.0){
-	    printf("in second\n") ;
 	    zbox=(constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
-	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	    zbox=(constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
-	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	}
 	plane(&box_coord[5][0],&box_coord[4][0],&box_coord[2][0],
 		&box_coord[0][0],constant);
         if(constant[2] != 0.0){
-	    printf("in third\n") ;
 	    zbox=(constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
-	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	    zbox=(constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
-	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	}
 	bin_box_min = floor((zbox_min - zmin)/bin_size) ;
 	bin_box_max = floor((zbox_max - zmin)/bin_size) ;
-	printf("bin_min, bin_max = %d, %d\n", bin_box_min,bin_box_max) ;
 	if((zbox_max - zmin)/bin_size == (double) bin_box_max)
 	  bin_box_max--;
-	printf("bin_min, bin_max = %d, %d\n", bin_box_min,bin_box_max) ;
 
 	rsys = cosmof*kpcunit/1.e3 ;
 	vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
@@ -1419,19 +1410,31 @@ absorb(job)
 	    if(mass_HI[i] == 0.0)
 		continue ;
 	    for(j = 0; j < SUBBIN; j++){
-		z = ((double)(i) + ((double)(j))/((double)(SUBBIN)))*bin_size ;
-		if(2*j < SUBBIN){
+		z = ((double)(i) + (((double)(j)) + 0.5)/((double)(SUBBIN)))*
+			bin_size ;
+		if(2*j + 1 < SUBBIN){
 		    k = i - 1 ;
 		}
 		else {
 		    k = i ;
 		}
-		k = max(0,k) ;
-		k = min(zbin-2,k) ;
-		v_interp = (vel_HI[k+1] - vel_HI[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + vel_HI[k] ;
-		t_interp = (temp_HI[k+1] - temp_HI[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + temp_HI[k] ;
+    /* needs to be fixed for tilted boxes */
+		if(periodic && k < 0){
+		    kl = zbin - 1 ;
+		}
+		else{
+		    kl = max(0,k) ;
+		}
+		if(periodic && k + 1 > zbin - 1){
+		    ku = 0 ;
+		}
+		else{
+		    ku = min(zbin-1,k+1) ;
+		}
+		v_interp = (vel_HI[ku] - vel_HI[kl])*(i + (((double)(j))+0.5)/
+			((double)(SUBBIN)) - (k + 0.5)) + vel_HI[kl] ;
+		t_interp = (temp_HI[ku] - temp_HI[kl])*(i + (((double)(j))+0.5)/
+			((double)(SUBBIN)) - (k + 0.5)) + temp_HI[kl] ;
 		b = bsys_H*sqrt(t_interp) ;
 		if(comove == YES){
 		    v_interp += hubble_constant*z*rsys + voffset ;
@@ -1513,30 +1516,34 @@ absorb(job)
 	    if(mass_HI[i] == 0.0)
 		continue ;
 	    for(j = 0; j < SUBBIN; j++){
-		z = ((double)(i) + ((double)(j))/((double)(SUBBIN)))*bin_size ;
-		if(2*j < SUBBIN){
+		z = ((double)(i) + (((double)(j)) + 0.5)/((double)(SUBBIN)))*
+			bin_size ;
+		if(2*j + 1 < SUBBIN){
 		    k = i - 1 ;
 		}
 		else {
 		    k = i ;
 		}
-		k = max(0,k) ;
-		k = min(zbin-2,k) ;
-		v_interp = (vel_HI[k+1] - vel_HI[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + vel_HI[k] ;
-		t_interp = (temp_HI[k+1] - temp_HI[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + temp_HI[k] ;
+    /* needs to be fixed for tilted boxes */
+		if(periodic && k < 0){
+		    kl = zbin - 1 ;
+		}
+		else{
+		    kl = max(0,k) ;
+		}
+		if(periodic && k + 1 > zbin - 1){
+		    ku = 0 ;
+		}
+		else{
+		    ku = min(zbin-1,k+1) ;
+		}
+		v_interp = (vel_HI[ku] - vel_HI[kl])*(i + (((double)(j))+0.5)/
+			((double)(SUBBIN)) - (k + 0.5)) + vel_HI[kl] ;
+		t_interp = (temp_HI[ku] - temp_HI[kl])*(i + (((double)(j))+0.5)/
+			((double)(SUBBIN)) - (k + 0.5)) + temp_HI[kl] ;
 		b = bsys_D*sqrt(t_interp) ;
 		if(comove == YES){
 		    v_interp += hubble_constant*z*rsys + voffset ;
-		}
-		if((v_interp < vmax && v_interp >= vmin) ||
-			(autolim == YES && periodic == YES)){
-	            bin = floor((v_interp - vmin)/vbin_size) ;
-		    ibin = bin%nvbin;
-		    if(ibin < 0) {
-		      ibin += nvbin;
-		    }
 		}
 		bin_min = floor((v_interp - 6.0*b - vmin)/vbin_size) ;
 		bin_max = floor((v_interp + 6.0*b - vmin)/vbin_size) ;
@@ -1593,30 +1600,34 @@ absorb(job)
 	    if(mass_HeI[i] == 0.0)
 		continue ;
 	    for(j = 0; j < SUBBIN; j++){
-		z = ((double)(i) + ((double)(j))/((double)(SUBBIN)))*bin_size ;
-		if(2*j < SUBBIN){
+		z = ((double)(i) + (((double)(j)) + 0.5)/((double)(SUBBIN)))*
+			bin_size ;
+		if(2*j + 1 < SUBBIN){
 		    k = i - 1 ;
 		}
 		else {
 		    k = i ;
 		}
-		k = max(0,k) ;
-		k = min(zbin-2,k) ;
-		v_interp = (vel_HeI[k+1] - vel_HeI[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + vel_HeI[k] ;
-		t_interp = (temp_HeI[k+1] - temp_HeI[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + temp_HeI[k] ;
+    /* needs to be fixed for tilted boxes */
+		if(periodic && k < 0){
+		    kl = zbin - 1 ;
+		}
+		else{
+		    kl = max(0,k) ;
+		}
+		if(periodic && k + 1 > zbin - 1){
+		    ku = 0 ;
+		}
+		else{
+		    ku = min(zbin-1,k+1) ;
+		}
+		v_interp = (vel_HeI[ku] - vel_HeI[kl])*(i + (((double)(j))+0.5)/
+			((double)(SUBBIN)) - (k + 0.5)) + vel_HeI[kl] ;
+		t_interp = (temp_HeI[ku]-temp_HeI[kl])*(i + (((double)(j))+0.5)/
+			((double)(SUBBIN)) - (k + 0.5)) + temp_HeI[kl] ;
 		b = bsys_He*sqrt(t_interp) ;
 		if(comove == YES){
 		    v_interp += hubble_constant*z*rsys + voffset ;
-		}
-		if((v_interp < vmax && v_interp >= vmin) ||
-			(autolim == YES && periodic == YES)){
-	            bin = floor((v_interp - vmin)/vbin_size) ;
-		    ibin = bin%nvbin;
-		    if(ibin < 0) {
-		      ibin += nvbin;
-		    }
 		}
 		bin_min = floor((v_interp - 6.0*b - vmin)/vbin_size) ;
 		bin_max = floor((v_interp + 6.0*b - vmin)/vbin_size) ;
@@ -1671,30 +1682,34 @@ absorb(job)
 	    if(mass_HeII[i] == 0.0)
 		continue ;
 	    for(j = 0; j < SUBBIN; j++){
-		z = ((double)(i) + ((double)(j))/((double)(SUBBIN)))*bin_size ;
-		if(2*j < SUBBIN){
+		z = ((double)(i) + (((double)(j)) + 0.5)/((double)(SUBBIN)))*
+			bin_size ;
+		if(2*j + 1 < SUBBIN){
 		    k = i - 1 ;
 		}
 		else {
 		    k = i ;
 		}
-		k = max(0,k) ;
-		k = min(zbin-2,k) ;
-		v_interp = (vel_HeII[k+1] - vel_HeII[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + vel_HeII[k] ;
-		t_interp = (temp_HeII[k+1] - temp_HeII[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + temp_HeII[k] ;
+    /* needs to be fixed for tilted boxes */
+		if(periodic && k < 0){
+		    kl = zbin - 1 ;
+		}
+		else{
+		    kl = max(0,k) ;
+		}
+		if(periodic && k + 1 > zbin - 1){
+		    ku = 0 ;
+		}
+		else{
+		    ku = min(zbin-1,k+1) ;
+		}
+		v_interp = (vel_HeII[ku] - vel_HeII[kl])*(i + (((double)(j))+
+			0.5)/ ((double)(SUBBIN)) - (k + 0.5)) + vel_HeII[kl] ;
+		t_interp = (temp_HeII[ku] - temp_HeII[kl])*(i + (((double)(j))+
+			0.5)/ ((double)(SUBBIN)) - (k + 0.5)) + temp_HeII[kl] ;
 		b = bsys_He*sqrt(t_interp) ;
 		if(comove == YES){
 		    v_interp += hubble_constant*z*rsys + voffset ;
-		}
-		if((v_interp < vmax && v_interp >= vmin) ||
-			(autolim == YES && periodic == YES)){
-	            bin = floor((v_interp - vmin)/vbin_size) ;
-		    ibin = bin%nvbin;
-		    if(ibin < 0) {
-		      ibin += nvbin;
-		    }
 		}
 		bin_min = floor((v_interp - 6.0*b - vmin)/vbin_size) ;
 		bin_max = floor((v_interp + 6.0*b - vmin)/vbin_size) ;

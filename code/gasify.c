@@ -87,10 +87,7 @@ gasify(job)
 	binary_loaded = LOADED ;
 	current_project = NO ;
 	current_color = NO ;
-	redshift_loaded = NO ;
 	divv_loaded = NO ;
-	cooling_loaded = NO ;
-	starform_loaded = NO ;
       }
       else {
 	  input_error(command) ;
