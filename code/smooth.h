@@ -82,26 +82,26 @@ typedef struct smContext {
 
 
 
-void calc_density(SMX *psmx, int bDark, int bGas, int bStar);
-int smInit(SMX *,KD,int,float *);
-void smFinish(SMX);
-void smBallSearch(SMX,float,float *);
-int  smBallGather(SMX,float,float *);
-void smSmooth(SMX,void (*)(SMX,int,int,int *,float *));
-void smReSmooth(SMX,void (*)(SMX,int,int,int *,float *));
-void smDensity(SMX,int,int,int *,float *);
-void smDensitySym(SMX,int,int,int *,float *);
-void smMeanVel(SMX,int,int,int *,float *);
-void smMeanVelSym(SMX,int,int,int *,float *);
-void smVelDisp(SMX,int,int,int *,float *);
-void smVelDispSym(SMX,int,int,int *,float *);
-void smNull(SMX,int,int,int *,float *);
-void smOutDensity(SMX,FILE *);
-void smOutMeanVel(SMX,FILE *);
-void smOutVelDisp(SMX,FILE *);
-void smOutPhase(SMX,FILE *);
-void smOutMach(SMX,FILE *);
-void smOutSpeed(SMX,FILE *);
+PROTO(void, calc_density, (SMX *psmx, int bDark, int bGas, int bStar));
+PROTO(int, smInit, (SMX *,KD,int,float *));
+PROTO(void, smFinish, (SMX));
+PROTO(void, smBallSearch, (SMX,double,float *));
+PROTO(int,  smBallGather, (SMX,double,float *));
+PROTO(void, smSmooth, (SMX,void (*)(SMX,int,int,int *,float *)));
+PROTO(void, smReSmooth, (SMX,void (*)(SMX,int,int,int *,float *)));
+PROTO(void, smDensity, (SMX,int,int,int *,float *));
+PROTO(void, smDensitySym, (SMX,int,int,int *,float *));
+PROTO(void, smMeanVel, (SMX,int,int,int *,float *));
+PROTO(void, smMeanVelSym, (SMX,int,int,int *,float *));
+PROTO(void, smVelDisp, (SMX,int,int,int *,float *));
+PROTO(void, smVelDispSym, (SMX,int,int,int *,float *));
+PROTO(void, smNull, (SMX,int,int,int *,float *));
+PROTO(void, smOutDensity, (SMX,FILE *));
+PROTO(void, smOutMeanVel, (SMX,FILE *));
+PROTO(void, smOutVelDisp, (SMX,FILE *));
+PROTO(void, smOutPhase, (SMX,FILE *));
+PROTO(void, smOutMach, (SMX,FILE *));
+PROTO(void, smOutSpeed, (SMX,FILE *));
 
 #endif
 

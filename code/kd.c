@@ -11,7 +11,10 @@
 #define MAX_ROOT_ITTR	32
 
 
-void kdTime(KD kd,int *puSecond,int *puMicro)
+void kdTime(kd, puSecond, puMicro)
+     KD kd;
+     int *puSecond;
+     int *puMicro;
 {
 	struct rusage ru;
 
@@ -27,7 +30,8 @@ void kdTime(KD kd,int *puSecond,int *puMicro)
 	}
 
 
-int kdInit(KD *pkd)
+int kdInit(pkd)
+     KD *pkd;
 {
 	KD kd;
 	int nBucket = 8;
@@ -42,7 +46,12 @@ int kdInit(KD *pkd)
 	}
 
 
-void kdReadBox(KD kd,struct list *b,int bDark,int bGas,int bStar)
+void kdReadBox(kd, b, bDark, bGas, bStar)
+     KD kd;
+     struct list *b;
+     int bDark;
+     int bGas;
+     int bStar;
 {
 	int i,nCnt;
 
@@ -89,7 +98,12 @@ void kdReadBox(KD kd,struct list *b,int bDark,int bGas,int bStar)
 		}
 	}
 
-void kdSelect(KD kd,int d,int k,int l,int r)
+void kdSelect(kd, d, k, l, r)
+     KD kd;
+     int d;
+     int k;
+     int l;
+     int r;
 {
 	PARTICLE *p,t;
 	double v;
@@ -120,7 +134,10 @@ void kdSelect(KD kd,int d,int k,int l,int r)
 	}
 
 
-void kdCombine(KDN *p1,KDN *p2,KDN *pOut)
+void kdCombine(p1, p2, pOut)
+     KDN *p1;
+     KDN *p2;
+     KDN *pOut;
 {
 	int j;
 
@@ -140,7 +157,9 @@ void kdCombine(KDN *p1,KDN *p2,KDN *pOut)
 	}
 
 
-void kdUpPass(KD kd,int iCell)
+void kdUpPass(kd, iCell)
+     KD kd;
+     int iCell;
 {
 	KDN *c;
 	int l,u,pj,j;
@@ -172,7 +191,8 @@ void kdUpPass(KD kd,int iCell)
 	}
 
 
-void kdBuildTree(KD kd)
+void kdBuildTree(kd)
+     KD kd;
 {
 	int l,n,i,d,m,j,diff;
 	KDN *c;
@@ -250,7 +270,9 @@ void kdBuildTree(KD kd)
 	}
 
 
-int cmpParticles(const void *v1,const void *v2)
+int cmpParticles(v1, v2)
+     CONST void *v1;
+     CONST void *v2;
 {
 	PARTICLE *p1=(PARTICLE *)v1,*p2=(PARTICLE *)v2;
 	
@@ -258,13 +280,15 @@ int cmpParticles(const void *v1,const void *v2)
 	}
 
 
-void kdOrder(KD kd)
+void kdOrder(kd)
+     KD kd;
 {
 	qsort(kd->p,kd->nActive,sizeof(PARTICLE),cmpParticles);
 	}
 
 
-void kdFinish(KD kd)
+void kdFinish(kd)
+     KD kd;
 {
 	free(kd->p);
 	free(kd->kdNodes);

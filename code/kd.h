@@ -152,24 +152,22 @@ typedef struct kdContext {
 		}\
 	}
 
-
-void kdTime(KD,int *,int *);
-int kdInit(KD *);
-void kdReadBox(KD,struct list *,int,int,int);
-void kdInMark(KD,char *);
-void kdBuildTree(KD);
-void kdOrder(KD);
-void kdFinish(KD);
-
+#ifndef PROTO
+#       if __STDC__
+#               define PROTO(type, name, arglist) type name arglist
+#		define CONST const
+#       else
+#               define PROTO(type, name, arglist) type name ()
+#		define CONST
+#       endif
 #endif
 
+PROTO(void, kdTime, (KD,int *,int *));
+PROTO(int, kdInit, (KD *));
+PROTO(void, kdReadBox, (KD,struct list *,int,int,int));
+PROTO(void, kdInMark, (KD,char *));
+PROTO(void, kdBuildTree, (KD));
+PROTO(void, kdOrder, (KD));
+PROTO(void, kdFinish, (KD));
 
-
-
-
-
-
-
-
-
-
+#endif

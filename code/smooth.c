@@ -7,7 +7,7 @@
 #include "smooth.h"
 #include "kd.h"
 
-void smSetBall(SMX smx, double ball_size);
+PROTO(void, smSetBall, (SMX smx, double ball_size));
 
 void smooth_sub(job)
     char *job ;
@@ -23,7 +23,11 @@ void smooth_sub(job)
     }
 }
 
-void calc_density(SMX *psmx, int bDark, int bGas, int bStar)
+void calc_density(psmx, bDark, bGas, bStar)
+     SMX *psmx;
+     int bDark;
+     int bGas;
+     int bStar;
 {
     KD kd;
     SMX smx = *psmx;
@@ -61,7 +65,11 @@ void calc_density(SMX *psmx, int bDark, int bGas, int bStar)
     *psmx = smx;
 }
 
-void calc_balls(SMX *psmx, int bDark, int bGas, int bStar)
+void calc_balls(psmx, bDark, bGas, bStar)
+     SMX *psmx;
+     int bDark;
+     int bGas;
+     int bStar;
 {
     KD kd;
     SMX smx = *psmx;
@@ -98,7 +106,11 @@ void calc_balls(SMX *psmx, int bDark, int bGas, int bStar)
     *psmx = smx;
 }
 
-int smInit(SMX *psmx,KD kd,int nSmooth,float *fPeriod)
+int smInit(psmx, kd, nSmooth, fPeriod)
+     SMX *psmx;
+     KD kd;
+     int nSmooth;
+     float *fPeriod;
 {
 	SMX smx;
 	int pi,j;
@@ -137,7 +149,8 @@ int smInit(SMX *psmx,KD kd,int nSmooth,float *fPeriod)
 	}
 
 
-void smFinish(SMX smx)
+void smFinish(smx)
+     SMX smx;
 {
 	free(smx->iMark);
 	free(smx->pq);
@@ -147,7 +160,10 @@ void smFinish(SMX smx)
 	}
 
 
-void smBallSearch(SMX smx,float fBall2,float *ri)
+void smBallSearch(smx, fBall2, ri)
+     SMX smx;
+     double fBall2;
+     float *ri;
 {
 	KDN *c;
 	PARTICLE *p;
@@ -237,7 +253,10 @@ void smBallSearch(SMX smx,float fBall2,float *ri)
 	}
 
 
-int smBallGather(SMX smx,float fBall2,float *ri)
+int smBallGather(smx, fBall2, ri)
+     SMX smx;
+     double fBall2;
+     float *ri;
 {
 	KDN *c;
 	PARTICLE *p;
@@ -285,7 +304,9 @@ int smBallGather(SMX smx,float fBall2,float *ri)
 	}
 
 
-void smSmooth(SMX smx,void (*fncSmooth)(SMX,int,int,int *,float *))
+void smSmooth(smx, fncSmooth)
+     SMX smx;
+     void (*fncSmooth)();
 {
 	KDN *c;
 	PARTICLE *p;
@@ -422,7 +443,9 @@ void smSmooth(SMX smx,void (*fncSmooth)(SMX,int,int,int *,float *))
 	}
 
 
-void smReSmooth(SMX smx,void (*fncSmooth)(SMX,int,int,int *,float *))
+void smReSmooth(smx, fncSmooth)
+     SMX smx;
+     void (*fncSmooth)();
 {
 	PARTICLE *p;
 	int pi,nSmooth;
@@ -439,7 +462,9 @@ void smReSmooth(SMX smx,void (*fncSmooth)(SMX,int,int,int *,float *))
  	}
 
 
-void smSetBall(SMX smx, double ball_size)
+void smSetBall(smx, ball_size)
+     SMX smx;
+     double ball_size;
 {
     float fBall2;
     int pi;
@@ -451,7 +476,12 @@ void smSetBall(SMX smx, double ball_size)
 	}
 }
     
-void smDensity(SMX smx,int pi,int nSmooth,int *pList,float *fList)
+void smDensity(smx, pi, nSmooth, pList, fList)
+     SMX smx;
+     int pi;
+     int nSmooth;
+     int *pList;
+     float *fList;
 {
 	float ih2,r2,rs,fDensity;
 	int i,pj;
@@ -470,7 +500,12 @@ void smDensity(SMX smx,int pi,int nSmooth,int *pList,float *fList)
 	}
 
 
-void smDensitySym(SMX smx,int pi,int nSmooth,int *pList,float *fList)
+void smDensitySym(smx, pi, nSmooth, pList, fList)
+     SMX smx;
+     int pi;
+     int nSmooth;
+     int *pList;
+     float *fList;
 {
 	float fNorm,ih2,r2,rs;
 	int i,pj;
@@ -489,7 +524,12 @@ void smDensitySym(SMX smx,int pi,int nSmooth,int *pList,float *fList)
 		}
 	}
 
-void smNull(SMX smx,int pi,int nSmooth,int *pList,float *fList)
+void smNull(smx, pi, nSmooth, pList, fList)
+     SMX smx;
+     int pi;
+     int nSmooth;
+     int *pList;
+     float *fList;
 {
 	return;
 }
