@@ -389,7 +389,8 @@ int xdr_header()
   return 1;
 }
 
-int xdr_gas(struct gas_particle *gas)
+int xdr_gas(gas)
+struct gas_particle *gas;
 {
   if(sizeof(Real) == sizeof(float))
     {
@@ -419,9 +420,11 @@ int xdr_gas(struct gas_particle *gas)
 	return 0;
       return 1;
     }
+    return 0;
 }  
 
-int xdr_dark(struct dark_particle *dark)
+int xdr_dark(dark)
+struct dark_particle *dark;
 {
   if(sizeof(Real) == sizeof(float))
     {
@@ -445,9 +448,11 @@ int xdr_dark(struct dark_particle *dark)
 	return 0;
       return 1;
     }
+    return 0;
 }  
 
-int xdr_star(struct star_particle *star)
+int xdr_star(star)
+struct star_particle *star;
 {
   if(sizeof(Real) == sizeof(float))
     {
@@ -475,6 +480,7 @@ int xdr_star(struct star_particle *star)
 	return 0;
       return 1;
     }
+    return 0;
 }  
 #define STD_HEADER_SIZE 32
 #define STD_GAS_SIZE 48
