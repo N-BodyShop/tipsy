@@ -16,18 +16,24 @@ readascii(job)
     else {
 	if (sscanf(job,"%s %s",command,binaryfile.name) == 2) {
 	    binaryfile.ptr = fopen(binaryfile.name,"w");
-	    binaryopen = OPEN ;
-	    ascii2binary(bodfile.ptr,binaryfile.ptr);
-	    fclose(bodfile.ptr) ;
-	    fclose(binaryfile.ptr) ;
-	    binaryfile.ptr = fopen(binaryfile.name,"r");
-	    asciiopen = CLOSED ;
-	    cool_loaded = NO ;
-	    visc_loaded = NO ;
-	    form_loaded = NO ;
-	    lum_loaded = NO ;
-	    starform_loaded = NO ;
-	    dudt_loaded = NO ;
+	    if(binaryfile.ptr) {
+		binaryopen = OPEN ;
+		ascii2binary(bodfile.ptr,binaryfile.ptr);
+		fclose(binaryfile.ptr) ;
+		fclose(bodfile.ptr) ;
+		binaryfile.ptr = fopen(binaryfile.name,"r");
+		asciiopen = CLOSED ;
+		cool_loaded = NO ;
+		visc_loaded = NO ;
+		form_loaded = NO ;
+		lum_loaded = NO ;
+		starform_loaded = NO ;
+		dudt_loaded = NO ;
+		}
+	    else {
+		printf("<sorry, can't open binary file, %s>\n",
+		       title);
+		}
 	}
 	else {
 	    input_error(command) ;
