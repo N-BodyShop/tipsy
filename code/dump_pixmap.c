@@ -69,14 +69,6 @@ int Get_XColors(win_info, xcolors)
     return(ncolors);
 }
 
-/*
- * Work around Sun CC bug.
- */
-#if defined(__SunOS_5_4) && (__SUNPRO_C == 0x400)
-#define _SIZEOF(x) sz_##x
-#define SIZEOF(x) _SIZEOF(x)
-#endif
-
 void
 dump_pixmap(name)
 char *name;
@@ -120,7 +112,7 @@ char *name;
     /*
      * Calculate header size.
      */
-    header_size = SIZEOF(XWDheader) + win_name_size;
+    header_size = sz_XWDheader + win_name_size;
 
     /*
      * Write out header information.
@@ -164,7 +156,7 @@ char *name;
 	return;
     }
 
-    if (fwrite((char *)&header, SIZEOF(XWDheader), 1, out) != 1 ||
+    if (fwrite((char *)&header, sz_XWDheader, 1, out) != 1 ||
         fwrite(win_name, win_name_size, 1, out) != 1) {
         perror("xwd");
         return;
@@ -180,7 +172,7 @@ char *name;
         xwdcolor.green = xcolors[i].green;
         xwdcolor.blue = xcolors[i].blue;
         xwdcolor.flags = xcolors[i].flags;
-        if (fwrite((char *) &xwdcolor, SIZEOF(XWDColor), 1, out) != 1) {
+        if (fwrite((char *) &xwdcolor, sz_XWDColor, 1, out) != 1) {
             perror("xwd");
             return;
         }
