@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.4  2002/08/15 22:33:14  trq
+ * Fixed bugs in freeing arrays on bad input.
+ *
  * Revision 1.3  2001/06/21 18:56:55  trq
  * Added optional argument to raise values to a power as they are read in.
  *
@@ -73,6 +76,7 @@ readarray(job)
 		    printf("<Sorry %s, file format is wrong>\n",title);
 		    array_size = 0 ;
 		    free(array) ;
+		    array = NULL;
 		    break;
 	      }
 	    }
@@ -80,6 +84,7 @@ readarray(job)
 		printf("<Sorry %s, file format is wrong>\n",title);
 		array_size = 0 ;
 		free(array) ;
+		array = NULL;
 		break;
 	    }
 	    count++;
@@ -121,6 +126,7 @@ readarray(job)
 		    printf("<Sorry %s, file format is wrong>\n",title);
 		    array_size = 0 ;
 		    free(array) ;
+		    array = NULL;
 		    break;
 	      }
 	    }
@@ -128,6 +134,7 @@ readarray(job)
 		printf("<Sorry %s, file format is wrong>\n",title);
 		array_size = 0 ;
 		free(array) ;
+		array = NULL;
 		break;
 	    }
 	    array[count++] *= pow(tmp,power);

@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.4  2002/08/15 22:33:13  trq
+ * Fixed bugs in freeing arrays on bad input.
+ *
  * Revision 1.3  1997/02/20 02:34:13  trq
  * Fixed bug in previous modification.
  *
@@ -67,8 +70,9 @@ readvector(job)
 		else {
 		  if(count >= header.nbodies) {
 			printf("<Sorry %s, file format is wrong>\n",title);
-			array_size = 0 ;
-			free(array) ;
+			vector_size = 0 ;
+			free(vector) ;
+			vector = NULL;
 			break;
 		  }
 		}
@@ -76,6 +80,7 @@ readvector(job)
 		    printf("<Sorry %s, file format is wrong>\n",title);
 		    vector_size = 0 ;
 		    free(vector);
+		    vector = NULL;
 		    break;
 		}
 		count++;
