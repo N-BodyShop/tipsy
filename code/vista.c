@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.5  1995/06/06 17:48:01  trq
+ * Revision 1.6  1995/07/20 20:56:19  trq
+ * Small fixes to smoothing.
+ *
+ * Revision 1.5  1995/06/06  17:48:01  trq
  * dump_pixmap.c: Cleaned up declarations.
  *
  * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
@@ -579,7 +582,7 @@ vista(job)
 			part_pos[1] += rot_matrix[1][j] * (sp->pos[j] -
 				boxes[active_box].center[j]) ;
 		    }
-		    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+		    hsmooth = sqrt(box0_smx->kd->p[sp-star_particles].fBall2);
 		    if(hsmooth > size_pixel){
 			thsmooth = 2. * hsmooth ;
 			distnorm = 1. / (hsmooth * hsmooth) ;
@@ -639,7 +642,7 @@ vista(job)
 			part_pos[1] += rot_matrix[1][j] * (sp->pos[j] -
 				boxes[active_box].center[j]) ;
 		    }
-		    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+		    hsmooth = sqrt(box0_smx->kd->p[sp-star_particles].fBall2);
 		    if(hsmooth > size_pixel){
 			thsmooth = 2. * hsmooth ;
 			distnorm = 1. / (hsmooth * hsmooth) ;
@@ -697,7 +700,7 @@ vista(job)
 			part_pos[1] += rot_matrix[1][j] * (dp->pos[j] -
 				boxes[active_box].center[j]) ;
 		    }
-		    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+		    hsmooth = sqrt(box0_smx->kd->p[dp-dark_particles].fBall2);
 		    if(hsmooth > size_pixel){
 			thsmooth = 2. * hsmooth ;
 			distnorm = 1. / (hsmooth * hsmooth) ;

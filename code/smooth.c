@@ -34,6 +34,13 @@ void calc_density(SMX *psmx, int bDark, int bGas, int bStar)
 	smFinish(smx);
 	smx = NULL;
     }
+    if(boxlist[0].ndark != header.ndark || boxlist[0].ngas != header.nsph
+       || boxlist[0].nstar != header.nstar) {
+	printf("<Warning, box 0 does not contain all particles, %s>\n", title);
+	printf("<Reloading box 0, %s>\n", title);
+	loadall();
+    }
+	
     printf("<Building tree, %s>\n", title);
 	kdInit(&kd);
 	kdReadBox(kd, &boxlist[0], bDark, bGas, bStar);
@@ -65,6 +72,13 @@ void calc_balls(SMX *psmx, int bDark, int bGas, int bStar)
 	smFinish(smx);
 	smx = NULL;
     }
+    if(boxlist[0].ndark != header.ndark || boxlist[0].ngas != header.nsph
+       || boxlist[0].nstar != header.nstar) {
+	printf("<Warning, box 0 does not contain all particles, %s>\n", title);
+	printf("<Reloading box 0, %s>\n", title);
+	loadall();
+    }
+	
     printf("<Building tree, %s>\n", title);
 	kdInit(&kd);
 	kdReadBox(kd, &boxlist[0], bDark, bGas, bStar);
