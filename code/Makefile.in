@@ -134,6 +134,7 @@ zspace.c dump_pixmap.c kd.c smooth.c catbox.c
 $(OBJS): defs.h
 main.o:  main.h
 command_interp.o: comm.h
+nsktrq.o: nsktrqxbm.h
 
 READLINE_SRC = \
 readline/acconfig.h readline/ansi_stdlib.h readline/bind.c \

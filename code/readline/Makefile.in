@@ -192,15 +192,17 @@ distclean realclean: clean
 # Dependencies
 readline.o: readline.c readline.h rldefs.h rlconf.h chardefs.h
 readline.o: keymaps.h history.h
-vi_mode.o:  rldefs.h rlconf.h readline.h history.h
+vi_mode.o:  vi_mode.c rldefs.h rlconf.h readline.h history.h
 funmap.o:   funmap.c readline.h rlconf.h
 keymaps.o:  keymaps.c emacs_keymap.c vi_keymap.c keymaps.h chardefs.h rlconf.h
-history.o: history.h memalloc.h
-isearch.o: memalloc.h readline.h history.h
-search.o: memalloc.h readline.h history.h
-display.o: readline.h history.h rldefs.h rlconf.h
-complete.o: readline.h rldefs.h rlconf.h
-rltty.o: rldefs.h rlconf.h readline.h
-bind.o: rldefs.h rlconf.h readline.h history.h
-signals.o: rldefs.h rlconf.h readline.h history.h
-parens.o: readline.h
+history.o: history.c history.h memalloc.h
+isearch.o: isearch.c memalloc.h readline.h history.h
+search.o: search.c memalloc.h readline.h history.h
+display.o: display.c readline.h history.h rldefs.h rlconf.h
+complete.o: complete.c readline.h rldefs.h rlconf.h
+rltty.o: rltty.c rldefs.h rlconf.h readline.h
+bind.o: bind.c rldefs.h rlconf.h readline.h history.h
+signals.o: signals.c rldefs.h rlconf.h readline.h history.h
+parens.o: parens.c readline.h
+tilde.o: tilde.c memalloc.h tilde.h
+xmalloc.o: xmalloc.c

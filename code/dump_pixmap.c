@@ -69,6 +69,14 @@ int Get_XColors(win_info, xcolors)
     return(ncolors);
 }
 
+/*
+ * Work around Sun CC bug.
+ */
+#if defined(__SunOS_5_4) && (__SUNPRO_C == 0x400)
+#define _SIZEOF(x) sz_##x
+#define SIZEOF(x) _SIZEOF(x)
+#endif
+
 void
 dump_pixmap(name)
 char *name;

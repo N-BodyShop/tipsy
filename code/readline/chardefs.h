@@ -25,6 +25,10 @@
 
 #include <ctype.h>
 
+#if defined (HAVE_CONFIG_H)
+#include "config.h"
+#endif
+
 #if defined (HAVE_STRING_H)
 #  include <string.h>
 #else
