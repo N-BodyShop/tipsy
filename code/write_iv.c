@@ -16,9 +16,9 @@ writeiv(job)
   double fraction ;
   extern void writeAxes();
   extern void writeWireframe();
-  int *used_dark ;
-  int *used_gas ;
-  int *used_star ;
+  int *used_dark = NULL;
+  int *used_gas = NULL;
+  int *used_star = NULL;
   int first_flag ;
   int npart ;
 
@@ -61,7 +61,7 @@ writeiv(job)
 	    fprintf(hardfile.ptr,",\n   ");
 	  }
 	  if(mark_dark[boxlist[active_box].dpi[i]]){
-	    particle_color[i] = tmp_color;
+	    tmp_color = particle_color[i];
 	    particle_color[i] = 1;
 	  }
 	  j = particle_color[i] ;
@@ -100,7 +100,7 @@ writeiv(job)
 	    fprintf(hardfile.ptr,",\n   ");
 	  }
 	  if(mark_gas[boxlist[active_box].gpi[i]]){
-	    particle_color[i+offset] = tmp_color;
+	    tmp_color = particle_color[i+offset];
 	    particle_color[i+offset] = 1;
 	  }
 	  j = particle_color[i+offset] ;
@@ -139,7 +139,7 @@ writeiv(job)
 	    fprintf(hardfile.ptr,",\n   ");
 	  }
 	  if(mark_star[boxlist[active_box].spi[i]]){
-	    particle_color[i+offset] = tmp_color;
+	    tmp_color = particle_color[i+offset];
 	    particle_color[i+offset] = 1;
 	  }
 	  j = particle_color[i+offset] ;
