@@ -13,6 +13,7 @@ loadbinary(infile,time)
 {
     int old_nstar;
     int i;
+    int nread;
 
     if ((float)currtime > (float)time){
 	fseek(infile,0L,0);
@@ -115,12 +116,25 @@ loadbinary(infile,time)
       box0_pi = NULL;
     }
 
-    fread((char *)gas_particles,sizeof(struct gas_particle),
+    nread = fread((char *)gas_particles,sizeof(struct gas_particle),
 		     header.nsph,infile) ;
-    fread((char *)dark_particles,sizeof(struct dark_particle),
+    if(nread != header.nsph) {
+	printf("<sorry, short read of gas particles: %d vs %d, %s>\n",
+	       nread, header.nsph, title);
+    }
+	
+    nread = fread((char *)dark_particles,sizeof(struct dark_particle),
 		     header.ndark,infile) ;
-    fread((char *)star_particles,sizeof(struct star_particle),
+    if(nread != header.ndark) {
+	printf("<sorry, short read of dark particles: %d vs %d, %s>\n",
+	       nread, header.ndark, title);
+    }
+    nread = fread((char *)star_particles,sizeof(struct star_particle),
 		     header.nstar,infile) ;
+    if(nread != header.nstar) {
+	printf("<sorry, short read of star particles: %d vs %d, %s>\n",
+	       nread, header.nstar, title);
+    }
     currpos = lastpos ;
     fseek(infile,currpos,0) ;
     currtime = header.time ;
@@ -599,12 +613,29 @@ loadstandard(infile,time)
       box0_pi = NULL;
     }
 
-    for(i = 0; i < header.nsph; ++i)
-	xdr_gas(&gas_particles[i]);
-    for(i = 0; i < header.ndark; ++i)
-	xdr_dark(&dark_particles[i]);
-    for(i = 0; i < header.nstar; ++i)
-	xdr_star(&star_particles[i]);
+    for(i = 0; i < header.nsph; ++i) {
+	if(!xdr_gas(&gas_particles[i]))
+	    break;
+    }
+    if(i != header.nsph)
+	printf("<sorry, short read of gas: %d vs %d, %s>\n", i,
+	       header.nsph, title);
+
+    for(i = 0; i < header.ndark; ++i) {
+	if(!xdr_dark(&dark_particles[i]))
+	    break;
+    }
+    if(i != header.ndark)
+	printf("<sorry, short read of dark: %d vs %d, %s>\n", i,
+	       header.ndark, title);
+
+    for(i = 0; i < header.nstar; ++i) {
+	if(!xdr_star(&star_particles[i]))
+	    break;
+    }
+    if(i != header.nstar)
+	printf("<sorry, short read of star: %d vs %d, %s>\n", i,
+	       header.nstar, title);
     
     currpos = lastpos ;
     fseek(infile,currpos,0) ;
