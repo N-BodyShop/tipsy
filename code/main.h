@@ -1,7 +1,10 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.7  1996/04/24 23:40:36  trq
+ * Revision 1.8  1996/12/19 18:03:34  trq
+ * Fixed handling of arrays and vectors when a sub-box is loaded.
+ *
+ * Revision 1.7  1996/04/24  23:40:36  trq
  * balls_loaded variable to keep track of balls.
  * Fixed smoothing length bug.
  *
@@ -96,6 +99,8 @@ struct star_particle *star_particles = NULL;
 struct dump header  = { 0.0, 0, 0 , 0 , 0, 0};
 struct box boxes[MAXBOX+1] ;    
 struct list boxlist[MAXBOX+1] ;
+int *box0_pi = NULL;
+
 struct macro_list *macros = NULL;
 
 SMX box0_smx = NULL;

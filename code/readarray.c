@@ -1,8 +1,11 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:35  trq
- * Initial revision
+ * Revision 1.2  1996/12/19 18:03:37  trq
+ * Fixed handling of arrays and vectors when a sub-box is loaded.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:36  trq
+ * Import to CVS
  *
  * Revision 2.2  94/03/24  11:25:29  nsk
  * Allow for just the total number of particles in the header line.
@@ -50,14 +53,30 @@ readarray(job)
 	printf("<Sorry %s, no room for array>\n",title);
 	return;
       }
-	for(i = 0; i < nbodies; i++)
+	for(i = 0, count = 0; i < nbodies; i++)
 	  {
-	    if(fscanf(infile, "%f", &array[i]) == EOF){
+				/* skip line if a partial box was
+				   loaded and this particle is not in
+				   it */
+	    if(box0_pi && box0_pi[count] != i) {
+	      fscanf(infile, "%*f");
+	      continue;
+	    }
+	    else {
+	      if(count >= header.nbodies) {
+		    printf("<Sorry %s, file format is wrong>\n",title);
+		    array_size = 0 ;
+		    free(array) ;
+		    break;
+	      }
+	    }
+	    if(fscanf(infile, "%f", &array[count]) == EOF){
 		printf("<Sorry %s, file format is wrong>\n",title);
-		vector_size = 0 ;
+		array_size = 0 ;
 		free(array) ;
 		break;
 	    }
+	    count++;
 	  }
       }
     else {

@@ -109,6 +109,10 @@ loadbinary(infile,time)
 	smFinish(box0_smx);
 	box0_smx = NULL;
     }
+    if(box0_pi) {
+      free(box0_pi);
+      box0_pi = NULL;
+    }
 
     fread((char *)gas_particles,sizeof(struct gas_particle),
 		     header.nsph,infile) ;
@@ -136,6 +140,7 @@ loadbin_box(infile,time, xmin, xmax)
     int i;
     int k;
     int in;
+    int max_part = 1000;
     int max_gas = 1000;
     int max_dark = 1000;
     int max_star = 1000;
@@ -216,8 +221,17 @@ loadbin_box(infile,time, xmin, xmax)
 	smFinish(box0_smx);
 	box0_smx = NULL;
     }
-
-    for(i = 0, gp = gas_particles; i < header.nsph; i++) {
+    if(box0_pi) {
+      free(box0_pi);
+    }
+    box0_pi = (int *) malloc(max_part*sizeof(*box0_pi));
+    if(box0_pi == NULL) {
+	    printf("<sorry, no memory for particle indices, %s>\n",title) ;
+	    return ;
+    }
+      
+    for(i = 0, ngas = 0; i < header.nsph; i++) {
+	gp = &gas_particles[ngas];
 	fread((char *)gp, sizeof(struct gas_particle),
 	      1,infile) ;
 	in = 1;
@@ -226,9 +240,9 @@ loadbin_box(infile,time, xmin, xmax)
 		in = 0;
 	}
 	if(in) {
-	    ++gp;
-	    if(gp - gas_particles >= max_gas) {
-		ngas = gp - gas_particles;
+	    box0_pi[ngas] = i;
+	    ngas++;
+	    if(ngas >= max_gas) {
 		max_gas *= 1.4;
 		gas_particles = realloc(gas_particles,
 					max_gas*sizeof(*gas_particles));
@@ -236,13 +250,20 @@ loadbin_box(infile,time, xmin, xmax)
 		    printf("<sorry, no memory for gas particles, %s>\n",title);
 		    return ;
 		}
-		gp = gas_particles + ngas;
+	    }
+	    if(ngas >= max_part) {
+		max_part *= 1.4;
+		box0_pi = realloc(box0_pi, max_part*sizeof(*box0_pi));
+		if(box0_pi == NULL) {
+		    printf("<sorry, no memory for particle indices, %s>\n",title);
+		    return ;
+		}
 	    }
 	}
     }
-    header.nsph = gp - gas_particles;
 
-    for(i = 0, dp = dark_particles; i < header.ndark; i++) {
+    for(i = 0, ndark = 0; i < header.ndark; i++) {
+        dp = &dark_particles[ndark];
 	fread((char *)dp, sizeof(struct dark_particle),
 	      1,infile) ;
 	in = 1;
@@ -251,9 +272,9 @@ loadbin_box(infile,time, xmin, xmax)
 		in = 0;
 	}
 	if(in) {
-	    ++dp;
-	    if(dp - dark_particles >= max_dark) {
-		ndark = dp - dark_particles;
+	    box0_pi[ndark+ngas] = i + header.nsph;
+	    ++ndark;
+	    if(ndark >= max_dark) {
 		max_dark *= 1.4;
 		dark_particles = realloc(dark_particles,
 					 max_dark*sizeof(*dark_particles));
@@ -261,13 +282,20 @@ loadbin_box(infile,time, xmin, xmax)
 		    printf("<sorry, no memory for dark particles, %s>\n",title);
 		    return ;
 		}
-		dp = dark_particles + ndark;
+	    }
+	    if(ngas+ndark >= max_part) {
+		max_part *= 1.4;
+		box0_pi = realloc(box0_pi, max_part*sizeof(*box0_pi));
+		if(box0_pi == NULL) {
+		    printf("<sorry, no memory for particle indices, %s>\n",title);
+		    return ;
+		}
 	    }
 	}
     }
-    header.ndark = dp - dark_particles;
 
-    for(i = 0, sp = star_particles; i < header.nstar; i++) {
+    for(i = 0, nstar = 0; i < header.nstar; i++) {
+        sp = &star_particles[nstar];
 	fread((char *)sp, sizeof(struct star_particle),
 	      1,infile) ;
 	in = 1;
@@ -276,9 +304,9 @@ loadbin_box(infile,time, xmin, xmax)
 		in = 0;
 	}
 	if(in) {
-	    ++sp;
-	    if(sp - star_particles >= max_star) {
-		nstar = sp - star_particles;
+	    box0_pi[nstar+ndark+ngas] = i + header.nsph + header.ndark;
+	    ++nstar;
+	    if(nstar >= max_star) {
 		max_star *= 1.4;
 		star_particles = realloc(star_particles,
 					 max_star*sizeof(*star_particles));
@@ -286,11 +314,20 @@ loadbin_box(infile,time, xmin, xmax)
 		    printf("<sorry, no memory for star particles, %s>\n",title);
 		    return ;
 		}
-		sp = star_particles + nstar;
+	    }
+	    if(ngas+ndark+nstar >= max_part) {
+		max_part *= 1.4;
+		box0_pi = realloc(box0_pi, max_part*sizeof(*box0_pi));
+		if(box0_pi == NULL) {
+		    printf("<sorry, no memory for particle indices, %s>\n",title);
+		    return ;
+		}
 	    }
 	}
     }
-    header.nstar = sp - star_particles;
+    header.nsph = ngas;
+    header.ndark = ndark;
+    header.nstar = nstar;
 
     header.nbodies = header.nsph + header.ndark + header.nstar;
 

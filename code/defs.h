@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.8  1996/06/26 00:34:48  nsk
+ * Revision 1.9  1996/12/19 18:03:24  trq
+ * Fixed handling of arrays and vectors when a sub-box is loaded.
+ *
+ * Revision 1.8  1996/06/26  00:34:48  nsk
  * Added deuterium to absorb, HeI, HeII, and xray to vista
  *
  * Revision 1.7  1996/04/24  23:40:33  trq
@@ -317,6 +320,7 @@ struct list {
     int *spi;
 } ;
 extern struct list boxlist[MAXBOX+1] ;
+extern int *box0_pi;
 
 #include "smooth.h"
 extern SMX box0_smx;
