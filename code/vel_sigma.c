@@ -68,10 +68,12 @@ vel_sigma(job)
 		setvec(center,boxes[center_box].dark_com) ;
 		setvec(center_vel,boxes[box].dark_com_vel) ;
 		setvec(center_angular_mom,boxes[box].dark_angular_mom) ;
+	    }
 	    else if (strcmp(particle_type,"star") == 0){
 		setvec(center,boxes[center_box].star_com) ;
 		setvec(center_vel,boxes[box].star_com_vel) ;
 		setvec(center_angular_mom,boxes[box].star_angular_mom) ;
+	    }
 	    else if (strcmp(particle_type,"gas") == 0){
 		setvec(center,boxes[center_box].gas_com) ;
 		setvec(center_vel,boxes[box].gas_com_vel) ;
