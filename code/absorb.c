@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1995/03/02 21:43:01  nsk
+ * Revision 1.4  1995/09/22 23:39:36  nsk
+ * fixed boundary bug
+ *
+ * Revision 1.3  1995/03/02  21:43:01  nsk
  * fixed yet another bug in absorb
  *
  * Revision 1.2  1995/03/02  17:30:21  nsk
@@ -502,7 +505,7 @@ absorb(job)
 				}
 			    }
 			    abs_zupper = fabs(zupper) ;
-			    if(zlower*zupper < 0.0){  /* bin stradles zero */
+			    if(zlower*zupper <= 0.0){  /* bin stradles zero */
 				if(radius2 < 1.){
 				    kernel -= 0.5625*radius2*radius2*
 					    log(radius) ;
