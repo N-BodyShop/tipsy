@@ -1,7 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:34  trq
- * Initial revision
+ * Revision 1.2  1997/02/20 02:37:13  trq
+ * Make reading and writing marks work with a loaded subbox.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:35  trq
+ * Import to CVS
  *
  * Revision 2.1  1994/12/29  02:27:52  trq
  * close the file when done.
@@ -53,36 +56,7 @@ readmark(job)
 	    return;
 	}
 	ndark = nbodies - (nsph + nstar);
-	if(nsph > header.nsph)
-	  {
-	    fprintf(stderr, "Increasing nsph to %d\n", nsph);
-	    mark_gas = (short *)realloc(mark_gas,
-					sizeof(*mark_gas)*nsph);
-	    for(i = header.nsph; i < nsph; i++)
-	      {
-		mark_gas[i] = 0;
-	      }
-	  }
-	if(ndark > header.ndark)
-	  {
-	    fprintf(stderr, "Increasing ndark to %d\n", ndark);
-	    mark_dark = (short *)realloc(mark_dark,
-					sizeof(*mark_dark)*ndark);
-	    for(i = header.ndark; i < ndark; i++)
-	      {
-		mark_dark[i] = 0;
-	      }
-	  }
-	if(nstar > header.nstar)
-	  {
-	    fprintf(stderr, "Increasing nstar to %d\n", nstar);
-	    mark_star = (short *)realloc(mark_star,
-					sizeof(*mark_star)*nstar);
-	    for(i = header.nstar; i < nstar; i++)
-	      {
-		mark_star[i] = 0;
-	      }
-	  }
+	i = 0;
 	for(;;)
 	  {
 	    if(fscanf(infile, "%d", &index) != 1) break;
@@ -91,17 +65,27 @@ readmark(job)
 		printf("<Sorry %s, index is less than 1>\n",title);
 		break;
 	      }
-	    else if(index <= nsph)
+	    --index;
+	    if(box0_pi) {	/* partial box, assume sorted marked
+				   particles */
+	        while(box0_pi[i] < index) i++;
+		if(box0_pi[i] != index) {
+		  continue;
+		}
+	    }
+	    else
+	        i = index;
+	    if(index < nsph && i < header.nsph)
 	      {
-		mark_gas[index-1]++;
+		mark_gas[i]++;
 	      }
-	    else if (index <= nsph + ndark) 
+	    else if (index < nsph + ndark && i < header.nsph + header.ndark) 
 	      {
-		mark_dark[index-1-nsph]++;
+		mark_dark[i-header.nsph]++;
 	      }
-	    else if(index <= nbodies)
+	    else if(index < nbodies && i < header.nbodies)
 	      {
-		mark_star[index-1-nsph-ndark]++;
+		mark_star[i-header.nsph-header.ndark]++;
 	      }
 	    else
 	      {
