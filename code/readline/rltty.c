@@ -384,6 +384,8 @@ get_tty_settings (tty, tiop)
       (void) ioctl (tty, TIOCSWINSZ, &w);
 #endif
 
+  if(!isatty(tty))
+	return -1;
   /* Keep looping if output is being flushed after a ^O (or whatever
      the flush character is). */
   while (GETATTR (tty, tiop) < 0 || OUTPUT_BEING_FLUSHED (tiop))
