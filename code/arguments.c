@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.14  1997/09/12 18:43:04  nsk
+ * Revision 1.15  1997/09/24 17:35:03  trq
+ * Added "loadstandard" command which reads tipsy standard (as opposed to native)
+ * binaries.
+ *
+ * Revision 1.14  1997/09/12  18:43:04  nsk
  * fixed arguments for redshift
  *
  * Revision 1.13  1997/09/05  01:02:19  nsk
@@ -219,6 +223,10 @@ arguments(job)
     else if ( strcmp(command,"loadbinary") == 0 ||
 	    strcmp(command,"loadb") == 0 ) {
 	printf("loadbinary time [x-center y-center z-center x-hwidth y-hwidth z-hwidth]\n") ;
+    }
+    else if ( strcmp(command,"loadstandard") == 0 ||
+	    strcmp(command,"loads") == 0 ) {
+	printf("loadstandard time [x-center y-center z-center x-hwidth y-hwidth z-hwidth]\n") ;
     }
     else if ( strcmp(command,"lumconstants") == 0 ||
 	    strcmp(command,"lconst") == 0 ) {

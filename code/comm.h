@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.7  1997/09/05 01:02:20  nsk
+ * Revision 1.8  1997/09/24 17:35:04  trq
+ * Added "loadstandard" command which reads tipsy standard (as opposed to native)
+ * binaries.
+ *
+ * Revision 1.7  1997/09/05  01:02:20  nsk
  * streamlined vista (I hope it works), added neutralize command, added SZ
  * effect to vista.
  *
@@ -96,6 +100,7 @@ extern void lconst_sub() ;
 
 extern void loadall_sub() ;
 extern void loadbinary_sub() ;
+extern void loadstandard_sub() ;
 extern void make_box() ;
 extern void make_macro() ;
 extern void markarray() ;
@@ -262,6 +267,8 @@ struct comm c_list[] = {
      {"loadall",     loadall_sub,	0},
      {"loadb",       loadbinary_sub,	0},
      {"loadbinary",  loadbinary_sub,	0},
+     {"loads",       loadstandard_sub,	0},
+     {"loadstandard",loadstandard_sub,	0},
      {"lumconstants",lconst_sub,	0},
      {"macro",       run_macro,		0},
      {"makebox",     make_box,		1},
