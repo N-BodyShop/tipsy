@@ -99,12 +99,15 @@ void smDivvSym(smx, pi, nSmooth, pList, fList)
 	dwnorm = hsminv2 * hsminv2 * hsminv / PI ;
 	distnorm = hsminv2 * deldr2i ;
 	for (i = 0; i < nSmooth; i++) {
+
 	        pj = pList[i];
 		if(pj == pi)
 		    continue;
 		dr2 = fList[i];
 		dr2p = dr2 * distnorm ;
 		if(dr2p < NINTERP){
+		    int j;
+
 		    iwsm = (int)dr2p ;
 		    iwsm = min(NINTERP,iwsm) ;
 		    drw = dr2p - iwsm ;
@@ -112,6 +115,24 @@ void smDivvSym(smx, pi, nSmooth, pList, fList)
 		    dwmass = dwnorm * dwsm ;
 		    sub_vec(dr,p[pi].p.gp->pos, p[pj].p.gp->pos) ;
 		    sub_vec(dv,p[pi].p.gp->vel, p[pj].p.gp->vel) ;
+/*
+ * Handle periodic boundary conditions.
+ */
+		    if(periodic == YES) {
+			for(j = 0; j < MAXDIM; j++) {
+			    if(dr[j] >= 0.5*period_size)
+				dr[j] -= period_size;
+			    if(dr[j] < -0.5*period_size)
+				dr[j] += period_size;
+			}
+		    }
+/*
+ * Handle comoving coordinates.
+ */
+		    if(comove == YES) {
+			for(j = 0; j < MAXDIM; j++)
+			    dv[j] += dr[j]*hubble_constant/(1.0 + redshift);
+		    }
 		    vdotdr = dot_product(dv,dr) ;
 		    smx->kd->p[pi].fDensity -=
 			smx->kd->p[pj].p.gp->mass * dwmass * vdotdr ;
