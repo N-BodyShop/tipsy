@@ -8,6 +8,6 @@ void print(char job[])
   char junk[MAXVAR], rest[MAXCOMM];
 
   nread = sscanf(job, "%s %[^\n]", junk, rest);
-  if (nread == 2) printf("\n%s\n\n", rest);
+  if (nread == 2) printf("%s\n", rest);
 
 }  
