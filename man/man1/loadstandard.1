@@ -1,0 +1,41 @@
+.TH LOADBINARY  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+loadstandard \- load in data from a binary file in machine independent format
+.SH SYNOPSIS
+.B loadstandard
+.I time [ x-center y-center z-center x-hwidth y-hwidth z-hwidth ]
+.SH DESCRIPTION
+.B loadstandard
+loads in the data at time
+.I time
+from the currently open binary file assuming it is in a machine
+independent format.  This is format is defined by the XDR (external data
+representation routines) specified by RFC1014.  If more than one time is
+present in the binary file the time closest to 
+.I time
+is used.  It is typical (and useful) to have many sequential time outputs
+in one tipsy binary file. If no binary file is open an error is generated.
+Binary files can be opened using the
+.B openbinary
+command.
+Standard binary files can be created using the
+.B totipstd
+program from the tipsy_tools package.  The data cannot be used until box 0 is
+loaded using either the
+.B loadall
+or
+.B setbox
+command.
+If the arguments
+.I x-center y-center z-center x-hwidth y-hwidth z-hwidth
+are given, then a subbox centered at
+.I x-center y-center z-center
+of half width
+.I x-hwidth y-hwidth z-hwidth
+is loaded.
+.SH SEE ALSO
+.BR loadall (1),
+.BR openbinary (1),
+.BR loadbinary (1),
+.BR readascii (1),
+.BR setbox (1)
