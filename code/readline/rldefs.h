@@ -34,6 +34,10 @@
 #  include "memalloc.h"
 #endif
 
+#if defined(HAVE_UNISTD_H)
+#  include <unistd.h>
+#endif
+
 #define NEW_TTY_DRIVER
 #define HAVE_BSD_SIGNALS
 /* #define USE_XON_XOFF */
