@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.10  1996/06/26 00:34:47  nsk
+ * Revision 1.11  1996/07/30 22:19:48  trq
+ * Fixed memory leak.
+ *
+ * Revision 1.10  1996/06/26  00:34:47  nsk
  * Added deuterium to absorb, HeI, HeII, and xray to vista
  *
  * Revision 1.9  1996/04/24  23:40:32  trq
@@ -1764,6 +1767,7 @@ absorb(job)
 	fclose(fp);
 	free(vbins_t_HI);
 	free(vbins_HI);
+	free(vbins_D);
 	free(vbins_HeI);
 	free(vbins_HeII);
 	free(mass_tot);
