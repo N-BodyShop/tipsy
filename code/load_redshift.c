@@ -6,13 +6,15 @@ load_redshift()
     char *red_const ;
     char coord[MAXCOMM] ;
     char boundary[MAXCOMM] ;
+    double lambda ;
+    double zp1 ;
 
     forever{
 	printf("<enter: redshift, coordinates (comove or physical,") ;
-	printf(" hubble constant, omega, boundary, and period)>\n") ;
+	printf(" hubble constant, omega, lambda, boundary, and period)>\n") ;
 	red_const = my_gets(" ") ;
-	if(sscanf(red_const,"%lf %s %lf %lf %s %lf",&redshift, coord,
-		&hubble_constant,&omega,boundary,&period_size) == 6){
+	if(sscanf(red_const,"%lf %s %lf %lf %lf %s %lf",&redshift, coord,
+		&hubble_constant,&omega,&lambda,boundary,&period_size) == 7){
 	    if(strcmp(coord,"physical") == 0 || strcmp(coord,"p") == 0){
 		cosmof3 = 1.0;
 		cosmof = 1.0;
@@ -36,7 +38,9 @@ load_redshift()
 		cosmof = 1.0/(1.0 + redshift);
 		cosmof3 = cosmof*cosmof*cosmof;
 		comove = YES ;
-		hubble_constant *= sqrt(1 + omega*redshift)*(1 + redshift) ;
+		zp1 = 1. + redshift ;
+		hubble_constant *= sqrt(omega*zp1*zp1*zp1+
+					(1.-omega-lambda)*zp1*zp1+lambda) ;
 		if(strcmp(boundary,"periodic") == 0 ||
 			strcmp(boundary,"p") == 0){
 		    periodic = YES ;
