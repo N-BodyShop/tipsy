@@ -2,6 +2,12 @@ This directory contains source and documentation for TIPSY, a
 theoretical image processing system.  See INSTALLATION below for directions
 on building TIPSY.
 
+For further documentation see:
+http://www-hpcc.astro.washington.edu/tools/tipsy/tipsy.html
+
+To report problems use our Jitterbug site at:
+http://hpcc.astro.washington.edu/hpcc-bugs
+
 OVERVIEW:
 
 The developement of TIPSY was motivated by the need to quickly display
