@@ -475,7 +475,7 @@ void smSetBall(smx, ball_size)
     float fBall2;
     int pi;
     
-    fBall2 = ball_size*ball_size;
+    fBall2 = 4.0*ball_size*ball_size;
 
     for (pi=0;pi<smx->kd->nActive;++pi) {
 	smx->kd->p[pi].fBall2 = fBall2;
