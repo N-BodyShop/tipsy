@@ -2,6 +2,7 @@
 
 static char version_string[] = "2.1.7";
 
+void
 version(job)
     char job[MAXCOMM] ;
 {

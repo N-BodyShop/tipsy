@@ -1,7 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:34  trq
- * Initial revision
+ * Revision 1.2  1996/02/16 17:19:25  trq
+ * Fixed bug in window for non-8 bit displays.
+ * Added optional size arguments to the window command.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:35  trq
+ * Import to CVS
  *
  * Revision 2.7  1994/10/07  16:55:15  trq
  * Corrected use of XtGetValues().
@@ -41,6 +45,7 @@ static char vpTranslations[] =
    <MotionNotify>:	DrawBox()";
 
 extern XtAppContext app_con;
+extern Widget toplevel;
 extern Widget canvas;
 static Widget *shells;
 static Widget *views;
@@ -60,8 +65,13 @@ window(job)
     int i;
     String params;
     Cardinal nparams;
+    int narg;
+    int width, height;
+    Visual *visual;
+    int depth;
     
-    if(sscanf(job, "%s %d", command, &winnum) == 2)
+    if((narg = sscanf(job, "%s %d %d %d", command, &winnum, &width, &height)) == 2
+	|| narg == 4)
       {
 	XEvent event;
 	Arg args[2];
@@ -104,7 +114,13 @@ window(job)
 
 		shells[winnum-1] = XtCreatePopupShell("tipsy_popup",
 						   topLevelShellWidgetClass,
-						   canvas, NULL, 0);
+						   toplevel, NULL, 0);
+		XtSetArg(args[0], XtNvisual, &visual);
+		XtSetArg(args[1], XtNdepth, &depth);
+		XtGetValues(toplevel, args, 2);
+		XtSetArg(args[0], XtNvisual, visual);
+		XtSetArg(args[1], XtNdepth, depth);
+		XtSetValues(shells[winnum-1], args, 2);
 		views[winnum-1] = XtCreateManagedWidget( "hardview",
 					     viewportWidgetClass,
 					     shells[winnum-1], NULL, 0);
@@ -122,13 +138,19 @@ window(job)
 		  }
 		else
 		  {
-		    Dimension width, height;
-		    
-		    XtSetArg(args[0], XtNwidth, &width);
-		    XtSetArg(args[1], XtNheight, &height);
-		    XtGetValues(canvas, args, 2);
-		    XtSetArg(args[0], XtNwidth, width);
-		    XtSetArg(args[1], XtNheight, height);
+		      Dimension xwidth, xheight;
+
+		      if(narg == 2) {
+
+			XtSetArg(args[0], XtNwidth, &xwidth);
+			XtSetArg(args[1], XtNheight, &xheight);
+			XtGetValues(canvas, args, 2);
+		      } else {
+			  xwidth = width;
+			  xheight = height;
+		      }
+			XtSetArg(args[0], XtNwidth, xwidth);
+			XtSetArg(args[1], XtNheight, xheight);
 		  }
 		XtSetValues( views[winnum-1], args, 2 );
 		XtSetValues( canvases[winnum-1], args, 2 );

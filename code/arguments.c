@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.6  1995/09/21 21:36:03  trq
+ * Revision 1.7  1996/02/16 17:19:21  trq
+ * Fixed bug in window for non-8 bit displays.
+ * Added optional size arguments to the window command.
+ *
+ * Revision 1.6  1995/09/21  21:36:03  trq
  * Corrected label arguments.
  *
  * Revision 1.5  1995/06/06  17:47:49  trq
@@ -399,7 +403,7 @@ arguments(job)
 	printf("whatis command\n") ;
     }
     else if ( strcmp(command,"window") == 0) {
-	printf("window window-number\n") ;
+	printf("window window-number (width height)\n") ;
     }
     else if ( strcmp(command,"writebox") == 0 || strcmp(command,"wbox") == 0 ) {
 	printf("writebox box-number filename\n") ;

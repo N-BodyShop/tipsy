@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/03/30 00:14:43  trq
+ * Revision 1.3  1996/02/16 17:19:22  trq
+ * Fixed bug in window for non-8 bit displays.
+ * Added optional size arguments to the window command.
+ *
+ * Revision 1.2  1995/03/30  00:14:43  trq
  * Added "ruler" command.
  *
  * Revision 1.1.1.1  1995/01/10  22:57:35  trq
@@ -173,6 +177,7 @@ char color_left_text[MAXCOMM] = "\0";
 char color_middle_text[MAXCOMM] = "\0";
 char color_right_text[MAXCOMM] = "\0";
 XtAppContext app_con;
+Widget toplevel;
 Widget scrollbar;
 Widget zoomscrollbar;
 Widget lrscrollbar;
@@ -196,12 +201,11 @@ int argc;
     struct passwd *pwuid ;
     char name[MAXCOMM] ;
     char prompt[MAXCOMM];
-    char job[MAXCOMM] ;
     char command[MAXCOMM] ;
     void change_color() ;
     int i ;
-    char *njob;
-    Widget toplevel, outer, viewport, box, label;
+    char *job;
+    Widget outer, viewport, box, label;
     Widget colorview;
     Widget unzoom_button;
     Widget zoom_label;
@@ -229,11 +233,13 @@ int argc;
 
     sprintf(title,"master") ;
     for(i=1;i<argc;i++){
-	sscanf(argv[i],"%s",job) ;
-	if( strcmp(job,"-nodisplay") == 0 || strcmp(job,"-nodisp") == 0 ) {
+	sscanf(argv[i],"%s",command) ;
+	if( strcmp(command,"-nodisplay") == 0
+	    || strcmp(command,"-nodisp") == 0 ) {
 	    display = NO ;
 	}
-	else if( strcmp(job,"-add") == 0 || strcmp(job,"-address") == 0 ) {
+	else if( strcmp(command,"-add") == 0
+		 || strcmp(command,"-address") == 0 ) {
 	    sscanf(argv[++i],"%s",title) ;
 	}
     }
@@ -477,9 +483,9 @@ int argc;
     initialize_readline();
     sprintf(prompt, "<yes, %s>",name);
     forever {
-	njob = my_gets(prompt) ;
-        if(njob) sscanf(njob,"%s",command) ;
-	if ( !njob || strcmp(command,"quit") == 0 ) {
+	job = my_gets(prompt) ;
+        if(job) sscanf(job,"%s",command) ;
+	if ( !job || strcmp(command,"quit") == 0 ) {
 	    if (asciiopen) {
 		fclose(bodfile.ptr) ;
 	    }
@@ -492,7 +498,6 @@ int argc;
 	    break ;
 	}
 	else {
-	    strcpy(job,njob) ;
 	    command_interp(job) ;
 	}
     }
