@@ -1,7 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:30  trq
- * Initial revision
+ * Revision 1.2  1995/05/10 18:32:45  trq
+ * Added "dump" parameter to hard command which dumps the backing pixmap in
+ * XWD format.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:31  trq
+ * Import to CVS
  *
  * Revision 2.14  1994/10/12  21:26:39  trq
  * Cleaned up mallocs.
@@ -46,6 +50,8 @@
 #include "defs.h"
 #include <malloc.h>
 
+Pixmap back_xid = 0;
+
 void
 plot_all(job)
      char *job;
@@ -61,7 +67,6 @@ plot_all(job)
     int point_size_m ;
     int offset ;
     int tmp_color;
-    static Pixmap back_xid = 0;
     static GC back_gc = 0;
     static h_back, w_back;
     static unsigned char **c_array;

@@ -1,7 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:33  trq
- * Initial revision
+ * Revision 1.2  1995/05/10 18:32:44  trq
+ * Added "dump" parameter to hard command which dumps the backing pixmap in
+ * XWD format.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:34  trq
+ * Import to CVS
  *
  * Revision 2.3  94/04/20  08:21:58  trq
  * deleted hard_replay variable.
@@ -42,6 +46,17 @@ hard(job)
 	      sprintf(command, "xwd -id %d > %s", currentview_xid,
 		      hardfile.name);
 	      system(command);
+	      return;
+	    }
+	  if (strcmp(hardfile.name, "dump") == 0) 
+	    {
+				/* just dump current window to a file */
+	      if(sscanf(job, "%*s %*s %s", hardfile.name) != 1)
+		{
+		  input_error(command);
+		  return;
+		}
+	      dump_pixmap(hardfile.name);
 	      return;
 	    }
 	    window("window 1");
