@@ -171,7 +171,10 @@ profile(job)
 			return ;
 		    }
 		    if (strcmp(bin_type,"log") == 0) {
-			radius = log10(radius) ;
+			if(radius > 0.0)
+			    radius = log10(radius) ;
+			else
+			    radius = min_radius;
 		    }
 		    bin = max((int)(floor((radius - min_radius) / bin_size)),0);
 		    if (bin < number_bins) {
@@ -216,7 +219,10 @@ profile(job)
 			return ;
 		    }
 		    if (strcmp(bin_type,"log") == 0) {
-			radius = log10(radius) ;
+			if(radius > 0.0)
+			    radius = log10(radius) ;
+			else
+			    radius = min_radius;
 		    }
 		    bin = max((int)(floor((radius - min_radius) / bin_size)),0);
 		    if (bin < number_bins) {
@@ -263,7 +269,10 @@ profile(job)
 			return ;
 		    }
 		    if (strcmp(bin_type,"log") == 0) {
-			radius = log10(radius) ;
+			if(radius > 0.0)
+			    radius = log10(radius) ;
+			else
+			    radius = min_radius;
 		    }
 		    bin = max((int)(floor((radius - min_radius) / bin_size)),0);
 		    if (bin < number_bins) {
@@ -336,7 +345,10 @@ profile(job)
 			radius = ell_distance(dp->pos) ;
 		    }
 		    if (strcmp(bin_type,"log") == 0) {
-			radius = log10(radius) ;
+			if(radius > 0.0)
+			    radius = log10(radius) ;
+			else
+			    radius = min_radius;
 		    }
 		    bin = max((int)(floor((radius - min_radius) / bin_size)),0);
 		    if (bin < number_bins) {
@@ -374,7 +386,10 @@ profile(job)
 			radius = ell_distance(sp->pos) ;
 		    }
 		    if (strcmp(bin_type,"log") == 0) {
-			radius = log10(radius) ;
+			if(radius > 0.0)
+			    radius = log10(radius) ;
+			else
+			    radius = min_radius;
 		    }
 		    bin = max((int)(floor((radius - min_radius) / bin_size)),0);
 		    if ( bin >= 0 && bin < number_bins) {
@@ -412,7 +427,10 @@ profile(job)
 			radius = ell_distance(gp->pos) ;
 		    }
 		    if (strcmp(bin_type,"log") == 0) {
-			radius = log10(radius) ;
+			if(radius > 0.0)
+			    radius = log10(radius) ;
+			else
+			    radius = min_radius;
 		    }
 		    bin = max((int)(floor((radius - min_radius) / bin_size)),0);
 		    if (bin < number_bins) {
