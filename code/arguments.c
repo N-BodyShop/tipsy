@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.5  1995/06/06 17:47:49  trq
+ * Revision 1.6  1995/09/21 21:36:03  trq
+ * Corrected label arguments.
+ *
+ * Revision 1.5  1995/06/06  17:47:49  trq
  * dump_pixmap.c: Cleaned up declarations.
  *
  * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
@@ -176,7 +179,7 @@ arguments(job)
 	printf("hubble box-number hubble-constant x-center y-center z-center\n") ;
     }
     else if ( strcmp(command,"label") == 0 ) {
-	printf("label text\n") ;
+	printf("label x-position y-position orientation-integer text\n") ;
     }
     else if ( strcmp(command,"loadall") == 0 ) {
 	printf("loadall\n") ;
