@@ -1178,7 +1178,7 @@ int dumb_term = 0;
 
 #if !defined (__linux__)
 /* If this causes problems, remove the `extern'. */
-extern char PC, *BC, *UP;
+char PC, *BC, *UP;
 #endif /* __linux__ */
 
 /* Some strings to control terminal actions.  These are output by tputs (). */
