@@ -1,8 +1,11 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:31  trq
- * Initial revision
+ * Revision 1.1.1.1.6.1  2000/07/13 01:19:59  nsk
+ * Added 1-param calling mode to zoom from center of current box.  (maf)
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:32  trq
+ * Import to CVS
  *
  * Revision 2.3  1994/12/23  01:10:36  nsk
  * added ability to zoom to center of mass of a box
@@ -112,10 +115,17 @@ zoom_sub(job)
       }
     }
     else if (sscanf(job, "%s %f %f %f %lf",command,&center[0],
-		    &center[1],&center[2],&factor) != 5) {
+		    &center[1],&center[2],&factor) == 5) {
+      /* got what we needed */
+    }
+    else if (sscanf(job, "%s %lf",command,&factor) == 2) {
+	setvec(center, boxes[active_box].center);
+    }
+    else {
 	input_error(command) ;
 	return;
     }
+
     if (view_size == INTMAX ) {
 	view_size = (view_size + 1) / factor ;
     }
@@ -152,6 +162,9 @@ reset_zoom_scroll()
     XawScrollbarSetThumb(zoomscrollbar, 0.5, -1.0);
 }
 
+
+static double lastzoomfactor = 1.0;
+
 void
 zoom_scroll(scroll, ignore, top_ptr)
      Widget scroll;
@@ -160,7 +173,25 @@ zoom_scroll(scroll, ignore, top_ptr)
   double factor;
   
   factor = pow(2.0, 2.0*((*(float *) top_ptr)) - 1.0);
+  lastzoomfactor = factor;
   view_size = INTMAX/(zoom_factor*factor);
   zoom_window(can_width/2, can_height/2);
   plot_sub(NULL);
+}
+
+/* test */
+void
+zoom_report_down(Widget w,
+	    XtPointer calldata, 
+	    XtPointer ev) {
+  scrollval_save = lastzoomfactor;
+}
+
+
+/* test */
+void
+zoom_report_up(Widget w,
+	    XtPointer calldata, 
+	    XtPointer ev) {
+  if (xverbose) printf("zoom by %f\n", lastzoomfactor / scrollval_save);
 }
