@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.11  1998/03/31 00:26:53  trq
+ * Revision 1.12  1998/07/24 17:41:00  trq
+ * Added "closeb" alias for "closebinary.
+ *
+ * Revision 1.11  1998/03/31  00:26:53  trq
  * New command: scale.  N.B.  This command will mess up makebox and ruler.
  * This needs to be fixed.
  *
@@ -248,6 +251,7 @@ struct comm c_list[] = {
 
      {"clearrot",    clearrot,		0},
      {"closeascii",  closeascii,	0},
+     {"closeb",      closebinary,       0},
      {"closebinary", closebinary,	0},
      {"colorbarlabel",colorbar_label,	1},
      {"colorlabel",  colorbar_label,	1},
@@ -333,7 +337,7 @@ struct comm c_list[] = {
 
      {"saxes",       showaxes_sub,	0},
      {"sbox",	     showboxes_sub,	0},
-     {"scale",	     scale_sub,		1},
+     {"scale",	     scale_sub,		0},
      {"sdark",       showdark_sub,	0},
      {"setbox",      setbox_sub,	0},
      {"setsphere",   setsphere_sub,	0},

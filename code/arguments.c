@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.19  1998/03/31 00:26:54  trq
+ * Revision 1.20  1998/07/24 17:40:59  trq
+ * Added "closeb" alias for "closebinary.
+ *
+ * Revision 1.19  1998/03/31  00:26:54  trq
  * New command: scale.  N.B.  This command will mess up makebox and ruler.
  * This needs to be fixed.
  *
@@ -174,7 +177,8 @@ arguments(job)
     else if ( strcmp(command,"closeascii") == 0 ) {
 	printf("closeascii\n") ;
     }
-    else if ( strcmp(command,"closebinary") == 0 ) {
+    else if ( strcmp(command,"closebinary") == 0 ||
+	      strcmp(command,"closeb") == 0) {
 	printf("closebinary\n") ;
     }
     else if ( strcmp(command,"colorbarlabel") == 0  ||
