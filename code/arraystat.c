@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/03/24 18:49:02  trq
+ * Revision 1.3  1997/09/19 13:41:26  nsk
+ * fixed memeory troubles.
+ *
+ * Revision 1.2  1995/03/24  18:49:02  trq
  * Added "revrain" colormap.
  *
  * divv.c: included malloc.h.
@@ -34,7 +37,7 @@ arraystat(job)
     int i, offset;
     int totpart;
     int aoffset;
-    Real **medtmp;
+    Real **medtmp = NULL;
 
     if(sscanf(job,"%s %d %s",command,&box,type) == 3) {
 	if (boxes_loaded[box])

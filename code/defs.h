@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.11  1997/09/05 01:02:21  nsk
+ * Revision 1.12  1997/09/19 13:41:27  nsk
+ * fixed memeory troubles.
+ *
+ * Revision 1.11  1997/09/05  01:02:21  nsk
  * streamlined vista (I hope it works), added neutralize command, added SZ
  * effect to vista.
  *
@@ -110,7 +113,7 @@
 
 #define INTMAX 536870911
 #define CMAPSIZE 128
-#define MAXCOMM 100
+#define MAXCOMM 150
 #define MAXDIM 3
 #define ON 1
 #define OFF 0
@@ -401,15 +404,15 @@ extern int xray_loaded ;
 extern int divv_loaded ;
 extern int cooling_loaded ;
 extern int hneutral_loaded ;
+extern int meanmwt_loaded ;
+extern int lum_loaded ;
 extern double max_temp_old ;
 extern double min_rho_old ;
-extern int meanmwt_loaded ;
 extern int starform_loaded ;
 extern int redshift_loaded ;
 extern int comove ;
 extern int eps_loaded ;
 extern int epsgas_loaded ;
-extern int lum_loaded ;
 extern int color_type ;
 extern int vector_plot_type ;
 extern int log_type ;

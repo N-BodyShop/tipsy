@@ -48,6 +48,9 @@ loadbinary_sub(job)
 	    divv_loaded = NO ;
 	    cooling_loaded = NO ;
 	    starform_loaded = NO ;
+	    hneutral_loaded = NO ;
+	    meanmwt_loaded = NO ;
+	    xray_loaded = NO ;
 	}
 	else {
 	    input_error(command) ;

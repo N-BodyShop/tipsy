@@ -88,6 +88,9 @@ gasify(job)
 	current_project = NO ;
 	current_color = NO ;
 	divv_loaded = NO ;
+	hneutral_loaded = NO ;
+	meanmwt_loaded = NO ;
+	xray_loaded = NO ;
       }
       else {
 	  input_error(command) ;

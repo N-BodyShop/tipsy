@@ -23,37 +23,43 @@ closebinary(job)
  	   free(mark_star);
            mark_star = NULL;
 	}
-        if(acsmooth != NULL) {
- 	   free(acsmooth);
-           acsmooth = NULL;
-	}
-        if(dwsmooth != NULL) {
- 	   free(dwsmooth);
-           dwsmooth = NULL;
-	}
         if(hsmdivv != NULL) {
  	   free(hsmdivv);
            hsmdivv = NULL;
+	   divv_loaded = NO ;
 	}
         if(cooling != NULL) {
  	   free(cooling);
            cooling = NULL;
+	   cooling_loaded = NO ;
 	}
         if(hneutral != NULL) {
  	   free(hneutral);
            hneutral = NULL;
+	   hneutral_loaded = NO ;
+	}
+        if(heneutral != NULL) {
+ 	   free(heneutral);
+           heneutral = NULL;
+	}
+        if(heII != NULL) {
+ 	   free(heII);
+           heII = NULL;
 	}
         if(meanmwt != NULL) {
  	   free(meanmwt);
            meanmwt = NULL;
+	   meanmwt_loaded = NO ;
 	}
         if(starform != NULL) {
  	   free(starform);
            starform = NULL;
+	   starform_loaded = NO ;
 	}
         if(xray_lum != NULL) {
  	   free(xray_lum);
            xray_lum = NULL;
+	   xray_loaded = NO ;
 	}
     }
 }
