@@ -53,6 +53,7 @@ FILE *get_macro_file(char name[]) {
 
 
 
+/* the parsing code in this routine is a mess.  Should clean up someday. */
 
 void
 read_macro(job)
@@ -75,11 +76,14 @@ read_macro(job)
              hardfile.name,title) ;
       return ;
     }
-    forever {
-
-      if( (n_args=fscanf(hardfile.ptr,"%s %d%[^\n]",
-			 macro_name,&n_params,junk)) < 1 ) break ;
-      if (n_args > 1) fgetc(hardfile.ptr);  /*read in the extra return*/
+    forever {     /* loop over macros */
+      
+      do {
+	n_args = fscanf(hardfile.ptr, "%[^\n]", command);
+        fgetc(hardfile.ptr) ;
+      } while (!((n_args == EOF) || ((n_args > 0) && (command[0] != '#')) ) );
+      if (n_args == EOF ) break ;
+      n_args = sscanf(command,"%s %d", macro_name, &n_params) ;
       /* stole code from delete_macro since old version appeared buggy */
       prev = NULL;
       for(macro = macros; macro != NULL ; macro = macro->next){
@@ -120,7 +124,7 @@ read_macro(job)
       /* could check for parameter usage in following segment */
       macro->start = NULL;
       plist = &(macro->start);
-      forever {
+      forever {  /*loop over commands*/
         for(i = 0 ; i < MAXCOMM ; i++){
           j = fgetc(hardfile.ptr) ;
           if(j == '\n'){
@@ -137,6 +141,10 @@ read_macro(job)
             command[i] = j ;
           }
         }
+
+	if (strlen(command) == 0) continue;  /* skip blank lines */
+	if (command[0] == '#') continue;  /* skip comment lines */
+
         if ( strcmp(command,"end") == 0) {
           break ;
         }
@@ -161,7 +169,11 @@ read_macro(job)
 	  printf("command: |%s|\n");
 	  plist = &((*plist)->next);
         }
-      }
+      } /* loop over commands */
+
+      macros = macro;
+
+      /* are we done? */
       j = fgetc(hardfile.ptr) ;
       if(j == EOF){
         break ;
@@ -169,9 +181,8 @@ read_macro(job)
       else{
         ungetc(j,hardfile.ptr) ;
       }
-    }
+    } /* loop over macros */
     fclose(hardfile.ptr) ;
-    macros = macro;
   }
   else {
     input_error(command) ;
