@@ -1,7 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:36  trq
- * Initial revision
+ * Revision 1.2  1995/07/24 20:51:16  trq
+ * Fixed bug in load_cool.c.
+ * vista now has a velocity cut.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:37  trq
+ * Import to CVS
  *
  * Revision 2.1  1994/09/22  16:20:14  trq
  * Changed to calculate neutral fraction of all particles in box 0.
@@ -41,5 +45,7 @@ hneutral_func()
 	gp = boxlist[0].gp[i] ;
 	hneutral[gp-gas_particles] = calc_hneutral(gp->temp, gp->rho);
     }
+    printf("<finished calculating neutral fraction, %s>\n",
+	   title);
     hneutral_loaded = YES ;
 }

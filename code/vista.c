@@ -1,7 +1,8 @@
 /* $Header$
  * $Log$
- * Revision 1.6  1995/07/20 20:56:19  trq
- * Small fixes to smoothing.
+ * Revision 1.7  1995/07/24 20:51:17  trq
+ * Fixed bug in load_cool.c.
+ * vista now has a velocity cut.
  *
  * Revision 1.5  1995/06/06  17:48:01  trq
  * dump_pixmap.c: Cleaned up declarations.
@@ -74,8 +75,8 @@ vista(job)
     struct star_particle *sp ;
     struct dark_particle *dp ;
     double pixel_pos[2] ;
-    double part_pos[2] ;
-    int i,j ;
+    double part_pos[3] ;
+    int i,j,k ;
     int kx,ky ;
     int kx_min,kx_max ;
     int ky_min,ky_max ;
@@ -106,18 +107,31 @@ vista(job)
     double lum_xray ;
     int vista_size ;
     double msys ;
-
+    double rsys ;
+    double vsys ;
+    int num_read ;
+    double vel_min ;
+    double vel_max ;
+    int irep[MAXDIM];
+    int autolim ;
+    double vz ;
 
     if(!ikernel_loaded){
 	ikernel_load() ;
     }
     if (current_project){
-	if (sscanf(job,"%s %s %lf %lf %s %d",command,type,&low,&high,name,
-		&vista_size) == 6) {
+	if ((num_read = sscanf(job,"%s %s %lf %lf %s %d %lf %lf",command,type,
+		&low, &high,name, &vista_size, &vel_min, &vel_max)) >= 6) {
 	      size_pixel = (dv2_x - dv1_x) / scaling / (double)vista_size ;
 	      size_pixel_2 = size_pixel*size_pixel ;
 	      xmin = dv1_x / scaling ;
 	      ymin = dv1_y / scaling ;
+	      if (!cool_loaded ){
+		  load_cool() ;
+	      }
+	      if (!redshift_loaded ){
+		  load_redshift() ;
+	      }
 	      if (strcmp(type,"density") == 0 || strcmp(type,"rho") == 0 ){
 		  vista_type = RHO ;
 	      }
@@ -334,11 +348,19 @@ vista(job)
 		}
 	    }
 	    else if(vista_type == HNEUT){
+		autolim = NO ;
+		if(num_read != 8){
+		    vel_min = -HUGE ;
+		    vel_max = HUGE ;
+		    autolim = YES ;
+		}
 		if(!hneutral_loaded){
 		    hneutral_func() ;
 		}
 		msys = msolunit/(cosmof*kpcunit*cosmof*kpcunit)*
 			(MSOLG/(KPCCM*KPCCM*MHYDR)) ;
+		rsys = cosmof*kpcunit/1.e3 ;
+		vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
 	    }
 	    if(vista_type == RHO || vista_type == TEMP || vista_type == PRESS ||
 		    vista_type == TCOOL || vista_type == JEANS || 
@@ -384,72 +406,169 @@ vista(job)
 				return ;
 			    }
 			}
-			for (part_pos[0] = part_pos[1] = 0.0,j = 0 ;
-				j < header.ndim ;j++) {
-			    part_pos[0] += rot_matrix[0][j] * (gp->pos[j] -
-				    boxes[active_box].center[j]) ;
-			    part_pos[1] += rot_matrix[1][j] * (gp->pos[j] -
-				    boxes[active_box].center[j]) ;
-			}
-			hsmooth = gp->hsmooth ;
-			if(hsmooth > size_pixel){
-			    thsmooth = 2. * hsmooth ;
-			    distnorm = 1. / (hsmooth * hsmooth) ;
-			    hsmth2pi = distnorm / PI ;
-			    kx_min = max(0,(int)((part_pos[0]-thsmooth-xmin)/
-				    size_pixel + .499999)) ;
-			    kx_max = min(vista_size-1,(int)((part_pos[0]+
-				    thsmooth-xmin)/size_pixel + .499999)) ;
-			    ky_min = max(0,(int)((part_pos[1]-thsmooth-ymin)/
-				size_pixel + .499999)) ;
-			    ky_max = min(vista_size-1,(int)((part_pos[1]+
-				    thsmooth- ymin)/ size_pixel + .499999)) ;
-			    for(kx = kx_min; kx < kx_max + 1; kx++){
-				for(ky = ky_min; ky < ky_max + 1; ky++){
-				    pixel_pos[0] = xmin+(kx + .5) * size_pixel ;
-				    pixel_pos[1] = ymin+(ky + .5) * size_pixel ;
-				    radius2 = distance_dim2(pixel_pos,part_pos)*
-					    distnorm ;
-				    if(radius2 < 4.){
-					radius2 *= deldr2i ;
-					iwsm = (int)radius2 ;
-					drw = radius2 - (double)iwsm ;
-					kernel = ((1. - drw) * iwsmooth[iwsm] +
-						drw*iwsmooth[1+iwsm])*hsmth2pi ;
+			for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
+			  for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
+			    for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
+			      if(periodic || (irep[0] == 0 && irep[1] == 0 && 
+					irep[2] == 0)) {
+				for (part_pos[0] = part_pos[1] = 
+					part_pos[2] = 0.0,j = 0 ; j <
+					header.ndim ;j++) {
+				    for (k = 0 ; k < 3 ; k++){
+					part_pos[k] += rot_matrix[k][j] *
+					  (irep[j]*period_size + gp->pos[j]
+					   - boxes[active_box].center[j]) ;
 				    }
-				    else{
-					kernel = 0. ;
+				}
+				if(vista_type == HNEUT && autolim == NO){
+				    for (vz = 0.0,j = 0;j < header.ndim ;j++) {
+					vz += rot_matrix[2][j] * (gp->vel[j]) ;
 				    }
-				    kernel *= size_pixel_2 ;
-				    if(kernel != 0.){
+				    vz *= vsys ;
+				    if(comove == YES){
+					vz += hubble_constant*part_pos[2]*rsys ;
+				    }
+				}
+				if((!periodic && (vista_type != HNEUT
+						  || autolim == YES))
+				   || (periodic && (vista_type != HNEUT
+						    || autolim == YES)
+				       && (part_pos[2]< period_size/2.&&
+					   part_pos[2] >= -period_size/2.))
+				   || (vista_type == HNEUT && autolim == NO
+				       && vz >= vel_min && vz <= vel_max)) {
+				hsmooth = gp->hsmooth ;
+				if(hsmooth > size_pixel){
+				  thsmooth = 2. * hsmooth ;
+				  distnorm = 1. / (hsmooth * hsmooth) ;
+				  hsmth2pi = distnorm / PI ;
+				  kx_min = max(0,(int)((part_pos[0]-thsmooth-
+					xmin)/size_pixel + .499999)) ;
+				  kx_max = min(vista_size-1,(int)((part_pos[0]+
+					thsmooth-xmin)/size_pixel + .499999)) ;
+				  ky_min = max(0,(int)((part_pos[1]-thsmooth-
+					ymin)/size_pixel + .499999)) ;
+				  ky_max = min(vista_size-1,(int)((part_pos[1]+
+				        thsmooth-ymin)/ size_pixel + .499999)) ;
+				    for(kx = kx_min; kx < kx_max + 1; kx++){
+			              for(ky = ky_min; ky < ky_max + 1; ky++){
+				        pixel_pos[0] = xmin+(kx + .5) *
+						size_pixel ;
+					pixel_pos[1] = ymin+(ky + .5) * 
+						size_pixel ;
+					radius2 = distance_dim2(pixel_pos,
+						part_pos)*distnorm ;
+					if(radius2 < 4.){
+					    radius2 *= deldr2i ;
+					    iwsm = (int)radius2 ;
+					    drw = radius2 - (double)iwsm ;
+					    kernel = ((1. - drw)*iwsmooth[iwsm]+
+						    drw*iwsmooth[1+iwsm])*
+						    hsmth2pi ;
+					}
+					else{
+					    kernel = 0. ;
+					}
+					kernel *= size_pixel_2 ;
+					if(kernel != 0.){
+					    if(vista_type == XRAY){
+						density[kx][ky]+=(float)(kernel*
+						    lum_xray) ;
+					    }
+					    else if(vista_type == HNEUT){
+						density[kx][ky]+=(float)(kernel*
+						    msys*fhydrogen*
+						    hneutral[gp-gas_particles]*
+						    (gp->mass));
+					    }
+					    else {
+						density[kx][ky]+=(float)(kernel*
+						    (gp->mass)) ;
+					    }
+					    if(vista_type == TEMP){
+						quantity[kx][ky] += 
+						    (float)(kernel*
+						    (gp->mass)*(gp->temp)) ;
+					    }
+					    else if(vista_type == PRESS){
+						quantity[kx][ky] +=
+						    (float)(kernel*
+						    (gp->mass)*(gp->temp)*
+						    (gp->rho)) ;
+					    }
+					    else if(vista_type == TCOOL){
+						if(cooling[i] < 0.){
+						    quantity[kx][ky] += 
+						    (float)(kernel*
+						    gp->mass * -cooling[i]) ;
+						}
+					    }
+					    else if(vista_type == JEANS){
+					      double tconst = meanmwt[i]*MHYDR
+						*GCGS/KBOLTZ*msolunit*MSOLG
+						  /kpcunit/KPCCM;
+					      c1 = sqrt(tconst/GAMMA * 4. *PI) ;
+						quantity[kx][ky] +=
+						    (float)(kernel*
+						    gp->mass * gp->hsmooth*c1*
+						    sqrt(gp->rho / gp->temp));
+					    }
+					    else if(vista_type == FSTAR){
+						quantity[kx][ky] +=
+						    (float)(kernel*
+						    gp->mass * starform[i]);
+					    }
+					    else if(vista_type == HNEUT){
+						quantity[kx][ky] +=
+						    (float)(kernel*
+						    msys*fhydrogen*
+						    hneutral[gp-gas_particles]*
+						    hneutral[gp-gas_particles]*
+						    (gp->mass));
+						quantity2[kx][ky] +=
+						    (float)(kernel*
+						    msys*fhydrogen*
+						    hneutral[gp-gas_particles]*
+						    (gp->mass)*(gp->temp));
+					    }
+					}
+				      }
+				    }
+				}
+				else{
+				    kx = (int)((part_pos[0]-xmin)/size_pixel+
+					    0.499999) ;
+				    ky = (int)((part_pos[1]-ymin)/size_pixel+
+					    0.499999) ;
+				    if(kx >= 0 && kx < vista_size && ky >= 0 &&
+					    ky < vista_size){
 					if(vista_type == XRAY){
-					    density[kx][ky] += (float)(kernel*
-						lum_xray) ;
+					    density[kx][ky]+=(float)(lum_xray);
 					}
 					else if(vista_type == HNEUT){
-					    density[kx][ky] += (float)(kernel*
-						    msys*fhydrogen*
+						density[kx][ky] += (float)(msys*
+						    fhydrogen*
 						    hneutral[gp-gas_particles]*
 						    (gp->mass));
 					}
 					else {
-					    density[kx][ky] += (float)(kernel*
-						(gp->mass)) ;
+					    density[kx][ky] += 
+					    	(float)((gp->mass)) ;
 					}
 					if(vista_type == TEMP){
-					    quantity[kx][ky] += (float)(kernel*
+					    quantity[kx][ky] += (float)(
 						(gp->mass)*(gp->temp)) ;
 					}
 					else if(vista_type == PRESS){
-					    quantity[kx][ky] += (float)(kernel*
+					    quantity[kx][ky] += (float)(
 						(gp->mass)*(gp->temp)*
 						(gp->rho)) ;
 					}
 					else if(vista_type == TCOOL){
 					    if(cooling[i] < 0.){
 						quantity[kx][ky] += 
-						(float)(kernel*
-						gp->mass * -cooling[i]) ;
+							(float)(gp->mass *
+							-cooling[i]) ;
 					    }
 					}
 					else if(vista_type == JEANS){
@@ -457,86 +576,31 @@ vista(job)
 					    *GCGS/KBOLTZ*msolunit*MSOLG
 					      /kpcunit/KPCCM;
 					  c1 = sqrt(tconst / GAMMA * 4. *PI) ;
-					    quantity[kx][ky] +=(float)(kernel*
+					    quantity[kx][ky] +=(float)(
 					    gp->mass * gp->hsmooth * c1 *
 					    sqrt(gp->rho / gp->temp));
 					}
 					else if(vista_type == FSTAR){
-					    quantity[kx][ky] +=(float)(kernel*
+					    quantity[kx][ky] +=(float)(
 					    gp->mass * starform[i]);
 					}
 					else if(vista_type == HNEUT){
-					    quantity[kx][ky] += (float)(kernel*
-						    msys*fhydrogen*
+						quantity[kx][ky] +=
+						    (float)(msys*fhydrogen*
 						    hneutral[gp-gas_particles]*
 						    hneutral[gp-gas_particles]*
 						    (gp->mass));
-					    quantity2[kx][ky] += (float)(kernel*
-						    msys*fhydrogen*
+						quantity2[kx][ky] +=
+						    (float)(msys*fhydrogen*
 						    hneutral[gp-gas_particles]*
 						    (gp->mass)*(gp->temp));
 					}
 				    }
 				}
+			      }
+			      }
 			    }
-			}
-			else{
-			    kx = (int)((part_pos[0]-xmin)/size_pixel+0.499999) ;
-			    ky = (int)((part_pos[1]-ymin)/size_pixel+0.499999) ;
-			    if(kx >= 0 && kx < vista_size && ky >= 0 &&
-				    ky < vista_size){
-				if(vista_type == XRAY){
-				    density[kx][ky] += (float)(lum_xray) ;
-				}
-				else if(vista_type == HNEUT){
-					density[kx][ky] += (float)(msys*
-					    fhydrogen*
-					    hneutral[gp-gas_particles]*
-					    (gp->mass));
-				}
-				else {
-				    density[kx][ky] += (float)((gp->mass)) ;
-				}
-				if(vista_type == TEMP){
-				    quantity[kx][ky] += (float)(
-					(gp->mass)*(gp->temp)) ;
-				}
-				else if(vista_type == PRESS){
-				    quantity[kx][ky] += (float)(
-					(gp->mass)*(gp->temp)*
-					(gp->rho)) ;
-				}
-				else if(vista_type == TCOOL){
-				    if(cooling[i] < 0.){
-					quantity[kx][ky] += 
-					(float)(gp->mass * -cooling[i]) ;
-				    }
-				}
-				else if(vista_type == JEANS){
-				  double tconst = meanmwt[i]*MHYDR
-				    *GCGS/KBOLTZ*msolunit*MSOLG
-				      /kpcunit/KPCCM;
-				  c1 = sqrt(tconst / GAMMA * 4. *PI) ;
-				    quantity[kx][ky] +=(float)(
-				    gp->mass * gp->hsmooth * c1 *
-				    sqrt(gp->rho / gp->temp));
-				}
-				else if(vista_type == FSTAR){
-				    quantity[kx][ky] +=(float)(
-				    gp->mass * starform[i]);
-				}
-				else if(vista_type == HNEUT){
-					quantity[kx][ky] += (float)(msys*
-					    fhydrogen*
-					    hneutral[gp-gas_particles]*
-					    hneutral[gp-gas_particles]*
-					    (gp->mass));
-					quantity2[kx][ky] += (float)(msys*
-					    fhydrogen*
-					    hneutral[gp-gas_particles]*
-					    (gp->mass)*(gp->temp));
-				}
-			    }
+			  }
 			}
 		    }
 		}
@@ -575,58 +639,76 @@ vista(job)
 		calc_balls(&box0_smx, 0, 0 , 1);
 		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
 		    sp = boxlist[active_box].sp[i] ;
-		    for (part_pos[0] = part_pos[1] = 0.0,j = 0 ;
-			    j < header.ndim ;j++) {
-			part_pos[0] += rot_matrix[0][j] * (sp->pos[j] -
-				boxes[active_box].center[j]) ;
-			part_pos[1] += rot_matrix[1][j] * (sp->pos[j] -
-				boxes[active_box].center[j]) ;
-		    }
-		    hsmooth = sqrt(box0_smx->kd->p[sp-star_particles].fBall2);
-		    if(hsmooth > size_pixel){
-			thsmooth = 2. * hsmooth ;
-			distnorm = 1. / (hsmooth * hsmooth) ;
-			hsmth2pi = distnorm / PI ;
-			kx_min = max(0,(int)((part_pos[0]-thsmooth-xmin)/
-				size_pixel + .499999)) ;
-			kx_max = min(vista_size-1,(int)((part_pos[0]+
-				thsmooth-xmin)/size_pixel + .499999)) ;
-			ky_min = max(0,(int)((part_pos[1]-thsmooth-ymin)/
-			    size_pixel + .499999)) ;
-			ky_max = min(vista_size-1,(int)((part_pos[1]+
-				thsmooth- ymin)/ size_pixel + .499999)) ;
-			for(kx = kx_min; kx < kx_max + 1; kx++){
-			    for(ky = ky_min; ky < ky_max + 1; ky++){
-				pixel_pos[0] = xmin+(kx + .5) * size_pixel ;
-				pixel_pos[1] = ymin+(ky + .5) * size_pixel ;
-				radius2 = distance_dim2(pixel_pos,part_pos)*
-					distnorm ;
-				if(radius2 < 4.){
-				    radius2 *= deldr2i ;
-				    iwsm = (int)radius2 ;
-				    drw = radius2 - (double)iwsm ;
-				    kernel = ((1. - drw) * iwsmooth[iwsm] +
-					    drw*iwsmooth[1+iwsm])*hsmth2pi ;
-				}
-				else{
-				    kernel = 0. ;
-				}
-				kernel *= size_pixel_2 ;
-				if(kernel != 0.){
-					density[kx][ky] += (float)(kernel*
-					    (sp->mass)) ;
+		    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
+		      for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
+			for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
+			  if(periodic || (irep[0] == 0 && irep[1] == 0 &&
+				irep[2] == 0)) {
+			    for (part_pos[0] = part_pos[1] = part_pos[2] = 0.0,
+				    j = 0 ; j < header.ndim ;j++) {
+				for (k = 0 ; k < 3 ; k++){
+				    part_pos[k] += rot_matrix[k][j] *
+				      (irep[j]*period_size + sp->pos[j]
+				       - boxes[active_box].center[j]) ;
 				}
 			    }
+			    if(!(periodic) || (part_pos[2] < period_size/2.
+				    && part_pos[2] >= -period_size/2.)){
+			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+			    if(hsmooth > size_pixel){
+				thsmooth = 2. * hsmooth ;
+				distnorm = 1. / (hsmooth * hsmooth) ;
+				hsmth2pi = distnorm / PI ;
+				kx_min=max(0,(int)((part_pos[0]-thsmooth-xmin)/
+					size_pixel + .499999)) ;
+				kx_max = min(vista_size-1,(int)((part_pos[0]+
+					thsmooth-xmin)/size_pixel + .499999)) ;
+				ky_min=max(0,(int)((part_pos[1]-thsmooth-ymin)/
+				    size_pixel + .499999)) ;
+				ky_max = min(vista_size-1,(int)((part_pos[1]+
+					thsmooth- ymin)/ size_pixel+.499999)) ;
+				for(kx = kx_min; kx < kx_max + 1; kx++){
+				    for(ky = ky_min; ky < ky_max + 1; ky++){
+					pixel_pos[0] = xmin+(kx + .5) *
+						size_pixel ;
+					pixel_pos[1] = ymin+(ky + .5) *
+					        size_pixel ;
+					radius2 = distance_dim2(pixel_pos,
+						part_pos)*distnorm ;
+					if(radius2 < 4.){
+					    radius2 *= deldr2i ;
+					    iwsm = (int)radius2 ;
+					    drw = radius2 - (double)iwsm ;
+					    kernel = ((1. - drw) *
+						    iwsmooth[iwsm] + drw*
+						    iwsmooth[1+iwsm])*hsmth2pi ;
+					}
+					else{
+					    kernel = 0. ;
+					}
+					kernel *= size_pixel_2 ;
+					if(kernel != 0.){
+						density[kx][ky]+=(float)(kernel*
+						    (sp->mass)) ;
+					}
+				    }
+				}
+			    }
+			    else{
+				kx = (int)((part_pos[0]-xmin)/size_pixel+
+					0.499999) ;
+				ky = (int)((part_pos[1]-ymin)/size_pixel+
+					0.499999) ;
+				if(kx >= 0 && kx < vista_size && ky >= 0 &&
+					ky < vista_size){
+					density[kx][ky] += (float)((sp->mass)) ;
+				}
+			    }
+			  }
+			  }
 			}
-		    }
-		    else{
-			kx = (int)((part_pos[0]-xmin)/size_pixel+0.499999) ;
-			ky = (int)((part_pos[1]-ymin)/size_pixel+0.499999) ;
-			if(kx >= 0 && kx < vista_size && ky >= 0 &&
-				ky < vista_size){
-				density[kx][ky] += (float)((sp->mass)) ;
-			}
-		    }
+	              }
+	            }
 		}
 	    }
 	    else if(vista_type == LUMSTAR){
@@ -635,57 +717,75 @@ vista(job)
 		    sp = boxlist[active_box].sp[i] ;
 		    luminosity = star_lum_redshift(sp->mass,sp->tform,
 			    wavelength) ;
-		    for (part_pos[0] = part_pos[1] = 0.0,j = 0 ;
-			    j < header.ndim ;j++) {
-			part_pos[0] += rot_matrix[0][j] * (sp->pos[j] -
-				boxes[active_box].center[j]) ;
-			part_pos[1] += rot_matrix[1][j] * (sp->pos[j] -
-				boxes[active_box].center[j]) ;
-		    }
-		    hsmooth = sqrt(box0_smx->kd->p[sp-star_particles].fBall2);
-		    if(hsmooth > size_pixel){
-			thsmooth = 2. * hsmooth ;
-			distnorm = 1. / (hsmooth * hsmooth) ;
-			hsmth2pi = distnorm / PI ;
-			kx_min = max(0,(int)((part_pos[0]-thsmooth-xmin)/
-				size_pixel + .499999)) ;
-			kx_max = min(vista_size-1,(int)((part_pos[0]+
-				thsmooth-xmin)/size_pixel + .499999)) ;
-			ky_min = max(0,(int)((part_pos[1]-thsmooth-ymin)/
-			    size_pixel + .499999)) ;
-			ky_max = min(vista_size-1,(int)((part_pos[1]+
-				thsmooth- ymin)/ size_pixel + .499999)) ;
-			for(kx = kx_min; kx < kx_max + 1; kx++){
-			    for(ky = ky_min; ky < ky_max + 1; ky++){
-				pixel_pos[0] = xmin+(kx + .5) * size_pixel ;
-				pixel_pos[1] = ymin+(ky + .5) * size_pixel ;
-				radius2 = distance_dim2(pixel_pos,part_pos)*
-					distnorm ;
-				if(radius2 < 4.){
-				    radius2 *= deldr2i ;
-				    iwsm = (int)radius2 ;
-				    drw = radius2 - (double)iwsm ;
-				    kernel = ((1. - drw) * iwsmooth[iwsm] +
-					    drw*iwsmooth[1+iwsm])*hsmth2pi ;
-				}
-				else{
-				    kernel = 0. ;
-				}
-				kernel *= size_pixel_2 ;
-				if(kernel != 0.){
-					density[kx][ky] += (float)(kernel*
-					    luminosity) ;
+		    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
+		      for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
+			for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
+			  if(periodic || (irep[0] == 0 && irep[1] == 0 &&
+				irep[2] == 0)) {
+			    for (part_pos[0] = part_pos[1] = part_pos[2] = 0.0,
+				    j = 0 ; j < header.ndim ;j++) {
+				for (k = 0 ; k < 3 ; k++){
+				    part_pos[k] += rot_matrix[k][j] *
+				      (irep[j]*period_size + sp->pos[j]
+				       - boxes[active_box].center[j]) ;
 				}
 			    }
+			    if(!(periodic) || (part_pos[2] < period_size/2.
+				    && part_pos[2] >= -period_size/2.)){
+			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+			    if(hsmooth > size_pixel){
+				thsmooth = 2. * hsmooth ;
+				distnorm = 1. / (hsmooth * hsmooth) ;
+				hsmth2pi = distnorm / PI ;
+				kx_min=max(0,(int)((part_pos[0]-thsmooth-xmin)/
+					size_pixel + .499999)) ;
+				kx_max = min(vista_size-1,(int)((part_pos[0]+
+					thsmooth-xmin)/size_pixel + .499999)) ;
+				ky_min=max(0,(int)((part_pos[1]-thsmooth-ymin)/
+				    size_pixel + .499999)) ;
+				ky_max = min(vista_size-1,(int)((part_pos[1]+
+					thsmooth-ymin)/ size_pixel + .499999)) ;
+				for(kx = kx_min; kx < kx_max + 1; kx++){
+				    for(ky = ky_min; ky < ky_max + 1; ky++){
+					pixel_pos[0] = xmin+(kx + .5) *
+						size_pixel ;
+					pixel_pos[1] = ymin+(ky + .5) *
+						size_pixel ;
+					radius2 = distance_dim2(pixel_pos,
+						part_pos)*distnorm ;
+					if(radius2 < 4.){
+					    radius2 *= deldr2i ;
+					    iwsm = (int)radius2 ;
+					    drw = radius2 - (double)iwsm ;
+					    kernel = ((1. - drw) *
+						    iwsmooth[iwsm] + drw*
+						    iwsmooth[1+iwsm])*hsmth2pi ;
+					}
+					else{
+					    kernel = 0. ;
+					}
+					kernel *= size_pixel_2 ;
+					if(kernel != 0.){
+						density[kx][ky]+=(float)(kernel*
+						    luminosity) ;
+					}
+				    }
+				}
+			    }
+			    else{
+				kx = (int)((part_pos[0]-xmin)/size_pixel+
+					0.499999) ;
+				ky = (int)((part_pos[1]-ymin)/size_pixel+
+					0.499999) ;
+				if(kx >= 0 && kx < vista_size && ky >= 0 &&
+					ky < vista_size){
+					density[kx][ky] += (float)(luminosity) ;
+				}
+			    }
+			  }
+			  }
 			}
-		    }
-		    else{
-			kx = (int)((part_pos[0]-xmin)/size_pixel+0.499999) ;
-			ky = (int)((part_pos[1]-ymin)/size_pixel+0.499999) ;
-			if(kx >= 0 && kx < vista_size && ky >= 0 &&
-				ky < vista_size){
-				density[kx][ky] += (float)(luminosity) ;
-			}
+		      }
 		    }
 		}
 	    }
@@ -693,57 +793,75 @@ vista(job)
 		calc_balls(&box0_smx, 1, 0 , 0);
 		for (i = 0 ;i < boxlist[active_box].ndark ;i++) {
 		    dp = boxlist[active_box].dp[i] ;
-		    for (part_pos[0] = part_pos[1] = 0.0,j = 0 ;
-			    j < header.ndim ;j++) {
-			part_pos[0] += rot_matrix[0][j] * (dp->pos[j] -
-				boxes[active_box].center[j]) ;
-			part_pos[1] += rot_matrix[1][j] * (dp->pos[j] -
-				boxes[active_box].center[j]) ;
-		    }
-		    hsmooth = sqrt(box0_smx->kd->p[dp-dark_particles].fBall2);
-		    if(hsmooth > size_pixel){
-			thsmooth = 2. * hsmooth ;
-			distnorm = 1. / (hsmooth * hsmooth) ;
-			hsmth2pi = distnorm / PI ;
-			kx_min = max(0,(int)((part_pos[0]-thsmooth-xmin)/
-				size_pixel + .499999)) ;
-			kx_max = min(vista_size-1,(int)((part_pos[0]+
-				thsmooth-xmin)/size_pixel + .499999)) ;
-			ky_min = max(0,(int)((part_pos[1]-thsmooth-ymin)/
-			    size_pixel + .499999)) ;
-			ky_max = min(vista_size-1,(int)((part_pos[1]+
-				thsmooth- ymin)/ size_pixel + .499999)) ;
-			for(kx = kx_min; kx < kx_max + 1; kx++){
-			    for(ky = ky_min; ky < ky_max + 1; ky++){
-				pixel_pos[0] = xmin+(kx + .5) * size_pixel ;
-				pixel_pos[1] = ymin+(ky + .5) * size_pixel ;
-				radius2 = distance_dim2(pixel_pos,part_pos)*
-					distnorm ;
-				if(radius2 < 4.){
-				    radius2 *= deldr2i ;
-				    iwsm = (int)radius2 ;
-				    drw = radius2 - (double)iwsm ;
-				    kernel = ((1. - drw) * iwsmooth[iwsm] +
-					    drw*iwsmooth[1+iwsm])*hsmth2pi ;
-				}
-				else{
-				    kernel = 0. ;
-				}
-				kernel *= size_pixel_2 ;
-				if(kernel != 0.){
-					density[kx][ky] += (float)(kernel*
-					    (dp->mass)) ;
+		    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
+		      for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
+			for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
+			  if(periodic || (irep[0] == 0 && irep[1] == 0 &&
+				irep[2] == 0)) {
+			    for (part_pos[0] = part_pos[1] = part_pos[2] = 0.0,
+				    j = 0 ; j < header.ndim ;j++) {
+				for (k = 0 ; k < 3 ; k++){
+				    part_pos[k] += rot_matrix[k][j] *
+				      (irep[j]*period_size + dp->pos[j]
+				       - boxes[active_box].center[j]) ;
 				}
 			    }
+			    if(!(periodic) || (part_pos[2] < period_size/2.
+				    && part_pos[2] >= -period_size/2.)){
+			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+			    if(hsmooth > size_pixel){
+				thsmooth = 2. * hsmooth ;
+				distnorm = 1. / (hsmooth * hsmooth) ;
+				hsmth2pi = distnorm / PI ;
+				kx_min=max(0,(int)((part_pos[0]-thsmooth-xmin)/
+					size_pixel + .499999)) ;
+				kx_max = min(vista_size-1,(int)((part_pos[0]+
+					thsmooth-xmin)/size_pixel + .499999)) ;
+				ky_min=max(0,(int)((part_pos[1]-thsmooth-ymin)/
+				    size_pixel + .499999)) ;
+				ky_max = min(vista_size-1,(int)((part_pos[1]+
+					thsmooth-ymin)/ size_pixel + .499999)) ;
+				for(kx = kx_min; kx < kx_max + 1; kx++){
+				    for(ky = ky_min; ky < ky_max + 1; ky++){
+					pixel_pos[0] = xmin+(kx + .5) *
+						size_pixel ;
+					pixel_pos[1] = ymin+(ky + .5) *
+						size_pixel ;
+					radius2 = distance_dim2(pixel_pos,
+						part_pos)*distnorm ;
+					if(radius2 < 4.){
+					    radius2 *= deldr2i ;
+					    iwsm = (int)radius2 ;
+					    drw = radius2 - (double)iwsm ;
+					    kernel = ((1. - drw) *
+						    iwsmooth[iwsm] + drw*
+						    iwsmooth[1+iwsm])*hsmth2pi ;
+					}
+					else{
+					    kernel = 0. ;
+					}
+					kernel *= size_pixel_2 ;
+					if(kernel != 0.){
+						density[kx][ky]+=(float)(kernel*
+						    (dp->mass)) ;
+					}
+				    }
+				}
+			    }
+			    else{
+				kx = (int)((part_pos[0]-xmin)/size_pixel+
+					0.499999) ;
+				ky = (int)((part_pos[1]-ymin)/size_pixel+
+					0.499999) ;
+				if(kx >= 0 && kx < vista_size && ky >= 0 &&
+					ky < vista_size){
+					density[kx][ky] += (float)((dp->mass)) ;
+				}
+			    }
+			  }
+			  }
 			}
-		    }
-		    else{
-			kx = (int)((part_pos[0]-xmin)/size_pixel+0.499999) ;
-			ky = (int)((part_pos[1]-ymin)/size_pixel+0.499999) ;
-			if(kx >= 0 && kx < vista_size && ky >= 0 &&
-				ky < vista_size){
-				density[kx][ky] += (float)((dp->mass)) ;
-			}
+		      }
 		    }
 		}
 	    }

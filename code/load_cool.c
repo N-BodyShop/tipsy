@@ -17,6 +17,14 @@ load_cool()
     }
     time_unit = sqrt(pow(kpcunit*KPCCM, 3.0)/(GCGS*msolunit*MSOLG));
     time_unit /= GYRSEC;
+    if(jnu21 > 0.0){
+	ionize() ;
+    }
+    else{
+	gp0_H = 0.0 ;
+	gp0_He = 0.0 ;
+	gp0_Hep = 0.0 ;
+    }
     cool_loaded = YES ;
     lum_loaded = YES;
 }
