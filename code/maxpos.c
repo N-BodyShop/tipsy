@@ -1,7 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:26  trq
- * Initial revision
+ * Revision 1.2  2000/06/07 23:28:36  trq
+ * Insure that xmax and xmin get set even if there are no particles.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:27  trq
+ * Import to CVS
  *
  * Revision 2.3  94/04/20  09:05:38  trq
  * Make the box fit more tightly around the particles.
@@ -39,14 +42,20 @@ maxpos(xmax,xmin)
 	    xmin[i] = dp->pos[i] ;
 	}
     }
-    else{
+    else if(header.nstar){
 	for (i = 0; i < header.ndim; i++) {
 	    sp = star_particles ;
 	    xmax[i] = sp->pos[i] ;
 	    xmin[i] = sp->pos[i] ;
 	}
     }
-
+    else {			/* no particles! */
+	for (i = 0; i < header.ndim; i++) {
+	    xmax[i] = 0.0 ;
+	    xmin[i] = 0.0 ;
+	}
+    }
+    
     for (gp = gas_particles ;gp < lastgp ;gp++) {
 	for (i = 0; i < header.ndim; i++) {
 	    xmax[i] = max(xmax[i],gp->pos[i]) ;
