@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.12  1997/08/29 17:20:05  nsk
+ * Revision 1.13  1997/09/05 01:02:17  nsk
+ * streamlined vista (I hope it works), added neutralize command, added SZ
+ * effect to vista.
+ *
+ * Revision 1.12  1997/08/29  17:20:05  nsk
  * *** empty log message ***
  *
  * Revision 1.11  1996/07/30  22:19:48  trq
@@ -392,7 +396,6 @@ absorb(job)
 		free(temp_HeII);
 		return ;
 	      }
-	    /*
 	    if (!cool_loaded ){
 		load_cool() ;
 	    }
@@ -405,7 +408,6 @@ absorb(job)
 	    if (!divv_loaded ){
 		divv() ;
 	    }
-	    */
 	    for(i = 0; i < zbin; i++){
 		mass_tot[i] = 0.0;
 		mass_HI[i] = 0.0;
@@ -464,16 +466,6 @@ absorb(job)
 	      bound_min[k] = min(bound_min[k], box_coord[j][k]);
 	    }
 	}
-
-
-
-	printf("boundmin (x,y,z) = (%g,%g,%g)\n",bound_min[0],bound_min[1],
-		bound_min[2]) ;
-	printf("boundmax (x,y,z) = (%g,%g,%g)\n",bound_max[0],bound_max[1],
-		bound_max[2]) ;
-
-
-
 	for (j = 0 ;j < BOXPTS ;j++) {
 	    for(i = 0; i < header.ndim; i++){
 		for (rot_box[i] = 0.0,k = 0 ;k < header.ndim ;k++) {
@@ -491,57 +483,69 @@ absorb(job)
 	    zmin = min(zmin,box_coord[j][2]) ;
 	    zmax = max(zmax,box_coord[j][2]) ;
 	}
+
 	printf("zmin,zmax = %g, %g\n",zmin,zmax) ;
-	return ;
+
 	bin_size = (zmax - zmin)/zbin ;
 	zbox_min = HUGE ;
 	zbox_max = -HUGE ;
 	plane(&box_coord[0][0],&box_coord[1][0],&box_coord[2][0],
 		&box_coord[4][0],constant);
         if(constant[2] != 0.0){
+	    printf("in first\n") ;
 	    zbox=(constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
+	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	    zbox=(constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
+	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
         }
 	plane(&box_coord[0][0],&box_coord[2][0],&box_coord[4][0],
 		&box_coord[5][0],constant);
         if(constant[2] != 0.0){
+	    printf("in second\n") ;
 	    zbox=(constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
+	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	    zbox=(constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
+	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	}
 	plane(&box_coord[5][0],&box_coord[4][0],&box_coord[2][0],
 		&box_coord[0][0],constant);
         if(constant[2] != 0.0){
+	    printf("in third\n") ;
 	    zbox=(constant[3]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
+	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	    zbox=(constant[4]-constant[0]*x1[0]-constant[1]*x1[1])/constant[2] ;
 	    if(zbox <= zmax && zbox >= zmin){
 		zbox_min = min(zbox, zbox_min) ;
 		zbox_max = max(zbox, zbox_max) ;
 	    }
+	    printf("zbox = %g, min = %g, max = %g\n",zbox,zbox_min,zbox_max) ;
 	}
 	bin_box_min = floor((zbox_min - zmin)/bin_size) ;
 	bin_box_max = floor((zbox_max - zmin)/bin_size) ;
+	printf("bin_min, bin_max = %d, %d\n", bin_box_min,bin_box_max) ;
 	if((zbox_max - zmin)/bin_size == (double) bin_box_max)
 	  bin_box_max--;
+	printf("bin_min, bin_max = %d, %d\n", bin_box_min,bin_box_max) ;
 
 	rsys = cosmof*kpcunit/1.e3 ;
 	vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
@@ -560,27 +564,27 @@ absorb(job)
 		     || (irep[0] == 0 && irep[1] == 0 && irep[2] == 0)) {
 
 		    if(irep[0]*period_size + dp->pos[0] > bound_max[0]
-		       && irep[0]*period_size+dp->pos[0]-hsmooth
+		       && irep[0]*period_size+dp->pos[0]-2.*hsmooth
 		       > bound_max[0])
 		      continue;
 		    if(irep[0]*period_size + dp->pos[0] < bound_min[0]
-		       && irep[0]*period_size+dp->pos[0]+hsmooth
+		       && irep[0]*period_size+dp->pos[0]+2.*hsmooth
 		       < bound_min[0])
 		      continue;
 		    if(irep[1]*period_size + dp->pos[1] > bound_max[1]
-		       && irep[1]*period_size+dp->pos[1]-hsmooth
+		       && irep[1]*period_size+dp->pos[1]-2.*hsmooth
 		       > bound_max[1])
 		      continue;
 		    if(irep[1]*period_size + dp->pos[1] < bound_min[1]
-		       && irep[1]*period_size+dp->pos[1]+hsmooth
+		       && irep[1]*period_size+dp->pos[1]+2.*hsmooth
 		       < bound_min[1])
 		      continue;
 		    if(irep[2]*period_size + dp->pos[2] > bound_max[2]
-		       && irep[2]*period_size+dp->pos[2]-hsmooth
+		       && irep[2]*period_size+dp->pos[2]-2.*hsmooth
 		       > bound_max[2])
 		      continue;
 		    if(irep[2]*period_size + dp->pos[2] < bound_min[2]
-		       && irep[2]*period_size+dp->pos[2]+hsmooth
+		       && irep[2]*period_size+dp->pos[2]+2.*hsmooth
 		       < bound_min[2])
 		      continue;
 		    
@@ -823,27 +827,27 @@ absorb(job)
 		     || (irep[0] == 0 && irep[1] == 0 && irep[2] == 0)) {
 
 		    if(irep[0]*period_size + gp->pos[0] > bound_max[0]
-		       && irep[0]*period_size+gp->pos[0]-gp->hsmooth
+		       && irep[0]*period_size+gp->pos[0]-2.*gp->hsmooth
 		       > bound_max[0])
 		      continue;
 		    if(irep[0]*period_size + gp->pos[0] < bound_min[0]
-		       && irep[0]*period_size+gp->pos[0]+gp->hsmooth
+		       && irep[0]*period_size+gp->pos[0]+2.*gp->hsmooth
 		       < bound_min[0])
 		      continue;
 		    if(irep[1]*period_size + gp->pos[1] > bound_max[1]
-		       && irep[1]*period_size+gp->pos[1]-gp->hsmooth
+		       && irep[1]*period_size+gp->pos[1]-2.*gp->hsmooth
 		       > bound_max[1])
 		      continue;
 		    if(irep[1]*period_size + gp->pos[1] < bound_min[1]
-		       && irep[1]*period_size+gp->pos[1]+gp->hsmooth
+		       && irep[1]*period_size+gp->pos[1]+2.*gp->hsmooth
 		       < bound_min[1])
 		      continue;
 		    if(irep[2]*period_size + gp->pos[2] > bound_max[2]
-		       && irep[2]*period_size+gp->pos[2]-gp->hsmooth
+		       && irep[2]*period_size+gp->pos[2]-2.*gp->hsmooth
 		       > bound_max[2])
 		      continue;
 		    if(irep[2]*period_size + gp->pos[2] < bound_min[2]
-		       && irep[2]*period_size+gp->pos[2]+gp->hsmooth
+		       && irep[2]*period_size+gp->pos[2]+2.*gp->hsmooth
 		       < bound_min[2])
 		      continue;
 		    

@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.6  1997/08/28 20:29:18  nsk
+ * Revision 1.7  1997/09/05 01:02:20  nsk
+ * streamlined vista (I hope it works), added neutralize command, added SZ
+ * effect to vista.
+ *
+ * Revision 1.6  1997/08/28  20:29:18  nsk
  *      Added the gasify command, chnged redshift to to do lambda
  *
  * Revision 1.5  1996/12/20  01:25:09  trq
@@ -102,6 +106,7 @@ extern void markmass() ;
 extern void markstat() ;
 extern void massflux() ;
 extern void moments() ;
+extern void neutralize() ;
 extern void oldreadascii() ;
 extern void openascii() ;
 
@@ -274,6 +279,8 @@ struct comm c_list[] = {
      {"moments",     moments,		0},
      {"mrbox",       markbox,		0},
      {"mstat",       markstat,		0},
+     {"neutral",     neutralize,	0},
+     {"neutralize",  neutralize,	0},
 
      {"oldreadascii",oldreadascii,	0},
      {"openascii",   openascii,		0},

@@ -1,7 +1,11 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.8  1996/12/19 18:03:34  trq
+ * Revision 1.9  1997/09/05 01:02:22  nsk
+ * streamlined vista (I hope it works), added neutralize command, added SZ
+ * effect to vista.
+ *
+ * Revision 1.8  1996/12/19  18:03:34  trq
  * Fixed handling of arrays and vectors when a sub-box is loaded.
  *
  * Revision 1.7  1996/04/24  23:40:36  trq
@@ -150,6 +154,8 @@ int xray_loaded = NO ;
 int divv_loaded = NO ;
 int cooling_loaded = NO ;
 int hneutral_loaded = NO ;
+double max_temp_old = -HUGE ;
+double min_rho_old = HUGE ;
 int meanmwt_loaded = NO ;
 int starform_loaded = NO ;
 int redshift_loaded = NO ;

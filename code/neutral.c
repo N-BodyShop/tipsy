@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1995/12/11 20:00:48  nsk
+ * Revision 1.4  1997/09/05 01:02:23  nsk
+ * streamlined vista (I hope it works), added neutralize command, added SZ
+ * effect to vista.
+ *
+ * Revision 1.3  1995/12/11  20:00:48  nsk
  * added helium, dark absorb,  integral for elcetronic heating,
  * and read in 6 numbers for background
  *
@@ -34,6 +38,8 @@ hneutral_func()
     if (!redshift_loaded ){
 	load_redshift() ;
     }
+    max_temp_old = -HUGE ;
+    min_rho_old = HUGE ;
     if(hneutral != NULL) free(hneutral);
     if(heneutral != NULL) free(heneutral);
     if(heII != NULL) free(heII);

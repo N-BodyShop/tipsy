@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.12  1997/08/28 20:29:17  nsk
+ * Revision 1.13  1997/09/05 01:02:19  nsk
+ * streamlined vista (I hope it works), added neutralize command, added SZ
+ * effect to vista.
+ *
+ * Revision 1.12  1997/08/28  20:29:17  nsk
  *      Added the gasify command, chnged redshift to to do lambda
  *
  * Revision 1.11  1997/01/17  21:22:55  trq
@@ -247,6 +251,10 @@ arguments(job)
     else if ( strcmp(command,"moments") == 0 ) {
 	printf("moments box-number center-box-number particle binning") ;
 	printf(" bin_number filename minimum_radius\n") ; 
+    }
+    else if ( strcmp(command,"neutral") == 0 ||
+	     strcmp(command,"neutralize") == 0) {
+	printf("neutralize box-number max-temp min-rho\n") ;
     }
     else if ( strcmp(command,"oldreadascii") == 0 ) {
 	printf("oldreadascii filename type\n") ;

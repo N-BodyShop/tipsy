@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.10  1997/02/20 02:36:05  trq
+ * Revision 1.11  1997/09/05 01:02:21  nsk
+ * streamlined vista (I hope it works), added neutralize command, added SZ
+ * effect to vista.
+ *
+ * Revision 1.10  1997/02/20  02:36:05  trq
  * Don't redefine PI.
  *
  * Revision 1.9  1996/12/19  18:03:24  trq
@@ -160,6 +164,7 @@
 #define HNEUT 12
 #define HEI 13
 #define HEII 14
+#define SZ 15
 #define NOSPH 0
 #define SPH 1
 #define PREC_JACOBI 1.e-8 ;
@@ -195,6 +200,13 @@
 #define KBOLTZ 1.381e-16
 /* gamma of ideal gas */
 #define GAMMA (5.0/3.0)
+/*     Thomson cross section */
+#define SIGMAES  6.665e-25
+/*     electron mass */
+#define ME  9.11e-28
+/*     speed of light */
+#define C 2.998e10
+
 
 extern char title[MAXCOMM] ;
 extern Window currentview_xid ;
@@ -389,6 +401,8 @@ extern int xray_loaded ;
 extern int divv_loaded ;
 extern int cooling_loaded ;
 extern int hneutral_loaded ;
+extern double max_temp_old ;
+extern double min_rho_old ;
 extern int meanmwt_loaded ;
 extern int starform_loaded ;
 extern int redshift_loaded ;

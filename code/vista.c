@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.10  1996/07/30 22:20:25  trq
+ * Revision 1.11  1997/09/05 01:02:25  nsk
+ * streamlined vista (I hope it works), added neutralize command, added SZ
+ * effect to vista.
+ *
+ * Revision 1.10  1996/07/30  22:20:25  trq
  * Fixed HeII logic bugs.
  *
  * Revision 1.9  1996/06/26  00:34:50  nsk
@@ -81,6 +85,8 @@ vista(job)
     double size_pixel_2 ;
     double xmin ;
     double ymin ;
+    double xmax ;
+    double ymax ;
     struct gas_particle *gp ;
     struct star_particle *sp ;
     struct dark_particle *dp ;
@@ -106,6 +112,10 @@ vista(job)
     double low ;
     double high ;
     double c1 ;
+    double c2 ;
+    double rsz ;
+    double c1_i ;
+    double tconst ;
     double distnorm ;
     double drw ;
     double luminosity ;
@@ -123,10 +133,15 @@ vista(job)
     int irep[MAXDIM];
     int autolim ;
     double vz ;
+    double v_hubble ;
     double xray_const ;
     double e_lower, e_upper ;
     double t_lower, t_upper ;
     char *energy_const ;
+    double delta_d ;
+    double delta_q ;
+    double delta_q2 ;
+    double electron ;
 
     if(!ikernel_loaded){
 	ikernel_load() ;
@@ -138,6 +153,8 @@ vista(job)
 	      size_pixel_2 = size_pixel*size_pixel ;
 	      xmin = dv1_x / scaling ;
 	      ymin = dv1_y / scaling ;
+	      xmax = (dv2_x+1) / scaling ;
+	      ymax = (dv2_y+1) / scaling ;
 	      if (!cool_loaded ){
 		  load_cool() ;
 	      }
@@ -198,6 +215,9 @@ vista(job)
 	      }
 	      else if(strcmp(type,"heII") == 0){
 		  vista_type = HEII ;
+	      }
+	      else if(strcmp(type,"sz") == 0){
+		  vista_type = SZ ;
 	      }
 	      else {
 		  printf("<sorry, %s is not a proper type, %s>\n",type,title) ;
@@ -289,6 +309,8 @@ vista(job)
 		if(!epsgas_loaded){
 		    load_epsgas() ;
 		}
+		tconst = MHYDR*GCGS/KBOLTZ*msolunit*MSOLG/kpcunit/KPCCM;
+		c1 = sqrt(tconst/GAMMA * 4. *PI) ;
 	    }
 	    else if(vista_type == FSTAR){
 		if(!starform_loaded){
@@ -366,7 +388,7 @@ vista(job)
                 t_upper = e_upper*(1 + redshift)*1.6e-9/KBOLTZ ;
 	    }
 	    else if(vista_type == HNEUT || vista_type == HEI || 
-		    vista_type == HEII){
+		    vista_type == HEII || vista_type == SZ){
 		autolim = NO ;
 		if(num_read != 8){
 		    vel_min = -HUGE ;
@@ -380,12 +402,23 @@ vista(job)
 			(MSOLG/(KPCCM*KPCCM*MHYDR)) ;
 		rsys = cosmof*kpcunit/1.e3 ;
 		vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
+		if(vista_type == HNEUT){
+		    c1 = msys*fhydrogen ;
+		}
+		else if(vista_type == HEI || vista_type == HEII){
+		    c1 = msys*(1.-fhydrogen) ;
+		}
+		else if(vista_type == SZ){
+		    rsz = (1.-fhydrogen)/4./fhydrogen ;
+		    c1 = msys*fhydrogen*SIGMAES*KBOLTZ/ME/C/C ;
+		    c2 = msys*fhydrogen*SIGMAES*1.e5/C ;
+		}
 	    }
 	    if(vista_type == RHO || vista_type == TEMP || vista_type == PRESS ||
 		    vista_type == TCOOL || vista_type == JEANS || 
 		    vista_type == FSTAR || vista_type == XRAY ||
 		    vista_type == HNEUT || vista_type == HEI ||
-		    vista_type == HEII){
+		    vista_type == HEII || vista_type == SZ){
 		if(vista_type != RHO && vista_type != XRAY){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
@@ -423,28 +456,96 @@ vista(job)
 					   - boxes[active_box].center[j]) ;
 				    }
 				}
-				if((vista_type == HNEUT || vista_type == HEI ||
-					vista_type == HEII) && autolim == NO){
+				if(part_pos[0]-2.*(gp->hsmooth) > xmax)
+				    continue ;
+				if(part_pos[0]+2.*(gp->hsmooth) < xmin)
+				    continue ;
+				if(part_pos[1]-2.*(gp->hsmooth) > ymax)
+				    continue ;
+				if(part_pos[1]+2.*(gp->hsmooth) < ymin)
+				    continue ;
+				if(((vista_type == HNEUT || vista_type == HEI ||
+					vista_type == HEII) && autolim == NO) ||
+					vista_type == SZ){
 				    for (vz = 0.0,j = 0;j < header.ndim ;j++) {
 					vz += rot_matrix[2][j] * (gp->vel[j]) ;
 				    }
 				    vz *= vsys ;
 				    if(comove == YES){
-					vz += hubble_constant*part_pos[2]*rsys ;
+					v_hubble = hubble_constant*
+						part_pos[2]*rsys ;
 				    }
 				}
 				if((!periodic && ((vista_type != HNEUT &&
-					vista_type != HEI && vista_type != HEII)
-					      || autolim == YES))
-				   || (periodic && ((vista_type != HNEUT &&
-					vista_type != HEI && vista_type != HEII)
-						    || autolim == YES)
-				       && (part_pos[2]< period_size/2.&&
-					   part_pos[2] >= -period_size/2.))
-				   || ((vista_type == HNEUT || vista_type == HEI
-				   || vista_type == HEII) && autolim == NO
-				       && vz >= vel_min && vz <= vel_max)) {
+					vista_type != HEI && vista_type != HEII
+					&& vista_type != SZ) || autolim == YES))
+					|| (periodic && ((vista_type != HNEUT &&
+					vista_type != HEI && vista_type != HEII
+					&& vista_type != SZ)
+					|| autolim == YES) &&
+					(part_pos[2]< period_size/2.&&
+					part_pos[2] >= -period_size/2.))
+					|| ((vista_type == HNEUT ||
+					vista_type == HEI || vista_type == HEII
+					|| vista_type == SZ) && autolim == NO
+					&& vz + v_hubble >= vel_min &&
+					vz + v_hubble <= vel_max)) {
 				hsmooth = gp->hsmooth ;
+				if(vista_type == XRAY){
+				    delta_d = lum_xray ;
+				}
+				else if(vista_type == HNEUT){
+				    delta_d = c1*hneutral[gp-gas_particles]*
+					(gp->mass);
+				}
+				else if(vista_type == HEI){
+				    delta_d = c1*
+					heneutral[gp-gas_particles]*(gp->mass);
+				}
+				else if(vista_type == HEII){
+				    delta_d = c1*heII[gp-gas_particles]*
+					(gp->mass);
+				}
+				else {
+				    delta_d = (gp->mass) ;
+				}
+				if(vista_type == TEMP){
+				    delta_q = (gp->mass)*(gp->temp) ;
+				}
+				else if(vista_type == PRESS){
+				    delta_q = (gp->mass)*(gp->temp)*(gp->rho) ;
+				}
+				else if(vista_type == TCOOL){
+				    if(cooling[i] < 0.){
+					delta_q = gp->mass * -cooling[i] ;
+				    }
+				    else{
+					delta_q = 0.0 ;
+				    }
+				}
+				else if(vista_type == JEANS){
+				    c1_i = sqrt(meanmwt[i])*c1 ;
+				    delta_q = gp->mass * gp->hsmooth*c1_i*
+					sqrt(gp->rho / gp->temp);
+				}
+				else if(vista_type == FSTAR){
+				    delta_q = gp->mass * starform[i];
+				}
+				else if(vista_type == HNEUT){
+				    delta_q = c1*hneutral[gp-gas_particles]*
+					hneutral[gp-gas_particles]*(gp->mass);
+				    delta_q2 = c1*hneutral[gp-gas_particles]*
+					(gp->mass)*(gp->temp);
+				}
+				else if(vista_type == SZ){
+				    electron = (1. - 
+					hneutral[gp-gas_particles] + rsz*
+					(2. - 2*heneutral[gp-gas_particles]-
+					heII[gp-gas_particles])) ;
+				    delta_d = c1*electron*
+					(gp->mass)*(gp->temp);
+				    delta_q = c2*electron*(gp->mass)*vz ;
+				}
 				if(hsmooth > size_pixel){
 				  thsmooth = 2. * hsmooth ;
 				  distnorm = 1. / (hsmooth * hsmooth) ;
@@ -478,77 +579,21 @@ vista(job)
 					}
 					kernel *= size_pixel_2 ;
 					if(kernel != 0.){
-					    if(vista_type == XRAY){
-						density[kx][ky]+=(float)(kernel*
-						    lum_xray) ;
+					    density[kx][ky]+=(float)(kernel*
+						    delta_d) ;
+					    if(vista_type == TEMP ||
+						vista_type == PRESS ||
+						vista_type == TCOOL ||
+						vista_type == JEANS ||
+						vista_type == FSTAR ||
+						vista_type == HNEUT
+						|| vista_type == SZ){
 					    }
-					    else if(vista_type == HNEUT){
-						density[kx][ky]+=(float)(kernel*
-						    msys*fhydrogen*
-						    hneutral[gp-gas_particles]*
-						    (gp->mass));
-					    }
-					    else if(vista_type == HEI){
-						density[kx][ky]+=(float)(kernel*
-						    msys*(1.-fhydrogen)*
-						    heneutral[gp-gas_particles]*
-						    (gp->mass));
-					    }
-					    else if(vista_type == HEII){
-						density[kx][ky]+=(float)(kernel*
-						    msys*(1.-fhydrogen)*
-						    heII[gp-gas_particles]*
-						    (gp->mass));
-					    }
-					    else {
-						density[kx][ky]+=(float)(kernel*
-						    (gp->mass)) ;
-					    }
-					    if(vista_type == TEMP){
-						quantity[kx][ky] += 
-						    (float)(kernel*
-						    (gp->mass)*(gp->temp)) ;
-					    }
-					    else if(vista_type == PRESS){
-						quantity[kx][ky] +=
-						    (float)(kernel*
-						    (gp->mass)*(gp->temp)*
-						    (gp->rho)) ;
-					    }
-					    else if(vista_type == TCOOL){
-						if(cooling[i] < 0.){
-						    quantity[kx][ky] += 
-						    (float)(kernel*
-						    gp->mass * -cooling[i]) ;
-						}
-					    }
-					    else if(vista_type == JEANS){
-					      double tconst = meanmwt[i]*MHYDR
-						*GCGS/KBOLTZ*msolunit*MSOLG
-						  /kpcunit/KPCCM;
-					      c1 = sqrt(tconst/GAMMA * 4. *PI) ;
-						quantity[kx][ky] +=
-						    (float)(kernel*
-						    gp->mass * gp->hsmooth*c1*
-						    sqrt(gp->rho / gp->temp));
-					    }
-					    else if(vista_type == FSTAR){
-						quantity[kx][ky] +=
-						    (float)(kernel*
-						    gp->mass * starform[i]);
-					    }
-					    else if(vista_type == HNEUT){
-						quantity[kx][ky] +=
-						    (float)(kernel*
-						    msys*fhydrogen*
-						    hneutral[gp-gas_particles]*
-						    hneutral[gp-gas_particles]*
-						    (gp->mass));
+					    quantity[kx][ky] += (float)(kernel*
+						    delta_q) ;
+					    if(vista_type == HNEUT){
 						quantity2[kx][ky] +=
-						    (float)(kernel*
-						    msys*fhydrogen*
-						    hneutral[gp-gas_particles]*
-						    (gp->mass)*(gp->temp));
+						    (float)(kernel*delta_q2) ;
 					    }
 					}
 				      }
@@ -561,70 +606,21 @@ vista(job)
 					    0.499999) ;
 				    if(kx >= 0 && kx < vista_size && ky >= 0 &&
 					    ky < vista_size){
-					if(vista_type == XRAY){
-					    density[kx][ky]+=(float)(lum_xray);
+					density[kx][ky]+=(float)(kernel*
+						delta_d) ;
+					if(vista_type == TEMP ||
+					    vista_type == PRESS ||
+					    vista_type == TCOOL ||
+					    vista_type == JEANS ||
+					    vista_type == FSTAR ||
+					    vista_type == HNEUT
+					    || vista_type == SZ){
 					}
-					else if(vista_type == HNEUT){
-						density[kx][ky] += (float)(msys*
-						    fhydrogen*
-						    hneutral[gp-gas_particles]*
-						    (gp->mass));
-					}
-					else if(vista_type == HEI){
-						density[kx][ky] += (float)(msys*
-						    (1.-fhydrogen)*
-						    heneutral[gp-gas_particles]*
-						    (gp->mass));
-					}
-					else if(vista_type == HEII){
-						density[kx][ky] += (float)(msys*
-						    (1.-fhydrogen)*
-						    heII[gp-gas_particles]*
-						    (gp->mass));
-					}
-					else {
-					    density[kx][ky] += 
-					    	(float)((gp->mass)) ;
-					}
-					if(vista_type == TEMP){
-					    quantity[kx][ky] += (float)(
-						(gp->mass)*(gp->temp)) ;
-					}
-					else if(vista_type == PRESS){
-					    quantity[kx][ky] += (float)(
-						(gp->mass)*(gp->temp)*
-						(gp->rho)) ;
-					}
-					else if(vista_type == TCOOL){
-					    if(cooling[i] < 0.){
-						quantity[kx][ky] += 
-							(float)(gp->mass *
-							-cooling[i]) ;
-					    }
-					}
-					else if(vista_type == JEANS){
-					  double tconst = meanmwt[i]*MHYDR
-					    *GCGS/KBOLTZ*msolunit*MSOLG
-					      /kpcunit/KPCCM;
-					  c1 = sqrt(tconst / GAMMA * 4. *PI) ;
-					    quantity[kx][ky] +=(float)(
-					    gp->mass * gp->hsmooth * c1 *
-					    sqrt(gp->rho / gp->temp));
-					}
-					else if(vista_type == FSTAR){
-					    quantity[kx][ky] +=(float)(
-					    gp->mass * starform[i]);
-					}
-					else if(vista_type == HNEUT){
-						quantity[kx][ky] +=
-						    (float)(msys*fhydrogen*
-						    hneutral[gp-gas_particles]*
-						    hneutral[gp-gas_particles]*
-						    (gp->mass));
-						quantity2[kx][ky] +=
-						    (float)(msys*fhydrogen*
-						    hneutral[gp-gas_particles]*
-						    (gp->mass)*(gp->temp));
+					quantity[kx][ky] += (float)(kernel*
+						delta_q) ;
+					if(vista_type == HNEUT){
+					    quantity2[kx][ky] +=
+						(float)(kernel*delta_q2) ;
 					}
 				    }
 				}
@@ -637,7 +633,7 @@ vista(job)
 		}
 		if(vista_type != RHO && vista_type != XRAY &&
 			 vista_type != HNEUT && vista_type != HEI &&
-			 vista_type != HEII){
+			 vista_type != HEII && vista_type != SZ){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
 			    if(density[kx][ky] != 0.){
@@ -953,8 +949,15 @@ vista(job)
 		    density[i][j] = (float)pixel ;
 		}
 	    }
-	    fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
-		    size_pixel,low,high,name) ;
+	    if(vista_type != SZ){
+		fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
+			size_pixel,low,high,name) ;
+	    }
+	    else{
+                sprintf(name1,"%s.th",name) ;
+		fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
+			size_pixel,low,high,name1) ;
+	    }
 	    if(vista_type == HNEUT){
                 low = -20.0 ;
                 high = 0.0 ;
@@ -993,6 +996,37 @@ vista(job)
 		fits(quantity2,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name1) ;
             }
+	    if(vista_type == SZ){
+		for(i = 0; i < vista_size; i++){
+		    for(j = 0; j < vista_size; j++){
+			if(quantity[i][j] > 0. ){
+			    pixel = log10((double)(quantity[i][j])/
+				    size_pixel_2);
+			    density[i][j] = 1. ;
+			}
+			else if(quantity[i][j] < 0. ){
+			    pixel = log10((double)(-quantity[i][j])/
+				    size_pixel_2);
+			    density[i][j] = -1. ; ;
+			}
+			else{
+			    pixel = low ;
+			    density[i][j] = 0. ;
+			}
+			if(pixel > high)pixel = high ;
+			if(pixel < low)pixel = low ;
+			quantity[i][j] = (float)pixel ;
+		    }
+		}
+                sprintf(name1,"%s.kin",name) ;
+		fits(quantity,vista_size,vista_size,xmin,ymin,size_pixel,
+			size_pixel,low,high,name1) ;
+                low = -2.0 ;
+                high = 2.0 ;
+                sprintf(name1,"%s.sgn",name) ;
+		fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
+			size_pixel,low,high,name1) ;
+	    }
 	    free(density);
 	    free(*density);
 	    if(vista_type != RHO && vista_type != XRAY){

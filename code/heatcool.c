@@ -1,11 +1,5 @@
 #include "defs.h"
 
-/*     Thomson cross section */
-#define SIGMAES  6.665e-25
-/*     electron mass */
-#define ME  9.11e-28
-/*     speed of light */
-#define C 2.998e10
 /* xion tolerance */
 #define TOLERANCE 1e-14
 
@@ -370,19 +364,6 @@ calc_hneutral(temp, density, hneutral_p, heneutral_p, heII_p)
 	    fhydrogen / ((kpcunit*kpcunit*kpcunit) * MHYDR * 
 	    KPCCM*KPCCM*KPCCM);
 
-/* c------------------------------------------------------- */
-/* c  crate is cooling rate in units of (erg cm^3/s) */
-/* c  hrate is heating rate */
-/* c */
-/* c  alphaj is spectral index J \propto \nu^-\alpha */
-/* c */
-/* c  t  is temperature in K */
-/* c */
-/* c  j_nu is photoionizing flux at Lyman limit */
-/* c  in units of 10^{-21} has to be passed in common block */
-/* c  (per steradian) */
-/* c */
-/* c */
 /* c  n_H is density of hydrogen ions (Not helium) */
 /* c */
 /* c  y is helium abundance by mass */
@@ -390,10 +371,6 @@ calc_hneutral(temp, density, hneutral_p, heneutral_p, heII_p)
 /* c  g0 is photoionization rate coefficient? */
 /* c  g1 is photoionization rate coefficient? */
 /* c  g2 is photoionization rate coefficient? */
-/* c */
-/* c  h0 is photoionization heating rate coefficient? */
-/* c  h1 is photoionization heating rate coefficient? */
-/* c  h2 is photoionization heating rate coefficient? */
 /*   x is fraction of H that is NEUTRAL */
 /*   x_1 is fraction of He that is NEUTRAL */
 /*   x_2 is fraction of He that is singly ionized */
