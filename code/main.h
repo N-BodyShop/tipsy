@@ -1,7 +1,10 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.11  1998/02/27 19:51:35  nsk
+ * Revision 1.12  1998/06/11 20:27:21  trq
+ * Add values.h and change HUGE to MAXDOUBLE.
+ *
+ * Revision 1.11  1998/02/27  19:51:35  nsk
  * Fixed star formation stuff, added starform routine
  *
  * Revision 1.10  1997/09/25  18:35:16  nsk
@@ -62,6 +65,9 @@
  * *** empty log message ***
  * 
  */
+
+#include <values.h>
+
 char title[MAXCOMM] ;
 Window currentview_xid ;
 Window colorbar_xid ;
@@ -161,8 +167,8 @@ int xray_loaded = NO ;
 int divv_loaded = NO ;
 int cooling_loaded = NO ;
 int hneutral_loaded = NO ;
-double max_temp_old = -HUGE ;
-double min_rho_old = HUGE ;
+double max_temp_old = -MAXDOUBLE ;
+double min_rho_old = MAXDOUBLE ;
 int meanmwt_loaded = NO ;
 int starform_loaded = NO ;
 int redshift_loaded = NO ;
