@@ -182,10 +182,6 @@ extern char *strchr (), *strrchr ();
 #  define GWINSZ_IN_SYS_IOCTL
 #endif
 
-#if defined(GWINSZ_IN_SYS_IOCTL) && defined(__linux__)
-#   include <asm/termios.h>
-#endif
-
 #if !defined (emacs_mode)
 #  define no_mode -1
 #  define vi_mode 0
