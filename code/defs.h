@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.14  1997/12/06 22:00:54  trq
+ * Revision 1.15  1997/12/18 17:57:11  trq
+ * Added VALL vista plot: total mass density.
+ *
+ * Revision 1.14  1997/12/06  22:00:54  trq
  * Updated xray stuff to use spline emmission files.
  *
  * Revision 1.13  1997/09/25  18:35:12  nsk
@@ -174,6 +177,7 @@
 #define HEI 13
 #define HEII 14
 #define SZ 15
+#define VALL 16
 #define NOSPH 0
 #define SPH 1
 #define PREC_JACOBI 1.e-8 ;

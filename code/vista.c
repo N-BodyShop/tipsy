@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.13  1997/10/24 22:14:45  trq
+ * Revision 1.14  1997/12/18 17:57:14  trq
+ * Added VALL vista plot: total mass density.
+ *
+ * Revision 1.13  1997/10/24  22:14:45  trq
  * Fixed bug in handling hsmooth < size_pixel.
  *
  * Revision 1.12  1997/09/25  21:46:09  trq
@@ -79,6 +82,7 @@
  */
 #include "defs.h"
 #include "fdefs.h"
+#include "smooth.h"
 #include <stdlib.h>
 
 void
@@ -124,7 +128,6 @@ vista(job)
     double tconst ;
     double distnorm ;
     double drw ;
-    double luminosity ;
     int iwsm ;
     double star_lum_redshift() ;
     double wavelength ;
@@ -206,6 +209,9 @@ vista(job)
 	      else if(strcmp(type,"dark") == 0 ){
 		  vista_type = VDARK ;
 	      }
+	      else if(strcmp(type,"all") == 0 ){
+		  vista_type = VALL ;
+	      }
 	      else if(strcmp(type,"threedrho") == 0 ){
 		  vista_type = TDRHO ;
 	      }
@@ -235,7 +241,19 @@ vista(job)
 		  printf("<sorry, no memory for image, %s>\n",title) ;
 		  return ;
 		}
-	      if(vista_type != RHO && vista_type != XRAY){
+	      *density = (float *)malloc(vista_size*
+		    vista_size*sizeof(**density));
+	      if(*density == NULL)
+		{
+		  free(density);
+		  printf("<sorry, no memory for image, %s>\n",title) ;
+		  return ;
+		}
+	      for(i = 1; i < vista_size; i++)
+		  density[i] = &density[0][i*vista_size];
+	      if(vista_type != RHO && vista_type != XRAY && vista_type
+		 != VDARK && vista_type != VSTAR && vista_type != VALL
+		 && vista_type != LUMSTAR){
 		  quantity = (float **)malloc(vista_size*sizeof(*quantity));
 		  if(quantity == NULL)
 		    {
@@ -243,19 +261,6 @@ vista(job)
 		      printf("<sorry, no memory for image, %s>\n",title) ;
 		      return ;
 		    }
-	      }
-	      *density = (float *)malloc(vista_size*
-		    vista_size*sizeof(**density));
-	      if(*density == NULL)
-		{
-		  free(density);
-		  if(vista_type != RHO && vista_type != XRAY){
-		      free(quantity);
-		  }
-		  printf("<sorry, no memory for image, %s>\n",title) ;
-		  return ;
-		}
-	      if(vista_type != RHO && vista_type != XRAY){
 		  *quantity = (float *)malloc(vista_size*
 			vista_size*sizeof(**quantity));
 		  if(*quantity == NULL)
@@ -266,6 +271,14 @@ vista(job)
 		      printf("<sorry, no memory for image, %s>\n",title) ;
 		      return ;
 		    }
+		  for(i = 1; i < vista_size; i++)
+		      quantity[i] = &quantity[0][i*vista_size];
+		  for(kx = 0; kx < vista_size; kx++){
+			for(ky = 0; ky < vista_size; ky++){
+			    quantity[kx][ky] = 0.0 ;
+			}
+		  }
+		  
 	      }
 	      if(vista_type == HNEUT){
 		  quantity2 = (float **)malloc(vista_size*sizeof(*quantity2));
@@ -289,15 +302,14 @@ vista(job)
                       printf("<sorry, no memory for image, %s>\n",title) ;
                       return ;
                     }
-	      }
-	      for(i = 1; i < vista_size; i++)
-		{
-		  density[i] = &density[0][i*vista_size];
-		  if(vista_type != RHO && vista_type != XRAY)
-		      quantity[i] = &quantity[0][i*vista_size];
-		  if(vista_type == HNEUT)
+		  for(i = 1; i < vista_size; i++)
 		      quantity2[i] = &quantity2[0][i*vista_size];
-		}
+		  for(kx = 0; kx < vista_size; kx++){
+			for(ky = 0; ky < vista_size; ky++){
+			    quantity2[kx][ky] = 0.0 ;
+			}
+		  }
+	      }
 	    for(kx = 0; kx < vista_size; kx++){
 		for(ky = 0; ky < vista_size; ky++){
 		density[kx][ky] = 0.0 ;
@@ -323,16 +335,7 @@ vista(job)
 		    starform_func() ;
 		}
 	    }
-	    else if(strcmp(type,"lumi") == 0 ||
-		    strcmp(type,"luminosityi") == 0  ||
-		    strcmp(type,"lumv") == 0  ||
-		    strcmp(type,"luminosityv") == 0  ||
-		    strcmp(type,"lumb") == 0  ||
-		    strcmp(type,"luminosityb") == 0  ||
-		    strcmp(type,"lumu") == 0  ||
-		    strcmp(type,"luminosityu") == 0 ||
-		    strcmp(type,"lumuu") == 0  ||
-		    strcmp(type,"luminosityuu") == 0){
+	    else if(vista_type == LUMSTAR){
 		if (!redshift_loaded ){
 		    load_redshift() ;
 		}
@@ -365,11 +368,6 @@ vista(job)
 		    printf(" color band, %s>\n",title);
 		    free(density);
 		    free(*density);
-		    if(vista_type != RHO && vista_type != XRAY &&
-		    	    vista_type != HNEUT){
-		        free(quantity);
-		        free(*quantity);
-		    }
 		    return ;
 		}
 		if(!lum_loaded){
@@ -424,21 +422,8 @@ vista(job)
 		    vista_type == TCOOL || vista_type == JEANS || 
 		    vista_type == FSTAR || vista_type == XRAY ||
 		    vista_type == HNEUT || vista_type == HEI ||
-		    vista_type == HEII || vista_type == SZ){
-		if(vista_type != RHO && vista_type != XRAY){
-		    for(kx = 0; kx < vista_size; kx++){
-			for(ky = 0; ky < vista_size; ky++){
-			quantity[kx][ky] = 0.0 ;
-			}
-		    }
-		}
-		if(vista_type == HNEUT){
-		    for(kx = 0; kx < vista_size; kx++){
-			for(ky = 0; ky < vista_size; ky++){
-			quantity2[kx][ky] = 0.0 ;
-			}
-		    }
-		}
+		    vista_type == HEII || vista_type == SZ ||
+		    vista_type == VALL){
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
 		    if(vista_type != XRAY || (gp->temp) > 30000.){
@@ -637,7 +622,8 @@ vista(job)
 		}
 		if(vista_type != RHO && vista_type != XRAY &&
 			 vista_type != HNEUT && vista_type != HEI &&
-			 vista_type != HEII && vista_type != SZ){
+			 vista_type != HEII && vista_type != SZ &&
+		         vista_type != VALL){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
 			    if(density[kx][ky] != 0.){
@@ -667,13 +653,21 @@ vista(job)
 		    }
 		}
 	    }
-	    else if(vista_type == VSTAR){
-		if(balls_loaded != STAR) {
+	    if(vista_type == VSTAR || vista_type == VALL ||
+		    vista_type == LUMSTAR){
+		if(balls_loaded != STAR && boxlist[0].nstar > 0) {
 		    calc_balls(&box0_smx, 0, 0 , 1);
 		    balls_loaded = STAR;
 		}
 		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
 		    sp = boxlist[active_box].sp[i] ;
+		    if(vista_type == LUMSTAR) {
+			delta_d = star_lum_redshift(sp->mass,sp->tform,
+						    wavelength) ;
+		    }
+		    else {
+			delta_d = sp->mass;
+		    }
 		    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
 		      for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
 			for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
@@ -724,7 +718,7 @@ vista(job)
 					kernel *= size_pixel_2 ;
 					if(kernel != 0.){
 						density[kx][ky]+=(float)(kernel*
-						    (sp->mass)) ;
+						    delta_d) ;
 					}
 				    }
 				}
@@ -736,7 +730,7 @@ vista(job)
 					0.499999) ;
 				if(kx >= 0 && kx < vista_size && ky >= 0 &&
 					ky < vista_size){
-					density[kx][ky] += (float)((sp->mass)) ;
+					density[kx][ky] += (float)(delta_d) ;
 				}
 			    }
 			  }
@@ -746,89 +740,8 @@ vista(job)
 	            }
 		}
 	    }
-	    else if(vista_type == LUMSTAR){
-		if(balls_loaded != STAR) {
-		    calc_balls(&box0_smx, 0, 0 , 1);
-		    balls_loaded = STAR;
-		}
-		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
-		    sp = boxlist[active_box].sp[i] ;
-		    luminosity = star_lum_redshift(sp->mass,sp->tform,
-			    wavelength) ;
-		    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
-		      for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
-			for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
-			  if(periodic || (irep[0] == 0 && irep[1] == 0 &&
-				irep[2] == 0)) {
-			    for (part_pos[0] = part_pos[1] = part_pos[2] = 0.0,
-				    j = 0 ; j < header.ndim ;j++) {
-				for (k = 0 ; k < 3 ; k++){
-				    part_pos[k] += rot_matrix[k][j] *
-				      (irep[j]*period_size + sp->pos[j]
-				       - boxes[active_box].center[j]) ;
-				}
-			    }
-			    if(!(periodic) || (part_pos[2] < period_size/2.
-				    && part_pos[2] >= -period_size/2.)){
-			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2)/2.0;
-			    if(hsmooth > size_pixel){
-				thsmooth = 2. * hsmooth ;
-				distnorm = 1. / (hsmooth * hsmooth) ;
-				hsmth2pi = distnorm / PI ;
-				kx_min=max(0,(int)((part_pos[0]-thsmooth-xmin)/
-					size_pixel + .499999)) ;
-				kx_max = min(vista_size-1,(int)((part_pos[0]+
-					thsmooth-xmin)/size_pixel + .499999)) ;
-				ky_min=max(0,(int)((part_pos[1]-thsmooth-ymin)/
-				    size_pixel + .499999)) ;
-				ky_max = min(vista_size-1,(int)((part_pos[1]+
-					thsmooth-ymin)/ size_pixel + .499999)) ;
-				for(kx = kx_min; kx < kx_max + 1; kx++){
-				    for(ky = ky_min; ky < ky_max + 1; ky++){
-					pixel_pos[0] = xmin+(kx + .5) *
-						size_pixel ;
-					pixel_pos[1] = ymin+(ky + .5) *
-						size_pixel ;
-					radius2 = distance_dim2(pixel_pos,
-						part_pos)*distnorm ;
-					if(radius2 < 4.){
-					    radius2 *= deldr2i ;
-					    iwsm = (int)radius2 ;
-					    drw = radius2 - (double)iwsm ;
-					    kernel = ((1. - drw) *
-						    iwsmooth[iwsm] + drw*
-						    iwsmooth[1+iwsm])*hsmth2pi ;
-					}
-					else{
-					    kernel = 0. ;
-					}
-					kernel *= size_pixel_2 ;
-					if(kernel != 0.){
-						density[kx][ky]+=(float)(kernel*
-						    luminosity) ;
-					}
-				    }
-				}
-			    }
-			    else{
-				kx = (int)((part_pos[0]-xmin)/size_pixel+
-					0.499999) ;
-				ky = (int)((part_pos[1]-ymin)/size_pixel+
-					0.499999) ;
-				if(kx >= 0 && kx < vista_size && ky >= 0 &&
-					ky < vista_size){
-					density[kx][ky] += (float)(luminosity) ;
-				}
-			    }
-			  }
-			  }
-			}
-		      }
-		    }
-		}
-	    }
-	    else if(vista_type == VDARK){
-		if(balls_loaded != DARK) {
+	    if(vista_type == VDARK || vista_type == VALL){
+		if(balls_loaded != DARK && boxlist[0].ndark > 0) {
 		    calc_balls(&box0_smx, 1, 0 , 0);
 		    balls_loaded = DARK;
 		}
@@ -906,7 +819,7 @@ vista(job)
 		    }
 		}
 	    }
-	    else if(vista_type == TDRHO) {
+	    if(vista_type == TDRHO) {
 		for(kx = 0; kx < vista_size; kx++){
 		    for(ky = 0; ky < vista_size; ky++){
 			density[kx][ky] = 0.0 ;
@@ -1033,7 +946,9 @@ vista(job)
 	    }
 	    free(density);
 	    free(*density);
-	    if(vista_type != RHO && vista_type != XRAY){
+	    if(vista_type != RHO && vista_type != XRAY && vista_type
+		 != VDARK && vista_type != VSTAR && vista_type != VALL
+		 && vista_type != LUMSTAR){
 		free(quantity);
 		free(*quantity);
 	    }
