@@ -60,7 +60,7 @@ matrix_matrix_mult.o matrix_vector_mult.o maxpos.o moments.o norm.o openascii.o\
 openbinary.o packfit.o perp_distance.o plane.o \
 profile.o \
 readascii.o redshift_sub.o rot_cur.o rotate.o \
-rotate_sub.o setsize.o setbox_sub.o setvec.o showboxes_sub.o \
+rotate_sub.o setcolormap.o setsize.o setbox_sub.o setvec.o showboxes_sub.o \
 showdark_sub.o showgas_sub.o showstar_sub.o showvel_sub.o sift.o spline.o \
 star_lum.o star_lum_redshift.o starform_func.o sub_vec.o transpose.o unload.o \
 vec_add_const_mult_vec.o vel_dist.o vel_sigma.o radial_color.o \
@@ -107,7 +107,7 @@ matrix_matrix_mult.c matrix_vector_mult.c maxpos.c moments.c norm.c openascii.c\
 openbinary.c packfit.c perp_distance.c plane.c \
 profile.c \
 readascii.c redshift_sub.c rot_cur.c rotate.c \
-rotate_sub.c setsize.c setbox_sub.c setvec.c showboxes_sub.c \
+rotate_sub.c setcolormap.c setsize.c setbox_sub.c setvec.c showboxes_sub.c \
 showdark_sub.c showgas_sub.c showstar_sub.c showvel_sub.c sift.c spline.c \
 star_lum.c star_lum_redshift.c starform_func.c sub_vec.c transpose.c unload.c \
 vec_add_const_mult_vec.c vel_dist.c vel_sigma.c radial_color.c \
