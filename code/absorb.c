@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.17  1998/06/11 20:24:18  trq
+ * Revision 1.18  1998/07/24 17:43:01  trq
+ * Ensure that zbins do not go out of bounds.
+ *
+ * Revision 1.17  1998/06/11  20:24:18  trq
  * Fixed typos.
  *
  * Revision 1.16  1997/09/25  18:35:07  nsk
@@ -485,8 +488,8 @@ absorb(job)
 	}
 	bin_box_min = floor((zbox_min - zmin)/bin_size) ;
 	bin_box_max = floor((zbox_max - zmin)/bin_size) ;
-	if((zbox_max - zmin)/bin_size == (double) bin_box_max)
-	  bin_box_max--;
+	bin_box_min = max(bin_box_min, 0);
+	bin_box_max = min(bin_box_max, zbin-1);
 
 	rsys = cosmof*kpcunit/1.e3 ;
 	vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
