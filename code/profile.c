@@ -25,6 +25,7 @@ profile(job)
     double pressure[MAXBIN] ;
     double temp[MAXBIN] ;
     double lum[MAXBIN] ;
+    double ar_mean[MAXBIN] ;
     int number[MAXBIN] ;
     Real center[MAXDIM] ;
     Real center_e[MAXDIM] ;
@@ -73,7 +74,7 @@ profile(job)
 	    for (i = 0 ; i < MAXBIN ;i++) {
 		mass[i] = density[i] = pressure[i] = temp[i] = gas_mass[i] =
 			vel_radial[i] = vel_radial_sigma[i] =
-			vel_tang_sigma[i] = lum[i] = 0.0 ;
+			vel_tang_sigma[i] = lum[i] = ar_mean[i] = 0.0 ;
 		number[i] = 0 ;
 		for (j = 0 ; j < header.ndim ;j++) {
 		    angular_mom[i][j]  = 0.0 ;
@@ -204,6 +205,8 @@ profile(job)
 			  vel = sqrt(dot_product(delta_v, delta_v));
 			vel_radial[bin] += (dp->mass) * vel ;
 			vel_radial_sigma[bin] += (dp->mass) * vel * vel ;
+			if(array)
+			  ar_mean[bin] += dp->mass*array[boxlist[box].dpi[i]];
 		    }
 		}
 	    }
@@ -262,6 +265,8 @@ profile(job)
 			  vel = sqrt(dot_product(delta_v, delta_v));
 			vel_radial[bin] += (sp->mass) * vel ;
 			vel_radial_sigma[bin] += (sp->mass) * vel * vel ;
+			if(array)
+			  ar_mean[bin] += sp->mass*array[boxlist[box].spi[i]];
 		    }
 		}
 	    }
@@ -329,6 +334,8 @@ profile(job)
 			temp[bin] += (gp->mass) * (gp->temp) ;
 			pressure[bin] += (gp->mass) * gasconst
 			    * (gp->temp/meanmwt[i]) * (gp->rho) ;
+			if(array)
+			  ar_mean[bin] += gp->mass*array[boxlist[box].gpi[i]];
 		    }
 		}
 	    }
@@ -362,6 +369,8 @@ profile(job)
 		for (j = 0 ;j < MAXDIM ; j++) {
 		    angular_mom[i][j] /= mass[i] ;
 		}
+		if(array)
+		  ar_mean[i] /= mass[i];
 	    }
 	    if (strcmp(particle_type,"dark") == 0 ||
 		    strcmp(particle_type,"mark") == 0 ||
@@ -582,6 +591,8 @@ profile(job)
 			&& boxlist[box].nstar > 0) {
 		    fprintf(hardfile.ptr," %g",lum_den) ;
 		}
+		if(array)
+		  fprintf(hardfile.ptr," %g", ar_mean[i]);
 		fprintf(hardfile.ptr,"\n") ;
 		radius_old = radius ;
 	    }
