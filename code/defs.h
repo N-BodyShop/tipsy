@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.7  1996/04/24 23:40:33  trq
+ * Revision 1.8  1996/06/26 00:34:48  nsk
+ * Added deuterium to absorb, HeI, HeII, and xray to vista
+ *
+ * Revision 1.7  1996/04/24  23:40:33  trq
  * balls_loaded variable to keep track of balls.
  * Fixed smoothing length bug.
  *
@@ -147,6 +150,8 @@
 #define TDRHO 10
 #define XRAY 11
 #define HNEUT 12
+#define HEI 13
+#define HEII 14
 #define NOSPH 0
 #define SPH 1
 #define PREC_JACOBI 1.e-8 ;

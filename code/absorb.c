@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.9  1996/04/24 23:40:32  trq
+ * Revision 1.10  1996/06/26 00:34:47  nsk
+ * Added deuterium to absorb, HeI, HeII, and xray to vista
+ *
+ * Revision 1.9  1996/04/24  23:40:32  trq
  * balls_loaded variable to keep track of balls.
  * Fixed smoothing length bug.
  *
@@ -103,6 +106,7 @@
 #define LYCS_HeI (4.278e-12)
 #define LYCS_HeII (3.358e-13)
 #define MASSHE (3.971)
+#define MASSD (2.)
 
 void
 absorb(job)
@@ -118,32 +122,33 @@ absorb(job)
     char x_string[MAXCOMM] ;
     char y_string[MAXCOMM] ;
     Real x1[MAXDIM];            /* x and y coordinates of pencil beam */
-    Real *vbins_HI;
-    Real *vbins_HeI;
-    Real *vbins_HeII;
-    Real *vbins_t_HI;
-    Real *vbins_tot;
-    Real *vbins_neut_HI;
-    Real *vbins_temp_HI;
-    Real *vbins_rho_HI;
-    Real *vbins_res_HI;
-    Real *vbins_temp_tot;
-    Real *vbins_temp2_tot;
-    Real *vbins_divv_tot;
-    Real *mass_tot ;
-    Real *mass_HI ;
-    Real *mass_HeI ;
-    Real *mass_HeII ;
-    Real *vel_tot ;
-    Real *vel_HI ;
-    Real *vel_HeI ;
-    Real *vel_HeII ;
-    Real *temp_tot ;
-    Real *temp_HI ;
-    Real *temp_HeI ;
-    Real *temp_HeII ;
-    Real *divv_tot ;
-    Real *res ;
+    double *vbins_HI;
+    double *vbins_D;
+    double *vbins_HeI;
+    double *vbins_HeII;
+    double *vbins_t_HI;
+    double *vbins_tot;
+    double *vbins_neut_HI;
+    double *vbins_temp_HI;
+    double *vbins_rho_HI;
+    double *vbins_res_HI;
+    double *vbins_temp_tot;
+    double *vbins_temp2_tot;
+    double *vbins_divv_tot;
+    double *mass_tot ;
+    double *mass_HI ;
+    double *mass_HeI ;
+    double *mass_HeII ;
+    double *vel_tot ;
+    double *vel_HI ;
+    double *vel_HeI ;
+    double *vel_HeII ;
+    double *temp_tot ;
+    double *temp_HI ;
+    double *temp_HeI ;
+    double *temp_HeII ;
+    double *divv_tot ;
+    double *res ;
     int plot_type;
     int i,j,k ;
     double part_pos[MAXDIM] ;
@@ -188,6 +193,7 @@ absorb(job)
     double vsys ;
     double msys ;
     double bsys_H ;
+    double bsys_D ;
     double bsys_He ;
     double z ;
     double b ;
@@ -248,20 +254,20 @@ absorb(job)
 	    }
 	}
 	if(plot_type == DARKM){
-	    mass_tot = (Real *)malloc(zbin*sizeof(*mass_tot));
+	    mass_tot = (double *)malloc(zbin*sizeof(*mass_tot));
 	    if(mass_tot == NULL)
 	      {
 		printf("<sorry, no memory for column bins, %s>\n",title) ;
 		return ;
 	      }
-	    vel_tot = (Real *)malloc(zbin*sizeof(*vel_tot));
+	    vel_tot = (double *)malloc(zbin*sizeof(*vel_tot));
 	    if(vel_tot == NULL)
 	      {
 		printf("<sorry, no memory for column bins, %s>\n",title) ;
 		free(mass_tot);
 		return ;
 	      }
-	    res = (Real *)malloc(zbin*sizeof(*res));
+	    res = (double *)malloc(zbin*sizeof(*res));
 	    if(res == NULL)
 	      {
 		printf("<sorry, no memory for column bins, %s>\n",title) ;
@@ -282,45 +288,49 @@ absorb(job)
 	    }
 	}
 	else {
-	    vbins_t_HI = (Real *)malloc(nvbin*sizeof(*vbins_t_HI));
+	    vbins_t_HI = (double *)malloc(nvbin*sizeof(*vbins_t_HI));
 	    if(vbins_t_HI == NULL)
 	      {
 		printf("<sorry, no memory for velocity bins, %s>\n",title) ;
 		return ;
 	      }
-	    vbins_HI = (Real *)malloc(nvbin*sizeof(*vbins_HI));
-	    vbins_HeI = (Real *)malloc(nvbin*sizeof(*vbins_HeI));
-	    vbins_HeII = (Real *)malloc(nvbin*sizeof(*vbins_HeII));
-	    if(vbins_HI == NULL || vbins_HeI == NULL || vbins_HeII == NULL)
+	    vbins_HI = (double *)malloc(nvbin*sizeof(*vbins_HI));
+	    vbins_D = (double *)malloc(nvbin*sizeof(*vbins_D));
+	    vbins_HeI = (double *)malloc(nvbin*sizeof(*vbins_HeI));
+	    vbins_HeII = (double *)malloc(nvbin*sizeof(*vbins_HeII));
+	    if(vbins_HI == NULL || vbins_D  == NULL || vbins_HeI == NULL
+	    	|| vbins_HeII == NULL)
 	      {
 		printf("<sorry, no memory for velocity bins, %s>\n",title) ;
 		free(vbins_t_HI);
 		return ;
 	      }
-	    mass_tot = (Real *)malloc(zbin*sizeof(*mass_tot));
-	    mass_HI = (Real *)malloc(zbin*sizeof(*mass_HI));
-	    mass_HeI = (Real *)malloc(zbin*sizeof(*mass_HeI));
-	    mass_HeII = (Real *)malloc(zbin*sizeof(*mass_HeII));
+	    mass_tot = (double *)malloc(zbin*sizeof(*mass_tot));
+	    mass_HI = (double *)malloc(zbin*sizeof(*mass_HI));
+	    mass_HeI = (double *)malloc(zbin*sizeof(*mass_HeI));
+	    mass_HeII = (double *)malloc(zbin*sizeof(*mass_HeII));
 	    if(mass_tot == NULL || mass_HI == NULL || mass_HeI == NULL ||
 		    mass_HeII == NULL)
 	      {
 		printf("<sorry, no memory for column bins, %s>\n",title) ;
 		free(vbins_HI);
+		free(vbins_D);
 		free(vbins_HeI);
 		free(vbins_HeII);
 		free(vbins_t_HI);
 		return ;
 	      }
-	    vel_tot = (Real *)malloc(zbin*sizeof(*vel_tot));
-	    vel_HI = (Real *)malloc(zbin*sizeof(*vel_HI));
-	    vel_HeI = (Real *)malloc(zbin*sizeof(*vel_HeI));
-	    vel_HeII = (Real *)malloc(zbin*sizeof(*vel_HeII));
+	    vel_tot = (double *)malloc(zbin*sizeof(*vel_tot));
+	    vel_HI = (double *)malloc(zbin*sizeof(*vel_HI));
+	    vel_HeI = (double *)malloc(zbin*sizeof(*vel_HeI));
+	    vel_HeII = (double *)malloc(zbin*sizeof(*vel_HeII));
 	    if(vel_tot == NULL || vel_HI == NULL || vel_HeI == NULL ||
 		    vel_HeII == NULL)
 	      {
 		printf("<sorry, no memory for column bins, %s>\n",title) ;
 		free(vbins_t_HI);
 		free(vbins_HI);
+		free(vbins_D);
 		free(vbins_HeI);
 		free(vbins_HeII);
 		free(mass_tot);
@@ -329,16 +339,17 @@ absorb(job)
 		free(mass_HeII);
 		return ;
 	      }
-	    temp_tot = (Real *)malloc(zbin*sizeof(*temp_tot));
-	    temp_HI = (Real *)malloc(zbin*sizeof(*temp_HI));
-	    temp_HeI = (Real *)malloc(zbin*sizeof(*temp_HeI));
-	    temp_HeII = (Real *)malloc(zbin*sizeof(*temp_HeII));
+	    temp_tot = (double *)malloc(zbin*sizeof(*temp_tot));
+	    temp_HI = (double *)malloc(zbin*sizeof(*temp_HI));
+	    temp_HeI = (double *)malloc(zbin*sizeof(*temp_HeI));
+	    temp_HeII = (double *)malloc(zbin*sizeof(*temp_HeII));
 	    if(temp_tot == NULL || temp_HI == NULL || temp_HeI == NULL ||
 		    temp_HeII == NULL)
 	      {
 		printf("<sorry, no memory for column bins, %s>\n",title) ;
 		free(vbins_t_HI);
 		free(vbins_HI);
+		free(vbins_D);
 		free(vbins_HeI);
 		free(vbins_HeII);
 		free(mass_tot);
@@ -351,13 +362,14 @@ absorb(job)
 		free(vel_HeII);
 		return ;
 	      }
-	    divv_tot = (Real *)malloc(zbin*sizeof(*divv_tot));
-	    res = (Real *)malloc(zbin*sizeof(*res));
+	    divv_tot = (double *)malloc(zbin*sizeof(*divv_tot));
+	    res = (double *)malloc(zbin*sizeof(*res));
 	    if(divv_tot == NULL || res == NULL)
 	      {
 		printf("<sorry, no memory for column bins, %s>\n",title) ;
 		free(vbins_t_HI);
 		free(vbins_HI);
+		free(vbins_D);
 		free(vbins_HeI);
 		free(vbins_HeII);
 		free(mass_tot);
@@ -1111,6 +1123,7 @@ absorb(job)
 	    return;
 	  }
 	bsys_H = sqrt(2.*KBOLTZ/MHYDR)/1.e5 ;
+	bsys_D = sqrt(2.*KBOLTZ/(MASSD*MHYDR))/1.e5 ;
 	bsys_He = sqrt(2.*KBOLTZ/(MASSHE*MHYDR))/1.e5 ;
 	vmin *= vsys ;
 	vmax *= vsys ;
@@ -1134,17 +1147,19 @@ absorb(job)
 	vbin_size = (vmax - vmin)/(double)nvbin ;
 	for(i = 0; i < nvbin; i++){
 	    vbins_HI[i] = 0.0;
+	    vbins_D[i] = 0.0;
 	    vbins_HeI[i] = 0.0;
 	    vbins_HeII[i] = 0.0;
 	    vbins_t_HI[i] = 0.0;
 	}
 	if(plot_type == VELCOL){
-            vbins_tot = (Real *)malloc(nvbin*sizeof(*vbins_tot));
+            vbins_tot = (double *)malloc(nvbin*sizeof(*vbins_tot));
             if(vbins_tot == NULL)
               {
                 printf("<sorry, no memory for velocity bins, %s>\n",title) ;
                 free(vbins_t_HI);
                 free(vbins_HI);
+		free(vbins_D);
                 free(vbins_HeI);
                 free(vbins_HeII);
                 free(mass_tot);
@@ -1163,12 +1178,13 @@ absorb(job)
                 free(res);
                 return ;
               }
-            vbins_neut_HI = (Real *)malloc(nvbin*sizeof(*vbins_neut_HI));
+            vbins_neut_HI = (double *)malloc(nvbin*sizeof(*vbins_neut_HI));
             if(vbins_neut_HI == NULL)
               {
                 printf("<sorry, no memory for velocity bins, %s>\n",title) ;
                 free(vbins_t_HI);
                 free(vbins_HI);
+		free(vbins_D);
                 free(vbins_HeI);
                 free(vbins_HeII);
                 free(mass_tot);
@@ -1188,12 +1204,13 @@ absorb(job)
 		free(vbins_tot);
                 return ;
               }
-            vbins_temp_HI = (Real *)malloc(nvbin*sizeof(*vbins_temp_HI));
+            vbins_temp_HI = (double *)malloc(nvbin*sizeof(*vbins_temp_HI));
             if(vbins_temp_HI == NULL)
               {
                 printf("<sorry, no memory for velocity bins, %s>\n",title) ;
                 free(vbins_t_HI);
                 free(vbins_HI);
+		free(vbins_D);
                 free(vbins_HeI);
                 free(vbins_HeII);
                 free(mass_tot);
@@ -1214,12 +1231,13 @@ absorb(job)
 		free(vbins_neut_HI);
                 return ;
               }
-            vbins_rho_HI = (Real *)malloc(nvbin*sizeof(*vbins_rho_HI));
+            vbins_rho_HI = (double *)malloc(nvbin*sizeof(*vbins_rho_HI));
             if(vbins_rho_HI == NULL)
               {
                 printf("<sorry, no memory for velocity bins, %s>\n",title) ;
                 free(vbins_t_HI);
                 free(vbins_HI);
+		free(vbins_D);
                 free(vbins_HeI);
                 free(vbins_HeII);
                 free(mass_tot);
@@ -1240,12 +1258,13 @@ absorb(job)
 		free(vbins_neut_HI);
 		free(vbins_temp_HI);
 	      }
-            vbins_res_HI = (Real *)malloc(nvbin*sizeof(*vbins_res_HI));
+            vbins_res_HI = (double *)malloc(nvbin*sizeof(*vbins_res_HI));
             if(vbins_res_HI == NULL)
               {
                 printf("<sorry, no memory for velocity bins, %s>\n",title) ;
                 free(vbins_t_HI);
                 free(vbins_HI);
+		free(vbins_D);
                 free(vbins_HeI);
                 free(vbins_HeII);
                 free(mass_tot);
@@ -1268,12 +1287,13 @@ absorb(job)
 		free(vbins_rho_HI);
                 return ;
               }
-            vbins_temp_tot = (Real *)malloc(nvbin*sizeof(*vbins_temp_tot));
+            vbins_temp_tot = (double *)malloc(nvbin*sizeof(*vbins_temp_tot));
             if(vbins_temp_tot == NULL)
               {
                 printf("<sorry, no memory for velocity bins, %s>\n",title) ;
                 free(vbins_t_HI);
                 free(vbins_HI);
+		free(vbins_D);
                 free(vbins_HeI);
                 free(vbins_HeII);
                 free(mass_tot);
@@ -1297,12 +1317,13 @@ absorb(job)
 		free(vbins_res_HI);
                 return ;
               }
-            vbins_temp2_tot = (Real *)malloc(nvbin*sizeof(*vbins_temp2_tot));
+            vbins_temp2_tot = (double *)malloc(nvbin*sizeof(*vbins_temp2_tot));
             if(vbins_temp2_tot == NULL)
               {
                 printf("<sorry, no memory for velocity bins, %s>\n",title) ;
                 free(vbins_t_HI);
                 free(vbins_HI);
+		free(vbins_D);
                 free(vbins_HeI);
                 free(vbins_HeII);
                 free(mass_tot);
@@ -1327,12 +1348,13 @@ absorb(job)
 		free(vbins_temp_tot);
                 return ;
               }
-            vbins_divv_tot = (Real *)malloc(nvbin*sizeof(*vbins_divv_tot));
+            vbins_divv_tot = (double *)malloc(nvbin*sizeof(*vbins_divv_tot));
             if(vbins_divv_tot == NULL)
               {
                 printf("<sorry, no memory for velocity bins, %s>\n",title) ;
                 free(vbins_t_HI);
                 free(vbins_HI);
+		free(vbins_D);
                 free(vbins_HeI);
                 free(vbins_HeII);
                 free(mass_tot);
@@ -1459,6 +1481,86 @@ absorb(job)
 				    temp_tot[i];
 			    vbins_divv_tot[ibin] += dvcol_tot*divv_tot[i] ;
 			}
+		    }
+		}
+	    }
+	}
+	for(i = 0; i < zbin; i++){
+	    if(mass_HI[i] == 0.0)
+		continue ;
+	    for(j = 0; j < SUBBIN; j++){
+		z = ((double)(i) + ((double)(j))/((double)(SUBBIN)))*bin_size ;
+		if(2*j < SUBBIN){
+		    k = i - 1 ;
+		}
+		else {
+		    k = i ;
+		}
+		k = max(0,k) ;
+		k = min(zbin-2,k) ;
+		v_interp = (vel_HI[k+1] - vel_HI[k])*(i + ((double)(j))/
+			((double)(SUBBIN)) - (k + 0.5)) + vel_HI[k] ;
+		t_interp = (temp_HI[k+1] - temp_HI[k])*(i + ((double)(j))/
+			((double)(SUBBIN)) - (k + 0.5)) + temp_HI[k] ;
+		b = bsys_D*sqrt(t_interp) ;
+		if(comove == YES){
+		    v_interp += hubble_constant*z*rsys + voffset ;
+		}
+		if((v_interp < vmax && v_interp >= vmin) ||
+			(autolim == YES && periodic == YES)){
+	            bin = floor((v_interp - vmin)/vbin_size) ;
+		    ibin = bin%nvbin;
+		    if(ibin < 0) {
+		      ibin += nvbin;
+		    }
+		}
+		bin_min = floor((v_interp - 6.0*b - vmin)/vbin_size) ;
+		bin_max = floor((v_interp + 6.0*b - vmin)/vbin_size) ;
+		if((v_interp + 6.0*b - vmin)/vbin_size == (double) bin_max)
+		  bin_max--;
+		for(bin = bin_min; bin <= bin_max; bin++){
+		    if((bin >= 0 && bin < nvbin) || 
+			    (autolim == YES && periodic == YES)){
+			if(bin == bin_min){
+			    vlower = -6.0*b ;
+			}
+			else{
+			    vlower = ((double)(bin))*vbin_size+vmin -
+				    v_interp ;
+			}
+			if(bin == bin_max){
+			    vupper = 6.0*b ;
+			}
+			else{
+			    vupper = ((double)(bin+1))*vbin_size+vmin -
+				    v_interp ;
+			}
+			vlower /= b ;
+			vupper /= b ;
+			abs_vlower = fabs(vlower) ;
+			abs_vupper = fabs(vupper) ;
+			ibin = bin%nvbin;
+			if(ibin < 0) {
+			  ibin += nvbin;
+			}
+			if(vupper*vlower < 0){
+			    dvcol = 1./(double)SUBBIN*0.5*
+				    (erf(abs_vlower) + erf(vupper)) ;
+			}
+			else{
+			    if(abs_vlower < abs_vupper){
+				dvcol = 1./(double)SUBBIN*
+					0.5*(erf(abs_vupper) -
+					erf(abs_vlower)) ;
+			    }
+			    else{
+				dvcol = 1./(double)SUBBIN*
+					0.5*(erf(abs_vlower) -
+					erf(abs_vupper)) ;
+			    }
+			}
+			dvcol_HI = mass_HI[i]*dvcol ;
+			vbins_D[ibin] += dvcol_HI ;
 		    }
 		}
 	    }
@@ -1651,11 +1753,13 @@ absorb(job)
 	}
 	for(i = 0; i < nvbin; i++){
 	    vbins_HI[i] = LYCS_HI*vbins_HI[i]/vbin_size ;
+	    vbins_D[i] = LYCS_HI*vbins_D[i]/vbin_size ;
 	    vbins_HeI[i] = LYCS_HeI*vbins_HeI[i]/vbin_size ;
 	    vbins_HeII[i] = LYCS_HeII*vbins_HeII[i]/vbin_size ;
 	    vbins_t_HI[i] = LYCS_HI*vbins_t_HI[i]/vbin_size ;
-	    fprintf(fp, "%g %g %g %g %g\n", vmin + (i+0.5)*vbin_size,
-		    vbins_HI[i],vbins_HeI[i],vbins_HeII[i],vbins_t_HI[i]) ;
+	    fprintf(fp, "%g %g %g %g %g %g\n", vmin + (i+0.5)*vbin_size,
+		    vbins_HI[i],vbins_HeI[i],vbins_HeII[i],vbins_t_HI[i],
+		    vbins_D[i]) ;
 	}
 	fclose(fp);
 	free(vbins_t_HI);
