@@ -44,6 +44,9 @@ loadbinary(infile,time)
 
     if(header.ndim < 2 || header.ndim > 3) {
 	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
+	    fseek(infile,0L,0);
+	    currtime=0.0;
+	    currpos=0;
 	    header.nstar = 0;
 	    return FALSE;
     }
