@@ -88,6 +88,7 @@ uv(job)
 	uniform = YES ;
 	cooling_loaded = NO ;
 	meanmwt_loaded = NO ;
+	starform_loaded = NO ;
     }
     else {
 	input_error(command) ;

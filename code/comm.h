@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.9  1997/09/25 18:35:10  nsk
+ * Revision 1.10  1998/02/27 19:51:33  nsk
+ * Fixed star formation stuff, added starform routine
+ *
+ * Revision 1.9  1997/09/25  18:35:10  nsk
  * added uv command and discrete uv sources
  *
  * Revision 1.8  1997/09/24  17:35:04  trq
@@ -152,6 +155,7 @@ extern void showstar_sub() ;
 extern void showvec_sub() ;
 extern void showvel_sub() ;
 extern void smooth_sub();
+extern void starform_sub() ;
 extern void star_history() ;
 extern void unload_box() ;
 extern void unmark_all() ;
@@ -340,6 +344,7 @@ struct comm c_list[] = {
      {"showvel",     showvel_sub,	0},
      {"smooth",      smooth_sub,	0},
      {"sstar",       showstar_sub,	0},
+     {"starform",    starform_sub,      0},
      {"starhistory", star_history,	0},
      {"svec",        showvec_sub,	0},
      {"svel",        showvel_sub,	0},

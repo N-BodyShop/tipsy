@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.4  1997/09/25 18:35:09  nsk
+ * Revision 1.5  1998/02/27 19:51:32  nsk
+ * Fixed star formation stuff, added starform routine
+ *
+ * Revision 1.4  1997/09/25  18:35:09  nsk
  * added uv command and discrete uv sources
  *
  * Revision 1.3  1995/12/11  20:00:42  nsk
@@ -41,6 +44,7 @@ cconst_sub(job)
 	cooling_loaded = NO ;
 	hneutral_loaded = NO ;
 	meanmwt_loaded = NO ;
+	starform_loaded = NO ;
     }
     else {
 	input_error(command) ;

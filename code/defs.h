@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.15  1997/12/18 17:57:11  trq
+ * Revision 1.16  1998/02/27 19:51:33  nsk
+ * Fixed star formation stuff, added starform routine
+ *
+ * Revision 1.15  1997/12/18  17:57:11  trq
  * Added VALL vista plot: total mass density.
  *
  * Revision 1.14  1997/12/06  22:00:54  trq
@@ -468,6 +471,9 @@ extern double cstar ;
 extern double dtime ;
 extern double temppar ;
 extern double softpar ;
+extern double stareff ;
+extern double rhomin ;
+extern double overmin ;
 extern double redshift ;
 extern double cosmof ;
 extern double cosmof3 ;

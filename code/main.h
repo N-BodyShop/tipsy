@@ -1,7 +1,10 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.10  1997/09/25 18:35:16  nsk
+ * Revision 1.11  1998/02/27 19:51:35  nsk
+ * Fixed star formation stuff, added starform routine
+ *
+ * Revision 1.10  1997/09/25  18:35:16  nsk
  * added uv command and discrete uv sources
  *
  * Revision 1.9  1997/09/05  01:02:22  nsk
@@ -208,6 +211,9 @@ double cstar ;
 double dtime ;
 double temppar ;
 double softpar ;
+double stareff ;
+double rhomin ;
+double overmin ;
 double redshift ;
 double omega ;
 int periodic = NO ;

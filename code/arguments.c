@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.17  1997/09/30 17:32:43  nsk
+ * Revision 1.18  1998/02/27 19:51:31  nsk
+ * Fixed star formation stuff, added starform routine
+ *
+ * Revision 1.17  1997/09/30  17:32:43  nsk
  * generalized rotcur
  *
  * Revision 1.16  1997/09/25  18:35:08  nsk
@@ -194,7 +197,7 @@ arguments(job)
     }
     else if ( strcmp(command,"formconstants") == 0 ||
 	    strcmp(command,"fconst") == 0 ) {
-	printf("formconstants cstar dtime temppar softpar\n") ;
+	printf("formconstants cstar dtime temppar softpar stareff rhomin overmin\n") ;
     }
     else if ( strcmp(command,"framepoints") == 0 ||
 	    strcmp(command,"frp") == 0 ) {
@@ -376,6 +379,9 @@ arguments(job)
     }
     else if ( strcmp(command,"smooth") == 0 ) {
 	printf("smooth ball_size n_smooth\n") ;
+    }
+    else if ( strcmp(command,"starform") == 0 ) {
+	printf("starform filename \n") ;
     }
     else if ( strcmp(command,"starhistory") == 0 ) {
 	printf("starhistory box-number") ;
