@@ -44,6 +44,7 @@ loadbinary(infile,time)
 
     if(header.ndim < 2 || header.ndim > 3) {
 	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
+	    header.nstar = 0;
 	    return FALSE;
     }
     if(gas_particles != NULL) free(gas_particles);
@@ -193,6 +194,7 @@ loadbin_box(infile,time, xmin, xmax)
     fread((char *)&header,sizeof(header),1,infile) ;
     if(header.ndim < 2 || header.ndim > 3) {
 	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
+	    header.nstar = 0;
 	    return FALSE;
     }
 
@@ -541,6 +543,7 @@ loadstandard(infile,time)
     
     if(header.ndim < 2 || header.ndim > 3) {
 	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
+	    header.nstar = 0;
 	    return FALSE;
     }
     if(gas_particles != NULL) free(gas_particles);
@@ -696,6 +699,7 @@ loadstd_box(infile,time, xmin, xmax)
     xdr_header();
     if(header.ndim < 2 || header.ndim > 3) {
 	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
+	    header.nstar = 0;
 	    return FALSE;
     }
 
