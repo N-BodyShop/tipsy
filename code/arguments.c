@@ -1,7 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:22  trq
- * Initial revision
+ * Revision 1.2  1995/03/02 23:27:18  trq
+ * Changed documentation for setbox.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:23  trq
+ * Import to CVS
  *
  * Revision 2.25  1994/12/29  02:28:38  trq
  * Changed definition of setbox command.
@@ -270,7 +273,7 @@ arguments(job)
 	printf(" bin_number filename minimum_radius maximum_radius\n") ; 
     }
     else if ( strcmp(command,"setbox") == 0 ) {
-	printf("setbox box xcenter ycenter zcenter xoff yoff zoff\n") ;
+      printf("setbox box xcenter ycenter zcenter xradius yradius zradius\n");
     }
     else if ( strcmp(command,"setsphere") == 0 ) {
 	printf("setsphere box xcenter ycenter zcenter radius\n") ;

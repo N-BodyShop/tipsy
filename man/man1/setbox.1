@@ -4,12 +4,12 @@ setbox \- make and load a box from the command line
 .SH SYNOPSIS
 .B setbox
 .I box
-.I xmin
-.I xmax
-.I ymin
-.I ymax
-.I zmin
-.I zmax
+.I xcenter
+.I ycenter
+.I zcenter
+.I xradius
+.I yradius
+.I zradius
 .SH DESCRIPTION
 .B setbox
 is used to define the boundaries of
@@ -20,19 +20,15 @@ or an error will be generated.  The value of
 .I MAXBOX
 can be found by using the 
 .B version
-command.  The box extends from
-.I xmin
-to
-.I xmax
-in the x direction, from
-.I ymin
-to 
-.I ymax
-in the y direction, and from
-.I zmin
-to 
-.I zmax
-in the z direction.
+command.  The box is centered on
+.I (xcenter, ycenter, zcenter).
+It extends
+.I xradius
+in the +-x direction,
+.I yradius
+in the +-y direction, and
+.I zradius
+in the +-z direction.
 
 Once a box is made and loaded it still isn't the active box for plotting
 until the
