@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.17  1999/04/28 22:44:51  trq
+ * Revision 1.18  1999/08/25 22:05:26  nsk
+ * added center to boxstat, checks for periodic in smooth, prints out
+ * cooling stuff, vista makes plots
+ *
+ * Revision 1.17  1999/04/28  22:44:51  trq
  * Added limited support for truecolor visuals.
  *
  * Revision 1.16  1998/02/27  19:51:33  nsk
@@ -171,7 +175,7 @@
 #define RHO 1
 #define TEMP 2
 #define PRESS 3
-#define TCOOL 4
+#define COOL 4
 #define JEANS 5
 #define FSTAR 6
 #define VSTAR 7
@@ -184,6 +188,7 @@
 #define HEII 14
 #define SZ 15
 #define VALL 16
+#define LYA 17
 #define NOSPH 0
 #define SPH 1
 #define PREC_JACOBI 1.e-8 ;
@@ -201,6 +206,7 @@
 #define UPCLIP 1
 #define LOCLIP 2
 #define BCLIP 3
+#define COOLVECSIZE 7
 #define forever for(;;)
 #define max(A,B) ((A) > (B) ? (A) : (B))
 #define min(A,B) ((A) < (B) ? (A) : (B))

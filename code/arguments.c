@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.21  1999/04/28 22:08:50  nsk
+ * Revision 1.22  1999/08/25 22:05:23  nsk
+ * added center to boxstat, checks for periodic in smooth, prints out
+ * cooling stuff, vista makes plots
+ *
+ * Revision 1.21  1999/04/28  22:08:50  nsk
  * Added the writeiv command to output iv format.
  *
  * Revision 1.20  1998/07/24  17:40:59  trq
@@ -195,6 +199,9 @@ arguments(job)
     else if ( strcmp(command,"coolconstants") == 0 ||
 	    strcmp(command,"cconst") == 0 ) {
 	printf("coolconstants kpcunit msolunit fhydrogen\n") ;
+    }
+    else if ( strcmp(command,"coolout") == 0 ) {
+	printf("coolout box filename\n") ;
     }
     else if ( strcmp(command,"deletemacro") == 0 ||
 	    strcmp(command,"dmac") == 0 ) {
@@ -482,6 +489,9 @@ arguments(job)
     else if ( strcmp(command,"writeboxrot") == 0 ||
 	    strcmp(command,"wboxR") == 0 ) {
 	printf("writeboxrot box-number filename\n") ;
+    }
+    else if ( strcmp(command,"writegas") == 0 || strcmp(command,"wgas") == 0 ) {
+	printf("writegas box-number type filename\n") ;
     }
     else if ( strcmp(command,"writeiv") == 0 || strcmp(command,"wiv") == 0 ) {
 	printf("writeiv fraction filename\n") ;

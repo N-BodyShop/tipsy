@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.17  1998/06/11 20:26:28  trq
+ * Revision 1.18  1999/08/25 22:05:30  nsk
+ * added center to boxstat, checks for periodic in smooth, prints out
+ * cooling stuff, vista makes plots
+ *
+ * Revision 1.17  1998/06/11  20:26:28  trq
  * Allow vista to run without a display: check for current project and
  * set appropriate variables.
  *
@@ -161,6 +165,9 @@ vista(job)
     double delta_q ;
     double delta_q2 ;
     double electron ;
+    double cool_vec[COOLVECSIZE] ;
+    double cool_tot ;
+    double vol ;
 
     if(!ikernel_loaded){
 	ikernel_load() ;
@@ -200,7 +207,11 @@ vista(job)
 		  vista_type = PRESS ;
 	      }
 	      else if(strcmp(type,"cooling") == 0 || strcmp(type,"cool") == 0){
-		  vista_type = TCOOL ;
+		  vista_type = COOL ;
+	      }
+	      else if(strcmp(type,"lycooling") == 0 ||
+		    strcmp(type,"lycool") == 0){
+		  vista_type = LYA ;
 	      }
 	      else if(strcmp(type,"jeans") == 0){
 		  vista_type = JEANS ;
@@ -271,7 +282,8 @@ vista(job)
 		  density[i] = &density[0][i*vista_size];
 	      if(vista_type != RHO && vista_type != XRAY && vista_type
 		 != VDARK && vista_type != VSTAR && vista_type != VALL
-		 && vista_type != LUMSTAR){
+		 && vista_type != LUMSTAR && vista_type != COOL &&
+		 vista_type != LYA){
 		  quantity = (float **)malloc(vista_size*sizeof(*quantity));
 		  if(quantity == NULL)
 		    {
@@ -334,9 +346,15 @@ vista(job)
 		density[kx][ky] = 0.0 ;
 		}
 	    }
-	    if(vista_type == TCOOL){
-		if(!cooling_loaded){
-		    cool_func() ;
+	    if(vista_type == LYA || vista_type == COOL){
+		if (!cool_loaded ){
+		    load_cool() ;
+		}
+		if (!uv_loaded ){
+		    load_uv() ;
+		}
+		if (!redshift_loaded ){
+		    load_redshift() ;
 		}
 	    }
 	    else if(vista_type == JEANS){
@@ -438,11 +456,14 @@ vista(job)
 		}
 	    }
 	    if(vista_type == RHO || vista_type == TEMP || vista_type == PRESS ||
-		    vista_type == TCOOL || vista_type == JEANS || 
+		    vista_type == COOL || vista_type == JEANS || 
 		    vista_type == FSTAR || vista_type == XRAY ||
 		    vista_type == HNEUT || vista_type == HEI ||
 		    vista_type == HEII || vista_type == SZ ||
-		    vista_type == VALL){
+		    vista_type == VALL || vista_type == LYA){
+		if(vista_type == LYA || vista_type == COOL){
+		    c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
+		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
 		    if(vista_type != XRAY || (gp->temp) > 30000.){
@@ -451,6 +472,25 @@ vista(job)
 				    (exp(-t_lower/(gp->temp)) - 
 				    exp(-t_upper/(gp->temp))) ;
 			    lum_xray *= (gp->rho)*(gp->mass);
+			}
+			if(vista_type == LYA){
+			    if(!uniform){
+				calc_uv(gp) ;
+			    }
+			    lycool(gp->temp, gp->rho,cool_vec);
+			    vol = c1*gp->mass/gp->rho ;
+			    cool_tot = vol*(cool_vec[0]+cool_vec[1])/1.e40 ;
+			}
+			if(vista_type == COOL){
+			    if(!uniform){
+				calc_uv(gp) ;
+			    }
+			    lycool(gp->temp, gp->rho,cool_vec);
+			    vol = c1*gp->mass/gp->rho ;
+			    cool_tot = vol*(cool_vec[0]+cool_vec[1] +
+				    cool_vec[2]+cool_vec[3] +
+				    cool_vec[4]+cool_vec[5] +
+				    cool_vec[6])/1.e40 ;
 			}
 			for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
 			  for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
@@ -504,6 +544,9 @@ vista(job)
 				if(vista_type == XRAY){
 				    delta_d = lum_xray ;
 				}
+				else if(vista_type == COOL ||vista_type == LYA){
+				    delta_d = cool_tot ;
+				}
 				else if(vista_type == HNEUT){
 				    delta_d = c1*hneutral[gp-gas_particles]*
 					(gp->mass);
@@ -524,14 +567,6 @@ vista(job)
 				}
 				else if(vista_type == PRESS){
 				    delta_q = (gp->mass)*(gp->temp)*(gp->rho) ;
-				}
-				else if(vista_type == TCOOL){
-				    if(cooling[i] < 0.){
-					delta_q = gp->mass * -cooling[i] ;
-				    }
-				    else{
-					delta_q = 0.0 ;
-				    }
 				}
 				else if(vista_type == JEANS){
 				    c1_i = sqrt(meanmwt[i])*c1 ;
@@ -593,7 +628,6 @@ vista(job)
 						    delta_d) ;
 					    if(vista_type == TEMP ||
 						vista_type == PRESS ||
-						vista_type == TCOOL ||
 						vista_type == JEANS ||
 						vista_type == FSTAR ||
 						vista_type == HNEUT
@@ -619,7 +653,6 @@ vista(job)
 					density[kx][ky]+=(float) delta_d ;
 					if(vista_type == TEMP ||
 					    vista_type == PRESS ||
-					    vista_type == TCOOL ||
 					    vista_type == JEANS ||
 					    vista_type == FSTAR ||
 					    vista_type == HNEUT
@@ -642,7 +675,8 @@ vista(job)
 		if(vista_type != RHO && vista_type != XRAY &&
 			 vista_type != HNEUT && vista_type != HEI &&
 			 vista_type != HEII && vista_type != SZ &&
-		         vista_type != VALL){
+		         vista_type != VALL && vista_type != COOL &&
+			 vista_type != LYA){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
 			    if(density[kx][ky] != 0.){
@@ -871,14 +905,15 @@ vista(job)
 		for(j = 0; j < vista_size; j++){
 		    if(density[i][j] > 0. ){
 			if(vista_type != TEMP && vista_type != PRESS &&
-				vista_type != TCOOL && vista_type != JEANS &&
+				vista_type != COOL && vista_type != JEANS &&
 				vista_type != TDRHO && vista_type != FSTAR &&
-				vista_type != XRAY) {
+				vista_type != XRAY && vista_type != LYA) {
 			    pixel = log10((double)(density[i][j])/size_pixel_2);
 			}
 			else{
 			    pixel = log10((double)(density[i][j]));
-			    if(vista_type == XRAY){
+			    if(vista_type == XRAY || vista_type == COOL ||
+				    vista_type == LYA){
 				pixel += 40. ;
 			    }
 			}
@@ -973,7 +1008,8 @@ vista(job)
 	    free(density);
 	    if(vista_type != RHO && vista_type != XRAY && vista_type
 		 != VDARK && vista_type != VSTAR && vista_type != VALL
-		 && vista_type != LUMSTAR){
+		 && vista_type != LUMSTAR && vista_type != COOL &&
+		 vista_type != LYA){
 		free(*quantity);
 		free(quantity);
 	    }

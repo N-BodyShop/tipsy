@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.12  1998/11/26 01:06:20  trq
+ * Revision 1.13  1999/08/25 22:05:27  nsk
+ * added center to boxstat, checks for periodic in smooth, prints out
+ * cooling stuff, vista makes plots
+ *
+ * Revision 1.12  1998/11/26  01:06:20  trq
  * Updated function declarations.
  *
  * Revision 1.11  1998/06/11  20:28:54  trq
@@ -131,6 +135,9 @@ PROTO(void, load_eps, ());
 PROTO(void, load_epsgas, ());
 PROTO(void, load_form, () );
 PROTO(void, load_visc, ());
+PROTO(void, lycool, (double temp, double density,double cool_vex[COOLVECSIZE]));
+PROTO(double, heatcool, (double temp, double density));
+
      
 PROTO(void, magnitude_color, ());
 PROTO(void, make_ell_matrix, ());

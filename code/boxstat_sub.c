@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/11/21 00:02:49  trq
+ * Revision 1.3  1999/08/25 22:05:24  nsk
+ * added center to boxstat, checks for periodic in smooth, prints out
+ * cooling stuff, vista makes plots
+ *
+ * Revision 1.2  1995/11/21  00:02:49  trq
  * Changed output format to be a little more usable.
  *
  * Revision 1.1.1.1  1995/01/10  22:57:23  trq
@@ -48,8 +52,12 @@ boxstat_sub(job)
 	    if (strcmp(type,"gas") == 0 ) {
 		rho = boxes[box].gas_mass / boxes[box].volume ;
 		printf("<physical parameters of the gas in box %d>\n",box) ;
+		printf("number of gas particles = %d\n",boxlist[box].ngas) ;
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			boxes[box].gas_mass, rho, boxes[box].volume) ;
+		printf("center coordinates = {%.6e %.6e %.6e}\n",
+			boxes[box].center[0],boxes[box].center[1],
+			boxes[box].center[2]) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
 		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			boxes[box].gas_com[0],boxes[box].gas_com[1],
@@ -66,8 +74,12 @@ boxstat_sub(job)
 		rho = boxes[box].dark_mass / boxes[box].volume ;
 		printf("<physical parameters of the dark matter in box %d>\n",
 			box) ;
+		printf("number of dark particles = %d\n",boxlist[box].ndark) ;
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			boxes[box].dark_mass, rho, boxes[box].volume) ;
+		printf("center coordinates = {%.6e %.6e %.6e}\n",
+			boxes[box].center[0],boxes[box].center[1],
+			boxes[box].center[2]) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
 		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			boxes[box].dark_com[0],boxes[box].dark_com[1],
@@ -83,8 +95,12 @@ boxstat_sub(job)
 	    else if (strcmp(type,"star") == 0 ) {
 		rho = boxes[box].star_mass / boxes[box].volume ;
 		printf("<physical parameters of the stars in box %d>\n", box) ;
+		printf("number of star particles = %d\n",boxlist[box].nstar) ;
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			boxes[box].star_mass, rho, boxes[box].volume) ;
+		printf("center coordinates = {%.6e %.6e %.6e}\n",
+			boxes[box].center[0],boxes[box].center[1],
+			boxes[box].center[2]) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
 		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			boxes[box].star_com[0],boxes[box].star_com[1],
@@ -101,8 +117,13 @@ boxstat_sub(job)
 		mass = (boxes[box].gas_mass + boxes[box].star_mass) ;
 		rho = mass / boxes[box].volume ;
 		printf("<physical parameters of baryons in box %d>\n", box) ;
+		printf("number of gas and star particles = %d and %d\n",
+			boxlist[box].ngas, boxlist[box].nstar) ;
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			mass, rho,boxes[box].volume) ;
+		printf("center coordinates = {%.6e %.6e %.6e}\n",
+			boxes[box].center[0],boxes[box].center[1],
+			boxes[box].center[2]) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
 		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			(boxes[box].gas_com[0] * boxes[box].gas_mass +
@@ -137,8 +158,14 @@ boxstat_sub(job)
 	    else if (strcmp(type,"all") == 0 ) {
 		rho = boxes[box].total_mass / boxes[box].volume ;
 		printf("<physical parameters of box %d>\n", box) ;
+	     printf("number of dark, gas and star particles = %d, %d, and %d\n",
+			boxlist[box].ndark,boxlist[box].ngas,
+			boxlist[box].nstar) ;
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			boxes[box].total_mass, rho, boxes[box].volume) ;
+		printf("center coordinates = {%.6e %.6e %.6e}\n",
+			boxes[box].center[0],boxes[box].center[1],
+			boxes[box].center[2]) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
 		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			boxes[box].total_com[0],boxes[box].total_com[1],

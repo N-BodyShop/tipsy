@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.13  1999/04/28 22:08:51  nsk
+ * Revision 1.14  1999/08/25 22:05:25  nsk
+ * added center to boxstat, checks for periodic in smooth, prints out
+ * cooling stuff, vista makes plots
+ *
+ * Revision 1.13  1999/04/28  22:08:51  nsk
  * Added the writeiv command to output iv format.
  *
  * Revision 1.12  1998/07/24  17:41:00  trq
@@ -99,6 +103,7 @@ extern void closeascii() ;
 extern void closebinary() ;
 
 extern void commands() ;
+extern void cooling_sub() ;
 extern void delete_macro() ;
 extern void delete_window() ;
 extern void drift();
@@ -198,6 +203,7 @@ extern void write_macro() ;
 extern void writebox() ;
 extern void writebox_rot() ;
 extern void writeiv() ;
+extern void write_gas() ;
 extern void writemark() ;
 
 extern void xplot_all() ;
@@ -261,6 +267,7 @@ struct comm c_list[] = {
      {"colorlabel",  colorbar_label,	1},
      {"commands",    commands,		0},
      {"coolconstants",cconst_sub,	0},
+     {"coolout",     cooling_sub,       0},
 
      {"crot",        clearrot,		0},
      {"deletemacro", delete_macro,	0},
@@ -403,6 +410,7 @@ struct comm c_list[] = {
      {"wbox",        writebox,		0},
      {"wboxr",       writebox_rot,	1},
      {"wiv",         writeiv,	        1},
+     {"wgas",        write_gas,	        0},
 
      {"whatis",      whatis,		0},
      {"window",	     window,		1},
@@ -410,6 +418,7 @@ struct comm c_list[] = {
      {"writebox",    writebox,		0},
      {"writeboxrot", writebox_rot,	1},
      {"writeiv",     writeiv,	        1},
+     {"writegas",    write_gas,	        0},
      {"writemacro",  write_macro,	0},
      {"writemark",   writemark,		0},
      {"xall",        xplot_all,		1},

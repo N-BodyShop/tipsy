@@ -1,7 +1,11 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.3  1999/02/09 19:17:31  trq
+ * Revision 1.4  1999/08/25 22:05:29  nsk
+ * added center to boxstat, checks for periodic in smooth, prints out
+ * cooling stuff, vista makes plots
+ *
+ * Revision 1.3  1999/02/09  19:17:31  trq
  * Added "entropy" plot type.
  *
  * Revision 1.2  1996/04/11  21:27:59  trq
@@ -50,6 +54,7 @@ view_gas(job)
     double temp ;
     double drw ;
     int iwsm ;
+    double cool_vec[COOLVECSIZE] ;
 
     if (boxes_loaded[0]) {
 	if((num_read = sscanf(job,"%s %s %lf %lf %s",command,type,&low,&high,
@@ -442,19 +447,19 @@ view_gas(job)
 					      color_offset +0.5) ;
 		}
 	    }
-	    else if ( strcmp(type,"cooling") == 0 ||
-		    strcmp(type,"cool") == 0 ) {
+	    else if ( strcmp(type,"coolingrate") == 0 ||
+		    strcmp(type,"coolrate") == 0 ) {
 		if(!cooling_loaded){
 		    cool_func() ;
 		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
-		    particle_color[i] = (int)(color_slope*cooling[i]
+		    particle_color[i] = (int)(-color_slope*cooling[i]
 					      + color_offset +0.5) ;
 		}
 	    }
-	    else if ( strcmp(type,"logcooling") == 0 ||
-		    strcmp(type,"logcool") == 0 ) {
+	    else if ( strcmp(type,"logcoolingrate") == 0 ||
+		    strcmp(type,"logcoolrate") == 0 ) {
 		if(!cooling_loaded){
 		    cool_func() ;
 		}
@@ -463,6 +468,88 @@ view_gas(job)
 		    if(cooling[i] < 0.){
 			particle_color[i] = (int)(color_slope
 						  *log10(-cooling[i])
+						  + color_offset +0.5) ;
+		    }
+		    else{
+			particle_color[i] = 0 ;
+		    }
+		}
+	    }
+	    else if ( strcmp(type,"cooling") == 0 ||
+		    strcmp(type,"cool") == 0 ) {
+		if(!cooling_loaded){
+		    cool_func() ;
+		}
+		c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
+		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+		    gp = boxlist[active_box].gp[i] ;
+		    particle_color[i] = (int)(-color_slope*c1*gp->mass/gp->rho*
+			    cooling[i] + color_offset +0.5) ;
+		}
+	    }
+	    else if ( strcmp(type,"logcooling") == 0 ||
+		    strcmp(type,"logcool") == 0 ) {
+		if(!cooling_loaded){
+		    cool_func() ;
+		}
+		c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
+		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+		    gp = boxlist[active_box].gp[i] ;
+		    if(cooling[i] < 0.){
+			particle_color[i] = (int)(color_slope
+						  *log10(-c1*gp->mass/gp->rho*
+						  cooling[i])
+						  + color_offset +0.5) ;
+		    }
+		    else{
+			particle_color[i] = 0 ;
+		    }
+		}
+	    }
+	    else if ( strcmp(type,"lycooling") == 0 ||
+		    strcmp(type,"lycool") == 0 ) {
+                if (!cool_loaded ){
+		    load_cool() ;
+		}
+		if (!uv_loaded ){
+		    load_uv() ;
+		}
+		if (!redshift_loaded ){
+		    load_redshift() ;
+		}
+		c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
+		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+		    gp = boxlist[active_box].gp[i] ;
+		    if(!uniform){
+			calc_uv(gp) ;
+		    }
+		    lycool(gp->temp, gp->rho,cool_vec);
+		    particle_color[i] = (int)(color_slope*c1*gp->mass/gp->rho*
+			    (cool_vec[0]+cool_vec[1]) + color_offset +0.5) ;
+		}
+	    }
+	    else if ( strcmp(type,"loglycooling") == 0 ||
+		    strcmp(type,"loglycool") == 0 ) {
+                if (!cool_loaded ){
+		    load_cool() ;
+		}
+		if (!uv_loaded ){
+		    load_uv() ;
+		}
+		if (!redshift_loaded ){
+		    load_redshift() ;
+		}
+		c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
+		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+		    gp = boxlist[active_box].gp[i] ;
+		    if(!uniform){
+			calc_uv(gp) ;
+		    }
+		    lycool(gp->temp, gp->rho,cool_vec);
+		    if(cool_vec[0]+cool_vec[1] > 0.){
+			particle_color[i] = (int)(color_slope
+						  *log10(c1*gp->mass/gp->rho*
+						  (cool_vec[0]+cool_vec[1]))
 						  + color_offset +0.5) ;
 		    }
 		    else{

@@ -174,6 +174,19 @@ double rate_H(t)
     return 1.27e-21*sqrt(t)*exp(-157809.1/t)/(1.0 + sqrt(t/1e5))
       + 7.5e-19*exp(-118348.0/t)/(1.0 + sqrt(t/1e5));	/* excitation */
 }
+/* --------------------------------------------------------- */
+/*cooling rate coefficient for collisional excitation of H in*/
+/* erg*cc/s. */
+/* The cooling will scale as n_e*n_H. */
+/* Modified as in Cen 1992 */
+static
+double rate_H_cex(t)
+     double t;
+{
+    if (t == 0.0)
+	return 0.0;
+    return 7.5e-19*exp(-118348.0/t)/(1.0 + sqrt(t/1e5));	/* excitation */
+}
 
 /* --------------------------------------------------------- */
 /* cooling rate coefficient for collisional ionization of He in erg*cc/s. */
@@ -199,16 +212,71 @@ double rate_br(t)
     double gf = 1.1 + 0.34*exp(-pow(5.5-log10(t), 2.0)/3.0);
     return sqrt(t)*1.42e-27*gf;
 }
+/* --------------------------------------------------------- */
+/* radiative emission coefficient for recombination to H in erg*cc/s. */
+/* (ie rate_Hp but includes potential energy as well) */
+/* The cooling will scale as n_e*n_H+. */
+/* Modified as in Cen 1992 */
+
+static
+double radrate_Hp(t)
+     double t;
+{
+    if (t == 0.0) {
+	return 0.0;
+    }
+    return (8.70e-27 * t + 1.83e-21) / sqrt(t)
+      * pow(t/1e3, -0.2)/(1.0 + pow(t/1e6, 0.7));
+}
+
+
+/* --------------------------------------------------------- */
+/* radiative emission coefficient for recombination to He, */
+/* collisional ionization of He+, */
+/* collisional exitation of He+ and */
+/* dielectronic recombination of He+ in erg*cc/s. */
+/* The cooling will scale as n_e*n_He+. */
+/* Modified as in Cen 1992 */
+
+static
+double radrate_Hep(t)
+     double t;
+{
+    if (t == 0.0) {
+	return 0.0;
+    }
+    return (1.55e-26 * t + 5.91e-21) * pow(t, -0.6353)	/* recombination */
+      + 4.95e-22*sqrt(t)*exp(-631515.0/t)/(1.0 + sqrt(t/1e5)) /* ionization */
+				/* exitation */
+      + 5.54e-17*pow(t, -.397)*exp(-473638.0/t)/(1.0 + sqrt(t/1e5))
+				/* dielectric recombination */
+      + 1.99e-13*pow(t, -1.5)*exp(-4.7e5/t)*(exp(-9.4e4/t)*.3 + 1.0);
+}
+
+/* --------------------------------------------------------- */
+/* radiative emission coefficient for recombination to He+ in erg*cc/s. */
+/* The cooling will scale as n_e*n_He++. */
+/* Modified as in Cen 1992 */
+static
+double radrate_Hepp(t)
+     double t;
+{
+    if (t == 0.0)
+      return  0.0;
+    return (3.48e-26 * t + 2.93e-20) / sqrt(t)
+      * pow(t/1e3, -0.2)/(1.0 + pow(t/1e6, 0.7));
+}
 
 /* ------------------------------------------------------- */
 /* calculate ionization equilibrium */
 
 static
-void xion(t, x, x_1, x_2, p_ne)
+void xion(t, x, x_1, x_2, x_3, p_ne)
      double t;
      double *x;
      double *x_1;
      double *x_2;
+     double *x_3;
      double *p_ne;
 {
     double a;
@@ -274,9 +342,11 @@ void xion(t, x, x_1, x_2, p_ne)
       n_e = .5*(n_e + old_n_e);
       old_n_e = n_e;
     }
+    zx = min(1.,zx) ;
     *x = zx;
     *x_1 = zx1;
     *x_2 = zx2;
+    *x_3 = zx3;
     *p_ne = n_e;
 }
 
@@ -287,7 +357,7 @@ double heatcool(temp, density)
 {
     double crate, hrate, compcrate;
     double h0, h1, h2;
-    double x, x_1, x_2, f_e, n_e;
+    double x, x_1, x_2, x_3, f_e, n_e;
     double y;
 
       n_h = (density/cosmof3)*MSOLG*msolunit* 
@@ -333,14 +403,14 @@ double heatcool(temp, density)
     h1 = eps_He ;
     h2 = eps_Hep ;
 
-    xion(temp, &x, &x_1, &x_2, &n_e);
-    f_e = 1.0 - x + x_2*r + (1.0 - x_1 - x_2)*2.0*r;
+    xion(temp, &x, &x_1, &x_2, &x_3, &n_e);
+    f_e = 1.0 - x + x_2*r + (x_3)*2.0*r;
     crate = f_e*rate_Hp(temp)*(1.0 - x);
     crate += f_e*x_2*r*rate_Hep(temp);
-    crate += f_e*(1.0 - x_1 - x_2)*r*rate_Hepp(temp);
+    crate += f_e*(x_3)*r*rate_Hepp(temp);
     crate += f_e*x*rate_H(temp);
     crate += f_e*x_1*r*rate_He(temp);
-    crate += f_e*(1.0 - x + x_2*r + (1.0 - x_1 - x_2)*4.0*r)*rate_br(temp);
+    crate += f_e*(1.0 - x + x_2*r + (x_3)*4.0*r)*rate_br(temp);
     crate *= n_h*n_h;
     hrate = h0*x + h1*x_1*r + h2*x_2*r;
     hrate *= n_h;
@@ -353,6 +423,76 @@ double heatcool(temp, density)
     return hrate - (crate + compcrate);
 }
 
+void lycool(temp, density, cool_vec)
+     double temp;
+     double density;
+     double cool_vec[COOLVECSIZE] ;
+{
+    double crate ;
+    double crate2 ;
+    double h0, h1, h2;
+    double x, x_1, x_2, x_3, f_e, n_e;
+    double y;
+    int i ;
+
+      n_h = (density/cosmof3)*MSOLG*msolunit* 
+	    fhydrogen / ((kpcunit*kpcunit*kpcunit) * MHYDR * 
+	    KPCCM*KPCCM*KPCCM);   
+
+/* c------------------------------------------------------- */
+/* c  crate is cooling rate in units of (erg cm^3/s) */
+/* c  hrate is heating rate */
+/* c */
+/* c  alphaj is spectral index J \propto \nu^-\alpha */
+/* c */
+/* c  t  is temperature in K */
+/* c */
+/* c  j_nu is photoionizing flux at Lyman limit */
+/* c  in units of 10^{-21} has to be passed in common block */
+/* c  (per steradian) */
+/* c */
+/* c */
+/* c  n_H is density of hydrogen ions (Not helium) */
+/* c  passed in common */
+/* c */
+/* c  y is helium abundance by mass */
+/* c  r is ratio of helium ions to hydrogen ions (all ionizations) */
+/* c  g0 is photoionization rate coefficient? */
+/* c  g1 is photoionization rate coefficient? */
+/* c  g2 is photoionization rate coefficient? */
+/* c */
+/* c  h0 is photoionization heating rate coefficient? */
+/* c  h1 is photoionization heating rate coefficient? */
+/* c  h2 is photoionization heating rate coefficient? */
+/*   x is fraction of H that is NEUTRAL */
+/*   x_1 is fraction of He that is NEUTRAL */
+/*   x_2 is fraction of He that is singly ionized */
+
+    y = 1.0 - fhydrogen;
+    r = y / 4.0 / (1.0 - y);
+    g0 = gp0_H ;
+    g1 = gp0_He ;
+    g2 = gp0_Hep ;
+
+    h0 = eps_H ;
+    h1 = eps_He ;
+    h2 = eps_Hep ;
+
+    xion(temp, &x, &x_1, &x_2, &x_3, &n_e);
+    f_e = 1.0 - x + x_2*r + (x_3)*2.0*r;
+    cool_vec[0] = f_e*radrate_Hp(temp)*(1.0 - x);
+    cool_vec[1] = f_e*x*rate_H_cex(temp);
+    cool_vec[2] = f_e*x*rate_H(temp) - cool_vec[1];
+    cool_vec[3] = f_e*x_2*r*radrate_Hep(temp);
+    cool_vec[4] = f_e*(x_3)*r*radrate_Hepp(temp);
+    cool_vec[5] = f_e*x_1*r*rate_He(temp);
+    cool_vec[6] = f_e*(1.0 - x + x_2*r + (x_3)*4.0*r)*rate_br(temp);
+
+    for(i = 0; i < COOLVECSIZE; i++){
+	cool_vec[i] *= n_h*n_h;
+    }
+    return ;
+}
 void
 calc_hneutral(temp, density, hneutral_p, heneutral_p, heII_p)
      double temp;
@@ -363,6 +503,7 @@ calc_hneutral(temp, density, hneutral_p, heneutral_p, heII_p)
 {
     double y;
     double n_e;
+    double heIII;
 
     n_h = (density/cosmof3)*MSOLG*msolunit* 
 	    fhydrogen / ((kpcunit*kpcunit*kpcunit) * MHYDR * 
@@ -385,7 +526,7 @@ calc_hneutral(temp, density, hneutral_p, heneutral_p, heII_p)
     g1 = gp0_He ;
     g2 = gp0_Hep ;
 
-    xion(temp, hneutral_p, heneutral_p, heII_p, &n_e);
+    xion(temp, hneutral_p, heneutral_p, heII_p, &heIII, &n_e);
 
     return ;
 }
@@ -394,7 +535,7 @@ double calc_meanmwt(temp, density)
      double temp;
      double density;
 {
-    double x, x_1, x_2;
+    double x, x_1, x_2, x_3;
     double y;
     double n_e;
 
@@ -433,7 +574,7 @@ double calc_meanmwt(temp, density)
     g1 = gp0_He ;
     g2 = gp0_Hep ;
 
-    xion(temp, &x, &x_1, &x_2, &n_e);
+    xion(temp, &x, &x_1, &x_2, &x_3, &n_e);
     return (1.0 - y/4.0)/(2.0 - x) + y/(3.0 - x_1 - x_2);
 }
 
@@ -450,7 +591,7 @@ double calc_xemiss(temp, density, band)
      double density;
      int band;
 {
-    double x, x_1, x_2;
+    double x, x_1, x_2, x_3;
     double y;
     double xemiss;
     double n_e;
@@ -467,7 +608,7 @@ double calc_xemiss(temp, density, band)
     g1 = gp0_He ;
     g2 = gp0_Hep ;
 
-    xion(temp, &x, &x_1, &x_2, &n_e);
+    xion(temp, &x, &x_1, &x_2, &x_3, &n_e);
     if(temp < 3e4)
 	return 0.0;
     else
