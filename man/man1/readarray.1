@@ -3,7 +3,7 @@
 readarray \- read an array from a file
 .SH SYNOPSIS
 .B readarray
-.I filename
+.I filename [ power ]
 .SH DESCRIPTION
 .B readarray
 reads in an array of scalars for each particle from the file
@@ -13,6 +13,9 @@ for use by commands like
 .B markarray,
 and
 .B viewarray.
+The optional
+.I power
+argument will raise the scalars to a power as they are read in.
 
 The file
 .I filename
