@@ -1,0 +1,66 @@
+.TH READVECTOR  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+readbinvector \- read a vector from binary file
+.SH SYNOPSIS
+.B readbinvector
+.I filename type
+.SH DESCRIPTION
+.B readbinvector
+reads in a three dimensional vector for each particle from the file
+.I filename
+for use by commands like
+.B viewmag
+and
+.B viewrad.
+Using the
+.B showvec
+command the vector field can be displayed in plots.
+The
+.I type
+option is either
+.I float
+or
+.I double
+to indicate the format of the file.
+
+The file
+.I filename
+must be a binary file.  The file should be of the form:
+.LP
+.RS
+.TP 3
+ntotal
+.TP 3
+x_vector(i), i = 1 to ntotal
+.TP 3
+y_vector(i), i = 1 to ntotal
+.TP 3
+z_vector(i), i = 1 to ntotal
+.RE
+
+where ntotal is the total number of particles.
+Therefore, the total file length is sizeof(int) + 3*ntotal*sizeof(float) bytes.
+
+If
+.I type
+is
+.I packeddouble
+or
+.I packedfloat
+then the format of the file is
+.LP
+.RS
+.TP 3
+ntotal
+.TP 3
+x_vector(i), y_vector(i), z_vector(i), i = 1 to ntotal
+.RE
+
+The
+.B readarray
+command is used to read in scalars. 
+.SH SEE ALSO
+readarray (1),
+showvec (1),
+viewmag (1),
+viewrad (1)
