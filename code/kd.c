@@ -10,26 +10,6 @@
 
 #define MAX_ROOT_ITTR	32
 
-
-void kdTime(kd, puSecond, puMicro)
-     KD kd;
-     int *puSecond;
-     int *puMicro;
-{
-	struct rusage ru;
-
-	getrusage(0,&ru);
-	*puMicro = ru.ru_utime.tv_usec - kd->uMicro;
-	*puSecond = ru.ru_utime.tv_sec - kd->uSecond;
-	if (*puMicro < 0) {
-		*puMicro += 1000000;
-		*puSecond -= 1;
-		}
-	kd->uSecond = ru.ru_utime.tv_sec;
-	kd->uMicro = ru.ru_utime.tv_usec;
-	}
-
-
 int kdInit(pkd)
      KD *pkd;
 {

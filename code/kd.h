@@ -162,7 +162,6 @@ typedef struct kdContext {
 #       endif
 #endif
 
-PROTO(void, kdTime, (KD,int *,int *));
 PROTO(int, kdInit, (KD *));
 PROTO(void, kdReadBox, (KD,struct list *,int,int,int));
 PROTO(void, kdInMark, (KD,char *));
