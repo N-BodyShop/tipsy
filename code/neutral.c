@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.4  1997/09/05 01:02:23  nsk
+ * Revision 1.5  1997/09/25 18:35:18  nsk
+ * added uv command and discrete uv sources
+ *
+ * Revision 1.4  1997/09/05  01:02:23  nsk
  * streamlined vista (I hope it works), added neutralize command, added SZ
  * effect to vista.
  *
@@ -35,6 +38,9 @@ hneutral_func()
     if (!cool_loaded ){
 	load_cool() ;
     }
+    if (!uv_loaded ){
+	load_uv() ;
+    }
     if (!redshift_loaded ){
 	load_redshift() ;
     }
@@ -66,6 +72,9 @@ hneutral_func()
     
     for (i = 0 ;i < boxlist[0].ngas ;i++) {
 	gp = boxlist[0].gp[i] ;
+	if(!uniform){
+	    calc_uv(gp) ;
+	}
 	calc_hneutral(gp->temp, gp->rho, &hneutral_p, &heneutral_p, &heII_p);
 	hneutral[gp-gas_particles] = hneutral_p ;
 	heneutral[gp-gas_particles] = heneutral_p ;

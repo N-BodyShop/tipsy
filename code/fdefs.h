@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.8  1997/01/17 21:22:58  trq
+ * Revision 1.9  1997/09/25 18:35:12  nsk
+ * added uv command and discrete uv sources
+ *
+ * Revision 1.8  1997/01/17  21:22:58  trq
  * Added optional argument to resetcolor command.
  *
  * Revision 1.7  1996/12/20  01:25:10  trq
@@ -65,6 +68,7 @@ PROTO(void, box_cumulate, (int box));
 PROTO(void, calc_hneutral, (double temp, double density, double *hneutral_p,
 			     double *heneutral_p, double *heII_p));
 PROTO(double, calc_meanmwt, (double temp, double density));
+PROTO(void, calc_uv, (struct gas_particle *gp));
 PROTO(void, canvas_resize_proc, (Widget canvas, XEvent *event, String
 				 *params, Cardinal *n_params));
 PROTO(void, clear_rot, ());
@@ -108,6 +112,7 @@ PROTO(void, loadbox, (int box));
 PROTO(void, load_redshift, ());
 PROTO(void, loadsphere, (int box, Real *center, double radius));
 PROTO(void, load_cool, ());
+PROTO(void, load_uv, ());
 PROTO(void, load_eps, ());
 PROTO(void, load_epsgas, ());
 PROTO(void, load_form, () );

@@ -1,7 +1,10 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.9  1997/09/05 01:02:22  nsk
+ * Revision 1.10  1997/09/25 18:35:16  nsk
+ * added uv command and discrete uv sources
+ *
+ * Revision 1.9  1997/09/05  01:02:22  nsk
  * streamlined vista (I hope it works), added neutralize command, added SZ
  * effect to vista.
  *
@@ -103,6 +106,7 @@ struct star_particle *star_particles = NULL;
 struct dump header  = { 0.0, 0, 0 , 0 , 0, 0};
 struct box boxes[MAXBOX+1] ;    
 struct list boxlist[MAXBOX+1] ;
+struct uv_source *uv_sources = NULL ;
 int *box0_pi = NULL;
 
 struct macro_list *macros = NULL;
@@ -159,6 +163,9 @@ double min_rho_old = HUGE ;
 int meanmwt_loaded = NO ;
 int starform_loaded = NO ;
 int redshift_loaded = NO ;
+int uv_loaded = NO ;
+int uniform = YES ;
+int source_num = 0 ;
 int comove = NO ;
 int eps_loaded = NO ;
 int epsgas_loaded = NO ;

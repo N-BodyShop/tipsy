@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.12  1997/09/19 13:41:27  nsk
+ * Revision 1.13  1997/09/25 18:35:12  nsk
+ * added uv command and discrete uv sources
+ *
+ * Revision 1.12  1997/09/19  13:41:27  nsk
  * fixed memeory troubles.
  *
  * Revision 1.11  1997/09/05  01:02:21  nsk
@@ -342,6 +345,17 @@ struct list {
 extern struct list boxlist[MAXBOX+1] ;
 extern int *box0_pi;
 
+struct uv_source {
+    Real pos[MAXDIM];
+    double gp0_H ;
+    double gp0_He ;
+    double gp0_Hep ;
+    double eps_H ;
+    double eps_He ;
+    double eps_Hep ;
+} ;
+extern struct uv_source *uv_sources;
+
 #include "smooth.h"
 extern SMX box0_smx;
 extern Real ball_size;
@@ -410,6 +424,9 @@ extern double max_temp_old ;
 extern double min_rho_old ;
 extern int starform_loaded ;
 extern int redshift_loaded ;
+extern int uv_loaded ;
+extern int uniform ;
+extern int source_num ;
 extern int comove ;
 extern int eps_loaded ;
 extern int epsgas_loaded ;

@@ -62,4 +62,6 @@ load_redshift()
     redshift_loaded = YES ;
     starform_loaded = NO ;
     cooling_loaded = NO ;
+    hneutral_loaded = NO ;
+    meanmwt_loaded = NO ;
 }

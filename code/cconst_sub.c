@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1995/12/11 20:00:42  nsk
+ * Revision 1.4  1997/09/25 18:35:09  nsk
+ * added uv command and discrete uv sources
+ *
+ * Revision 1.3  1995/12/11  20:00:42  nsk
  * added helium, dark absorb,  integral for elcetronic heating,
  * and read in 6 numbers for background
  *
@@ -28,46 +31,16 @@ cconst_sub(job)
 {
     char command[MAXCOMM] ;
     double c1,c2,c3,c4,c5,c6 ;
-    int number ;
 
-    if((number = sscanf(job,"%s %lf %lf %lf %lf %lf %lf %lf %lf %lf", command, 
-	      &kpcunit, &msolunit, &fhydrogen, &c1, &c2,&c3,&c4,&c5,&c6)) == 6
-	      || number == 10){
+    if(sscanf(job,"%s %lf %lf %lf", command, 
+	      &kpcunit, &msolunit, &fhydrogen) == 4){
+	time_unit = sqrt(pow(kpcunit*KPCCM, 3.0)/(GCGS*msolunit*MSOLG));
+	time_unit /= GYRSEC;
+	lum_loaded = YES;
 	cool_loaded = YES ;
 	cooling_loaded = NO ;
 	hneutral_loaded = NO ;
-	time_unit = sqrt(pow(kpcunit*KPCCM, 3.0)/(GCGS*msolunit*MSOLG));
-	time_unit /= GYRSEC;
-	if(number == 6){
-	    jnu21 = c1 ;
-	    alphaj = c2 ;
-	    if(jnu21 > 0.0){
-		ionize() ;
-		gp0_H *= jnu21 * 4 * PI * 1.e-21 ;
-		gp0_He *= jnu21 * 4 * PI * 1.e-21 ;
-		gp0_Hep *= jnu21 * 4 * PI * 1.e-21 ;
-		eps_H *= jnu21 * 4 * PI * 1.e-21 ;
-		eps_He *= jnu21 * 4 * PI * 1.e-21 ;
-		eps_Hep *= jnu21 * 4 * PI * 1.e-21 ;
-	    }
-	    else{
-		gp0_H = 0.0 ;
-		gp0_He = 0.0 ;
-		gp0_Hep = 0.0 ;
-		eps_H = 0.0 ;
-		eps_He = 0.0 ;
-		eps_Hep = 0.0 ;
-	    }
-	}
-	else{
-            gp0_H = c1 ;
-	    gp0_He = c2 ;
-	    gp0_Hep = c3 ;
-	    eps_H = c4 ;
-	    eps_He = c5 ;
-	    eps_Hep = c6 ;
-	}
-	lum_loaded = YES;
+	meanmwt_loaded = NO ;
     }
     else {
 	input_error(command) ;

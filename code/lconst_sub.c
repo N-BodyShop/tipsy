@@ -11,6 +11,9 @@ lconst_sub(job)
 	time_unit = sqrt(pow(kpcunit*KPCCM, 3.0)/(GCGS*msolunit*MSOLG));
 	time_unit /= GYRSEC;
 	lum_loaded = YES ;
+	hneutral_loaded = NO ;
+	meanmwt_loaded = NO ;
+	cooling_loaded = NO ;
     }
     else{
 	input_error(command) ;

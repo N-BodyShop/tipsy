@@ -47,6 +47,8 @@ redshift_sub(job)
 	redshift_loaded = YES ;
 	starform_loaded = NO ;
 	cooling_loaded = NO ;
+	meanmwt_loaded = NO ;
+	hneutral_loaded = NO ;
     }
     else {
 	input_error(command) ;

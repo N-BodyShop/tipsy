@@ -29,6 +29,9 @@ neutralize(job)
 		}
 		else{
 		    if(gp->temp <= max_temp_old && gp->rho >= min_rho_old){
+			if(!uniform){
+			    calc_uv(gp) ;
+			}
 			calc_hneutral(gp->temp, gp->rho, &hneutral_p,
 				&heneutral_p, &heII_p);
 			hneutral[gp-gas_particles] = hneutral_p ;

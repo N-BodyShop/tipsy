@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.15  1997/09/19 13:41:24  nsk
+ * Revision 1.16  1997/09/25 18:35:07  nsk
+ * added uv command and discrete uv sources
+ *
+ * Revision 1.15  1997/09/19  13:41:24  nsk
  * fixed memeory troubles.
  *
  * Revision 1.14  1997/09/17  14:34:39  nsk
@@ -185,7 +188,6 @@ absorb(job)
     double rot_box[MAXDIM] ;
     double zbox_min ;
     double zbox_max ;
-    void plane();
     double constant[5] ;
     int bin_box_min ;
     int bin_box_max ;
@@ -346,6 +348,9 @@ absorb(job)
 	    }
 	    if (!cool_loaded ){
 		load_cool() ;
+	    }
+	    if (!uv_loaded ){
+		load_uv() ;
 	    }
 	    if (!redshift_loaded ){
 		load_redshift() ;

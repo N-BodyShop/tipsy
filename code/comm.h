@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.8  1997/09/24 17:35:04  trq
+ * Revision 1.9  1997/09/25 18:35:10  nsk
+ * added uv command and discrete uv sources
+ *
+ * Revision 1.8  1997/09/24  17:35:04  trq
  * Added "loadstandard" command which reads tipsy standard (as opposed to native)
  * binaries.
  *
@@ -154,6 +157,7 @@ extern void unload_box() ;
 extern void unmark_all() ;
 extern void unmarkbox_sub() ;
 extern void unzoom() ;
+extern void uv() ;
 
 extern void vcenter();
 extern void vconst_sub() ;
@@ -346,6 +350,8 @@ struct comm c_list[] = {
      {"unmarkall",   unmark_all,	0},
      {"unmarkbox",   unmarkbox_sub,	0},
      {"unzoom",      unzoom,		1},
+     {"uv",          uv,		0},
+     {"uvfield",     uv,		0},
      {"vall",        view_all,		1},
      {"varray",      view_array,	1},
 

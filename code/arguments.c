@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.15  1997/09/24 17:35:03  trq
+ * Revision 1.16  1997/09/25 18:35:08  nsk
+ * added uv command and discrete uv sources
+ *
+ * Revision 1.15  1997/09/24  17:35:03  trq
  * Added "loadstandard" command which reads tipsy standard (as opposed to native)
  * binaries.
  *
@@ -174,7 +177,7 @@ arguments(job)
     }
     else if ( strcmp(command,"coolconstants") == 0 ||
 	    strcmp(command,"cconst") == 0 ) {
-	printf("coolconstants kpcunit msolunit fhydrogen jnu21 alphaj\n") ;
+	printf("coolconstants kpcunit msolunit fhydrogen\n") ;
     }
     else if ( strcmp(command,"deletemacro") == 0 ||
 	    strcmp(command,"dmac") == 0 ) {
@@ -387,6 +390,10 @@ arguments(job)
     }
     else if ( strcmp(command,"unzoom") == 0 ) {
 	printf("unzoom\n") ;
+    }
+    else if ( strcmp(command,"uvfield") == 0 ||
+	    strcmp(command,"uv") == 0 ) {
+	printf("uvfield uv_type jnu21 alphaj\n") ;
     }
     else if ( strcmp(command,"vcenter") == 0 ) {
 	printf("vcenter box-number center-box-number type\n") ;

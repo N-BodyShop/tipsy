@@ -11,6 +11,9 @@ meanmwt_func()
     if (!cool_loaded ){
 	load_cool() ;
     }
+    if (!uv_loaded ){
+	load_uv() ;
+    }
     if (!redshift_loaded ){
 	load_redshift() ;
     }
@@ -28,6 +31,9 @@ meanmwt_func()
 
     for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 	gp = boxlist[active_box].gp[i] ;
+	if(!uniform){
+	    calc_uv(gp) ;
+	}
 	meanmwt[i] = calc_meanmwt(gp->temp, gp->rho);
     }
     meanmwt_loaded = YES ;
