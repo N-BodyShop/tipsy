@@ -57,6 +57,9 @@
 #    undef NEW_TTY_DRIVER
 #    define TERMIO_TTY_DRIVER
 #    include <termio.h>
+#    if defined(__linux__) && defined(__alpha__)
+#      include <ioctls.h>
+#    endif
 #    if !defined (TCOON)
 #      define TCOON 1
 #    endif
@@ -173,6 +176,10 @@ extern char *strchr (), *strrchr ();
     defined (__BSD_4_4__) || defined (FreeBSD) || defined (_386BSD) || \
     defined (AIX)
 #  define GWINSZ_IN_SYS_IOCTL
+#endif
+
+#if defined(GWINSZ_IN_SYS_IOCTL) && defined(__linux__)
+#   include <asm/termios.h>
 #endif
 
 #if !defined (emacs_mode)
