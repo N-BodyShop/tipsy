@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/03/02 17:30:21  nsk
+ * Revision 1.3  1995/03/02 21:43:01  nsk
+ * fixed yet another bug in absorb
+ *
+ * Revision 1.2  1995/03/02  17:30:21  nsk
  * changed absorption cross section tb be done by integral
  * added optical depth output and fixed bug in absorb
  * added stellar mass plot to view_star
@@ -687,7 +690,7 @@ absorb(job)
 		    k = i ;
 		}
 		k = max(0,k) ;
-		k = min(zbin-1,k) ;
+		k = min(zbin-2,k) ;
 		v_interp = (vel[k+1] - vel[k])*(i + ((double)(j))/
 			((double)(SUBBIN)) - (k + 0.5)) + vel[k] ;
 		t_interp = (temp[k+1] - temp[k])*(i + ((double)(j))/
