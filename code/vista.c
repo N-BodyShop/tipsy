@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.15  1998/03/27 17:12:12  trq
+ * Revision 1.16  1998/03/28 02:09:12  trq
+ * Fixed bug in determining smoothing length for dark and star particles.
+ *
+ * Revision 1.15  1998/03/27  17:12:12  trq
  * Free memory in correct order.
  *
  * Revision 1.14  1997/12/18  17:57:14  trq
@@ -664,7 +667,10 @@ vista(job)
 		    balls_loaded = STAR;
 		}
 		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
+		    int spi;
+		    
 		    sp = boxlist[active_box].sp[i] ;
+		    spi = boxlist[active_box].spi[i] ;
 		    if(vista_type == LUMSTAR) {
 			delta_d = star_lum_redshift(sp->mass,sp->tform,
 						    wavelength) ;
@@ -687,7 +693,7 @@ vista(job)
 			    }
 			    if(!(periodic) || (part_pos[2] < period_size/2.
 				    && part_pos[2] >= -period_size/2.)){
-			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2)/2.0;
+			    hsmooth = sqrt(box0_smx->kd->p[spi].fBall2)/2.0;
 			    if(hsmooth > size_pixel){
 				thsmooth = 2. * hsmooth ;
 				distnorm = 1. / (hsmooth * hsmooth) ;
@@ -750,7 +756,10 @@ vista(job)
 		    balls_loaded = DARK;
 		}
 		for (i = 0 ;i < boxlist[active_box].ndark ;i++) {
+		    int dpi;
+		    
 		    dp = boxlist[active_box].dp[i] ;
+		    dpi = boxlist[active_box].dpi[i];
 		    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
 		      for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
 			for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
@@ -766,7 +775,7 @@ vista(job)
 			    }
 			    if(!(periodic) || (part_pos[2] < period_size/2.
 				    && part_pos[2] >= -period_size/2.)){
-			    hsmooth = sqrt(box0_smx->kd->p[i].fBall2)/2.0;
+			    hsmooth = sqrt(box0_smx->kd->p[dpi].fBall2)/2.0;
 			    if(hsmooth > size_pixel){
 				thsmooth = 2. * hsmooth ;
 				distnorm = 1. / (hsmooth * hsmooth) ;
