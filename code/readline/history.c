@@ -709,6 +709,9 @@ history_do_write (filename, nelements, overwrite)
   char *output = history_filename (filename);
   int file, mode;
 
+  if(nelements == 0)
+      return 0;
+  
   mode = overwrite ? O_WRONLY | O_CREAT | O_TRUNC : O_WRONLY | O_APPEND;
 
   if ((file = open (output, mode, 0666)) == -1)
