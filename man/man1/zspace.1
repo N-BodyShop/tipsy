@@ -1,0 +1,30 @@
+.TH zspace  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+zspace \- move particles to redshift space in a box
+.SH SYNOPSIS
+.B zspace
+.I box-number
+.I hubble-constant
+.I x-center
+.I y-center
+.I z-center
+.SH DESCRIPTION
+.B zspace
+adds the velocity divided by the hubble constant to particles in box
+.I box-number
+centered on the coordinates
+.I (x-center, y-center, zcenter)
+with a Hubble constant of
+.I hubble-constant.
+This command is useful for looking at a particle distribution as it
+would be seen in redshift space.
+NOTE: this command permanently changes the positions of all the particles in
+box
+If the box
+.I box-number
+is not loaded an error is generated.
+.SH SEE ALSO
+hubble (1),
+drift (1),
+pcenter (1),
+vcenter (1)

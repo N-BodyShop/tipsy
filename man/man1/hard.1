@@ -52,6 +52,16 @@ certain that the entire view area is uncovered when using this option
 because what you see is what you get.  This command is useful for making
 movies.
 
+If the 
+.I filename
+is
+.B ``dump''
+an image is written to the file
+.I filename.
+The image contains the contents of the backing pixmap which tipsy uses to
+refresh the current window.  This is useful if the window is larger than
+the display.
+
 .SH SEE ALSO
 .BR framepoints (1),
 .BR xypoints (1),
