@@ -71,6 +71,7 @@ fits(data,xsize,ysize,xmin,ymin,deltax,deltay,zmin,zmax,outfile)
 	fillno = 1440*((int)(1.0 + xsize*ysize/1440)) - xsize*ysize ;
 	for(i=0;i<fillno;i++) fwrite(&zero,sizeof(short), 1, fpo) ;
 	fclose(fpo) ;
+	free(page);
 	
 }
 
