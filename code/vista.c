@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.21  2005/03/18 13:03:21  trq
+ * Load redshift info if needed.
+ *
  * Revision 1.20  2001/07/11 19:45:54  nsk
  *       Fixed bugs with array sizes for meanmwt, cooling, and starformation.
  *       Used to be only for active box now for all of box zero.
@@ -180,6 +183,9 @@ vista(job)
 
     if(!ikernel_loaded){
 	ikernel_load() ;
+    }
+    if (!redshift_loaded ){
+	load_redshift();
     }
     if (!current_project){
 	dv1_x = -INTMAX ;
