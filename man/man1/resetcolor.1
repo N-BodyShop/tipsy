@@ -3,11 +3,15 @@
 resetcolor \- reset the colormap
 .SH SYNOPSIS
 .B resetcolor
+.I [ where ]
 .SH ALIASES
 .B rcol
 .SH DESCRIPTION
 .B resetcolor
-resets the colormap to its original value. The command takes no arguments.
+resets the colormap to its original value.  If the optional argument
+.I where
+is given as a value between 0.0 and 1.0, the colorbar will be scrolled
+by the corresponding fraction.
 .SH SEE ALSO
 .BR clearall (1),
 .BR clearrot (1),
