@@ -1,7 +1,10 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.2  1996/12/19 18:03:42  trq
+ * Revision 1.3  1997/02/20 02:34:13  trq
+ * Fixed bug in previous modification.
+ *
+ * Revision 1.2  1996/12/19  18:03:42  trq
  * Fixed handling of arrays and vectors when a sub-box is loaded.
  *
  * Revision 1.1.1.1  1995/01/10  22:57:38  trq
@@ -31,7 +34,6 @@ readvector(job)
   int i;
   int count;
   int nbodies;
-  struct vec *v ;
 
   if (sscanf(job,"%s %s",command,filename) == 2) {
     infile = fopen(filename, "r");
@@ -70,7 +72,7 @@ readvector(job)
 			break;
 		  }
 		}
-		if(fscanf(infile, "%f", &(v[count].v[j])) == EOF){
+		if(fscanf(infile, "%f", &(vector[count].v[j])) == EOF){
 		    printf("<Sorry %s, file format is wrong>\n",title);
 		    vector_size = 0 ;
 		    free(vector);
