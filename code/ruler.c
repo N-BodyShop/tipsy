@@ -21,7 +21,6 @@ void
 ruler(job)
     char *job;
 {
-    int box ;
     Real x1,x2,y1,y2;
     double offset_x, offset_y ;
     double span_x, span_y ;
