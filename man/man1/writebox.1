@@ -2,6 +2,23 @@
 .SH NAME
 writebox \- write particles in a box to a file
 .SH SYNOPSIS
+.B writebox
+.I box_number
+.I file_name
+.I [mark]
 .SH ALIASES
+.B wbox
 .SH DESCRIPTION
+.B writebox
+writes all the particles in box
+.I box_number
+to file
+.I file_name
+in TIPSY ASCII format.
+If the optional argument
+.I mark
+is given, only the marked particles will be written to the file.
 .SH SEE ALSO
+.BR xypoints(1),
+.BR xyzpoints(1),
+.BR writboxrot(1)
