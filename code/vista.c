@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.12  1997/09/25 21:46:09  trq
+ * Revision 1.13  1997/10/24 22:14:45  trq
+ * Fixed bug in handling hsmooth < size_pixel.
+ *
+ * Revision 1.12  1997/09/25  21:46:09  trq
  * Fix bug in summing "quantity".
  *
  * Revision 1.11  1997/09/05  01:02:25  nsk
@@ -609,8 +612,7 @@ vista(job)
 					    0.499999) ;
 				    if(kx >= 0 && kx < vista_size && ky >= 0 &&
 					    ky < vista_size){
-					density[kx][ky]+=(float)(kernel*
-						delta_d) ;
+					density[kx][ky]+=(float) delta_d ;
 					if(vista_type == TEMP ||
 					    vista_type == PRESS ||
 					    vista_type == TCOOL ||
@@ -618,12 +620,11 @@ vista(job)
 					    vista_type == FSTAR ||
 					    vista_type == HNEUT
 					    || vista_type == SZ){
-					    quantity[kx][ky] += (float)(kernel*
-						delta_q) ;
+					    quantity[kx][ky] += (float) delta_q ;
 					}
 					if(vista_type == HNEUT){
 					    quantity2[kx][ky] +=
-						(float)(kernel*delta_q2) ;
+						(float) delta_q2 ;
 					}
 				    }
 				}
