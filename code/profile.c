@@ -24,6 +24,7 @@ profile(job)
     double density[MAXBIN] ;
     double pressure[MAXBIN] ;
     double temp[MAXBIN] ;
+    double entropy[MAXBIN] ;
     double lum[MAXBIN] ;
     double ar_mean[MAXBIN] ;
     int number[MAXBIN] ;
@@ -72,7 +73,8 @@ profile(job)
 	    && (center_box == -1 || boxes_loaded[center_box])
 	    && number_bins <= MAXBIN) {
 	    for (i = 0 ; i < MAXBIN ;i++) {
-		mass[i] = density[i] = pressure[i] = temp[i] = gas_mass[i] =
+		mass[i] = density[i] = pressure[i] = temp[i] =
+		        entropy[i] = gas_mass[i] =
 			vel_radial[i] = vel_radial_sigma[i] =
 			vel_tang_sigma[i] = lum[i] = ar_mean[i] = 0.0 ;
 		number[i] = 0 ;
@@ -334,6 +336,8 @@ profile(job)
 			temp[bin] += (gp->mass) * (gp->temp) ;
 			pressure[bin] += (gp->mass) * gasconst
 			    * (gp->temp/meanmwt[i]) * (gp->rho) ;
+			entropy[bin] += (gp->mass) *
+			    log10(pow(gp->temp, 1.5)/(gp->rho)) ;
 			if(array)
 			  ar_mean[bin] += gp->mass*array[boxlist[box].gpi[i]];
 		    }
@@ -351,11 +355,13 @@ profile(job)
 			density[i] /= gas_mass[i] ;
 			temp[i] /= gas_mass[i] ;
 			pressure[i] /= gas_mass[i] ;
+			entropy[i] /= gas_mass[i] ;
 		    }
 		    else {
 			density[i] = 0.0 ;
 			temp[i] = 0.0 ;
 			pressure[i] = 0.0 ;
+			entropy[i] = -HUGE;
 		    }
 		}
 		vel_radial[i] /= mass[i] ;
@@ -568,7 +574,7 @@ profile(job)
 		    ang_theta = 180.*acos(angular_mom[i][2]/ang)/PI ;
 		else
 		    ang_theta = 0.0;
-		ang_phi = 180.*atan2(angular_mom[i][0],angular_mom[i][1])/PI ;
+		ang_phi = 180.*atan2(angular_mom[i][1],angular_mom[i][0])/PI ;
 		vel_circ = ang / radius_mean ;
 		fprintf(hardfile.ptr,"%g %d %g %g %g %g %g %g %g %g %g %g",
 			radius,number[i],rho,mass_r,vel,vel_radial[i],
@@ -580,8 +586,8 @@ profile(job)
 			strcmp(particle_type,"unmark") == 0 ||
 			strcmp(particle_type,"all") == 0)
 			&& boxlist[box].ngas > 0) {
-		    fprintf(hardfile.ptr," %g %g %g",density[i],temp[i],
-			    pressure[i]) ;
+		    fprintf(hardfile.ptr," %g %g %g %g",density[i],temp[i],
+			    pressure[i], entropy[i]) ;
 		}
 		if ((strcmp(particle_type,"star") == 0 ||
 			strcmp(particle_type,"baryon") ==0 ||
