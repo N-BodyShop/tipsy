@@ -79,7 +79,7 @@ extern char *rl_vi_comment_begin;
 
 extern int rl_explicit_arg;
 extern int rl_editing_mode;
-extern unsigned short _rl_parsing_conditionalized_out;
+extern unsigned char _rl_parsing_conditionalized_out;
 extern Keymap _rl_keymap;
 
 extern char *possible_control_prefixes[], *possible_meta_prefixes[];
