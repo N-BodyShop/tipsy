@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.7  1996/04/19 19:10:46  nsk
+ * Revision 1.8  1996/04/24 23:29:16  nsk
+ *     changed units etc.
+ *
+ * Revision 1.7  1996/04/19  19:10:46  nsk
  *       Added all sorts of velocity stuff and divv
  *
  * Revision 1.6  1995/12/11  20:00:41  nsk
@@ -756,18 +759,18 @@ absorb(job)
 	for(i = 0; i < zbin; i++){
 	    mass_tot[i] *= msys ;
 	}
-	sprintf(col_name,"%s.col",name) ;
-	fp = fopen(col_name, "w");
+	fp = fopen(name, "w");
 	if(fp == NULL)
 	  {
-	    printf("<sorry, cannot open file %s, %s>\n",col_name, title) ;
+	    printf("<sorry, cannot open file %s, %s>\n",name, title) ;
 	    return;
 	  }
 	for(i = 0; i < zbin; i++)
 	  {
 	    fprintf(fp, "%g %g %g %g\n",
 		    rsys*(bin_size*(i+0.5) + zmin),
-		    mass_tot[i], vel_tot[i], rsys*res[i]);
+		    mass_tot[i]/(bin_size*cosmof*kpcunit*KPCCM),
+		    vel_tot[i], rsys*res[i]);
 	  }
 	fclose(fp);
 	}
@@ -1083,11 +1086,14 @@ absorb(job)
 	      {
 		fprintf(fp, "%g %g %g %g %g %g %g %g %g %g %g %g %g %g %g\n",
 			rsys*(bin_size*(i+0.5) + zmin),
-			mass_tot[i], vel_tot[i], temp_tot[i],
-			mass_HI[i], vel_HI[i], temp_HI[i],
-			mass_HeI[i], vel_HeI[i], temp_HeI[i],
-			mass_HeII[i], vel_HeII[i], temp_HeII[i],
-			rsys*res[i],divv_tot[i]);
+			mass_tot[i]/(bin_size*cosmof*kpcunit*KPCCM)*MHYDR,
+			vel_tot[i], temp_tot[i],
+			mass_HI[i]/(bin_size*cosmof*kpcunit*KPCCM),
+			vel_HI[i], temp_HI[i],
+			mass_HeI[i]/(bin_size*cosmof*kpcunit*KPCCM),
+			vel_HeI[i], temp_HeI[i],
+			mass_HeII[i]/(bin_size*cosmof*kpcunit*KPCCM),
+			vel_HeII[i], temp_HeII[i],rsys*res[i],divv_tot[i]);
 	      }
 	    fclose(fp);
 	}
@@ -1628,9 +1634,9 @@ absorb(job)
 		}
 		fprintf(fp2, "%g %g %g %g %g %g %g %g %g %g\n",
 			vmin + (i+0.5)*vbin_size, vbins_HI[i]/vbin_size,
-			vbins_tot[i]/vbin_size,vbins_neut_HI[i],
+			vbins_tot[i]*MHYDR/vbin_size,vbins_neut_HI[i],
 			vbins_temp_HI[i],
-			vbins_rho_HI[i]/(bin_size*cosmof*kpcunit*KPCCM),
+			vbins_rho_HI[i]*MHYDR/(bin_size*cosmof*kpcunit*KPCCM),
 			vbins_res_HI[i]*rsys, vbins_temp_tot[i],
 			vbins_temp2_tot[i], vbins_divv_tot[i]) ;
 		}
