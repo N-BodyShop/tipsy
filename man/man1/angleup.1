@@ -1,0 +1,63 @@
+.TH ANGLEUP  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+angleup \- change the viewing angle to edge-on
+.SH SYNOPSIS
+.B angleup
+.I box-number
+.I particle
+.SH ALIASES
+.B aup
+.SH DESCRIPTION
+.B angleup
+changes the viewing angle so that the angular momentum vector of
+particle type 
+.I particle 
+in box 
+.I box-number
+points straight up and lies in the plane of the screen.
+Remember that the angular momentum vector of any box excludes the
+center of mass motion of the box.  To view the particles from the new
+direction the 
+.B angleup
+command must be followed by either the
+.B view
+command to maintain the same plot type or by
+.B viewall,
+.B viewarray,
+.B viewgas,
+.B viewmag,
+.B viewpot,
+.B viewrad,
+or
+.B viewstar
+commands.
+If the box
+.I box-number 
+is not loaded an error is generated.
+.SH OPTIONS
+.SS Particle
+.LP
+The possible choices for
+.I particle
+are:
+.RS
+.TP 3
+.B all
+Use the angular momentum vector of all the particles in box
+.I box-number
+.TP 3
+.B dark
+Use the angular momentum vector of only the dark matter particles in box
+.I box-number
+.TP 3
+.B gas
+Use the angular momentum vector of only the gas particles in box
+.I box-number
+.TP 3
+.B star
+Use the angular momentum vector of only the star particles in box
+.I box-number
+.RE
+.SH SEE ALSO
+.BR rotate (1),
+.BR view (1)

@@ -1,0 +1,66 @@
+
+
+
+READARRAY(1)             TIPSY COMMANDS              READARRAY(1)
+
+
+
+NAME
+     readarray - read an array from a file
+
+SYNOPSIS
+     readarray _f_i_l_e_n_a_m_e
+
+DESCRIPTION
+     readarray reads in an array of  scalars  for  each  particle
+     from  the  file _f_i_l_e_n_a_m_e for use by commands like arraystat,
+     markarray, and viewarray.
+
+     The file _f_i_l_e_n_a_m_e must be an ascii file. The file should  be
+     of the form:
+
+          ntotal
+
+          array_value(i), i = 1 to ntotal
+
+     where ntotal is the total number of  particles.   Therefore,
+     the total file length is ntotal+1 lines.
+
+     The readvector command is used to read in vectors.
+
+SEE ALSO
+     arraystat(1), markarray(1), readvector(1), viewarray(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

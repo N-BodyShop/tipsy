@@ -1,0 +1,132 @@
+
+
+
+MARKSTAT(1)              TIPSY COMMANDS               MARKSTAT(1)
+
+
+
+NAME
+     markstat - print physical parameters of marked particles
+
+SYNOPSIS
+     markstat _b_o_x _p_a_r_t_i_c_l_e
+
+ALIASES
+     mstat
+
+DESCRIPTION
+     markstat prints physical parameters of the marked  particles
+     in box _b_o_x-_n_u_m_b_e_r for the marked particles of type _p_a_r_t_i_c_l_e.
+     Parameters that are listed are: the mass, the  density,  the
+     volume  of  the box, the size of the box, the center of mass
+     coordinates, the center of mass velocity,  and  the  angular
+     momentum per unit mass in the center of mass frame.  This is
+     similar to the boxstat command but only for the marked  par-
+     ticles.
+
+     Particles can be marked using the markarray, markbox,  mark-
+     gal,  and readmark commands. Marked particles can be written
+     to a file using the writemark command.
+
+     Particles in a particular box  can  be  unmarked  using  the
+     unmarkbox  command  and  all  the  marked  particles  can be
+     unmarked using  the  unmarkall  command.   Particles  remain
+     marked  even when a new time frame is loaded but after a new
+     time frame is loaded any particles that were marked  in  the
+     previous time frame can only be unmarked using the unmarkall
+     command.
+
+     If no particles are marked  or  if  box  _b_o_x-_n_u_m_b_e_r  is  not
+     loaded an error is generated.
+
+OPTIONS
+  Particle
+     The possible choices for _p_a_r_t_i_c_l_e are:
+
+          all
+             Show the physical parameters of all the marked  par-
+             ticles.
+
+          baryon
+             Show the physical parameters of only the marked  gas
+             and star particles.
+
+          dark
+             Show the physical parameters of only the marked dark
+             matter particles.
+
+          gas
+             Show the physical parameters of only the marked  gas
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+
+
+
+
+MARKSTAT(1)              TIPSY COMMANDS               MARKSTAT(1)
+
+
+
+             particles.
+
+          star
+             Show the physical parameters of only the marked star
+             particles.
+
+SEE ALSO
+     boxstat(1),  markarray(1),  markbox(1),  markgal(1),   read-
+     mark(1), unmarkall(1), unmarkbox(1), writemark(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   2
+
+
+

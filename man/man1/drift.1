@@ -1,0 +1,66 @@
+.TH drift  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+hubble \- extrapolate particle positions in a box
+.SH SYNOPSIS
+.B drift
+.I box-number
+.I particle
+.I delta-t
+.SH DESCRIPTION
+.B drift
+drifts the particles of type
+.I particle
+in box
+.I box-number
+for
+.I delta-t
+using the particle's velocity.
+This command is useful for interpolating between time frames when making
+movies.
+To move particles forward in time use a positive value for
+.I delta-t
+and to move particles backward in time use a negative value for
+.I delta-t.
+NOTE: this command permanently changes the velocities of all the particles in
+box
+.I box-number.
+To undo a
+.B drift
+command repeat the command with a 
+.I delta-t
+of equal magnitude but of opposite sign.
+If the box
+.I box-number
+is not loaded an error is generated.
+.SH OPTIONS
+.SS Particle
+.LP
+The possible choices for
+.I particle
+are:
+.RS
+.TP 3
+.B all
+Adjust the velocities of all the particles in box
+.I box-number.
+.TP 3
+.B baryon
+Adjust the velocities of all the gas and star particles in box
+.I box-number.
+.TP 3
+.B dark
+Adjust the velocities of only the dark matter particles in box
+.I box-number
+.TP 3
+.B gas
+Adjust the velocities of only the gas particles in box
+.I box-number.
+.TP 3
+.B star
+Adjust the velocities of only the star particles in box
+.I box-number.
+.RE
+.SH SEE ALSO
+hubble (1),
+pcenter (1),
+vcenter (1)

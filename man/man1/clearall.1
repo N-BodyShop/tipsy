@@ -1,0 +1,35 @@
+.TH CLEARALL  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+clearall \- equivalent to clearrot, unloadall, and unmarkall
+.SH SYNOPSIS
+.B clearall
+.SH DESCRIPTION
+.B clearall
+resets the viewing angle to be looking down the
+.IR z \-axis,
+unloads all the boxes except box 0, and unmarks all the particles.
+To view the particles from the new direction the 
+.B clearall
+command must be followed by either the
+.B view
+command to maintain the same plot type or by
+.B viewall,
+.B viewarray,
+.B viewgas,
+.B viewmag,
+.B viewpot,
+.B viewrad,
+or
+.B viewstar
+commands.
+Its single action is equivalent to the three commands: 
+.B clearrot,
+.B unloadall,
+and
+.B unmarkall.
+.SH SEE ALSO
+.BR clearrot (1),
+.BR resetcolor (1),
+.BR unloadall (1),
+.BR unmarkall (1),
+.BR unzoom (1)

@@ -1,0 +1,132 @@
+
+
+
+OLDREADASCII(1)          TIPSY COMMANDS           OLDREADASCII(1)
+
+
+
+NAME
+     oldreadascii - read an old format ascii file
+
+SYNOPSIS
+     oldreadascii _f_i_l_e_n_a_m_e _t_y_p_e
+
+DESCRIPTION
+     oldreadascii is a command to  read  in  the  currently  open
+     ascii file if it is in the old ascii format and write it out
+     in binary form into file _f_i_l_e_n_a_m_e. This command only  exists
+     to  preserve backwards compatibility.  The readascii command
+     is used for ascii files with the usual format.  If no  ascii
+     file is open or if a binary file is already open an error is
+     generated.  Ascii files are opened using the openascii  com-
+     mand  and binary files are closed using the closebinary com-
+     mand.  After the binary file is written the  ascii  file  is
+     closed  and  the  binary file _f_i_l_e-_n_a_m_e is opened. After the
+     binary file is made a specific time  must  still  be  loaded
+     using  the  loadbinary  command  before  any plotting can be
+     done.
+
+     The ascii file should be of the old ascii form  and  contain
+     all  the  time  frames  in sequential order.  If _t_y_p_e is sph
+     each time frame should be of the form:
+
+          ntotal, ndimensions, time, ngas, nstar
+
+          mass(i), i = 1 to ntotal
+
+          x_position(i), i = 1 to ntotal
+
+          y_position(i), i = 1 to ntotal
+
+          z_position(i), i = 1 to ntotal
+
+          x_velocity(i), i = 1 to ntotal
+
+          y_velocity(i), i = 1 to ntotal
+
+          z_velocity(i), i = 1 to ntotal
+
+          density(i), i = 1 to ngas
+
+          temperature(i), i = 1 to ngas
+
+          sph_smoothing_length(i), i = 1 to ngas,
+     where ntotal is the total number of particles, ngas  is  the
+     number  of  gas  particles,  and nstar is the number of star
+     particles.  The first ngas particles should be the gas  par-
+     ticles  and the last nstar particles should be the star par-
+     ticles with the dark particles being in the middle.  If _t_y_p_e
+     is nosph each time frame should be of the form:
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+
+
+
+
+OLDREADASCII(1)          TIPSY COMMANDS           OLDREADASCII(1)
+
+
+
+          ntotal, ndimensions, time
+
+          mass(i), i = 1 to ntotal
+
+          x_position(i), i = 1 to ntotal
+
+          y_position(i), i = 1 to ntotal
+
+          z_position(i), i = 1 to ntotal
+
+          x_velocity(i), i = 1 to ntotal
+
+          y_velocity(i), i = 1 to ntotal
+
+          z_velocity(i), i = 1 to ntotal.
+
+SEE ALSO
+     closeascii(1), closebinary(1), loadbinary(1),  openascii(1),
+     readascii(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   2
+
+
+

@@ -1,0 +1,47 @@
+.TH MARKBOX  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+markbox \- mark the particles in a box
+.SH SYNOPSIS
+.B markbox
+.I box-number
+.SH ALIASES
+.B mrbox
+.SH DESCRIPTION
+.B markbox
+marks the particles in box
+.I box-number. 
+Marked particles appear green in 
+plots.  Particles in a particular box can be unmarked using the
+.B unmarkbox
+command and all the marked particles can be unmarked using the
+.B unmarkall
+command.  Particles remain marked even when a new time frame is loaded but
+after a new time frame is loaded any particles that were marked in the
+previous time frame can only be unmarked using the
+.B unmarkall
+command.
+
+Particles can also be marked using the
+.B markarray
+and
+.B markgal
+commands.
+Statistics about marked particles can be determined using the
+.B markstat
+command. Marked particles can be written to a file using the
+.B writemark
+command or read from a file using the 
+.B readmark
+command.
+ 
+If the box
+.I box-number 
+is not loaded an error is generated.
+.SH SEE ALSO
+.BR markarray (1),
+.BR markgal (1),
+.BR markstat (1),
+.BR readmark (1),
+.BR unmarkall (1),
+.BR unmarkbox (1),
+.BR writemark (1)

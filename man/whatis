@@ -1,0 +1,114 @@
+activatebox (1)      - change the box that is being used
+angleup (1)          - change the viewing angle to edge-on
+arguments (1)        - list the arguments required for a command
+arraystat (1)        - print statistics about the array values
+axesscale (1)        - set the length of plotted coordinate axes
+boxstat (1)          - print the physical parameters of a box
+clearall (1)         - equivalent to clearrot, unloadall, and unmarkall
+clearrot (1)         - resets the viewing angle down the z-axis
+closeascii (1)       - close the currently open ascii file
+closebinary (1)      - close the currently open binary file
+colorbarlabel (1)    - place labels over the color bar
+commands (1)         - list the possible commands
+coolconstants (1)    - set the values of constants related to cooling
+deletemacro (1)      - delete a macro
+deletewin (1)        - delete a window
+formconstants (1)    - set the constants related to star formation
+framepoints (1)      - write x, y, and z projections to files
+gravsoft (1)         - set the gravitational softening for the dark matter
+gravsoftgas (1)      - set the gravitational softening for the gas and stars 
+hard (1)             - make an X window dump (and send it to the printer)
+help (1)             - display useful information about commands on the screen
+hubble (1)           - add or remove the Hubble expansion in a box
+label (1)            - place a label in the upper-left corner
+loadall (1)          - loads and sets the limits for box 0
+loadbinary (1)       - load in data from a binary file
+lumconstants (1)     - set the constants related to stellar luminosities
+macro (1)            - execute a tipsy macro
+makebox (1)          - make and load a box interactively
+makemacro (1)        - make a macro interactively
+markarray (1)        - mark particles according to their array values
+markbox (1)          - mark the particles in a box
+markgal (1)          - mark gas particles that are likely to be in galaxies
+markstat (1)         - print physical parameters of marked particles
+moments (1)          - write the shape as a funtion of radius
+oldreadascii (1)     - read an old format ascii file
+openascii (1)        - open an ascii file
+openbinary (1)       - open a binary file
+pcenter (1)          - recenter a periodic box
+plot (1)             - plot using current projection and zoom
+pointsize (1)        - set the pointsize for plotted particles
+printhelp (1)        - print useful information about commands on the printer
+profile (1)          - write physical profiles as a funtion of radius
+readarray (1)        - read an array from a file
+readascii (1)        - read an ascii file
+readmacro (1)        - read a macro file
+readmark (1)         - read indices of marked particles from a file
+readoldbin (1)       - read an old format binary file
+readvector (1)       - read a vector
+redshift (1)         - set the redshift and coordinate system
+resetcolor (1)       - reset the colormap
+rotate (1)           - rotate the viewing angle
+rotationcurve (1)    - calculate the circular velocity rotation curve
+setbox (1)           - make and load a box from the command line
+setsphere (1)        - make and load a spherical "box" from the command line
+shell (1)            - execute a system command
+showaxes (1)         - turn axes display off or on
+showboxes (1)        - turn display of box edges off or on
+showdark (1)         - turn display of dark particles off or on
+showgas (1)          - turn display of gas particles off or on
+showstar (1)         - turn display of star particles off or on
+showvec (1)          - turn display of particle vectors off or on
+showvel (1)          - turn display of velocity vectors off or on
+starhistory (1)      - write the distribution in age of stellar mass
+tipsy (1)            - theoretical image processing system
+unload (1)           - unload a box
+unmarkall (1)        - unmark all particles
+unmarkbox (1)        - unmark particles in a box
+unzoom (1)           - reset zoom factor to 1
+vcenter (1)          - subtract a velocity from all particles in a box
+velocitydist (1)     - write the distribution of mass in circular velocity
+velscale (1)         - scale the length of velocities or vectors
+velsigma (1)         - write the bulk velocity and velocity dispersion averaged on shells
+version (1)          - print the version number of tipsy
+view (1)             - project and display current plot
+viewall (1)          - plot particles according to particle type
+viewarray (1)        - plot particles according to array values
+viewgas (1)          - plot particles according to gas values
+viewmag (1)          - plot particles according to velocity or vector magnitude
+viewpot (1)          - plot particles according to gravitational potential
+viewrad (1)          - plot particles according to radial component of velocity or vector
+viewstar (1)         - plot particles according to star properties
+viscconstants (1)    - set the constants related to artifical viscosity
+vista (1)            - make FITS images
+window (1)           - switch to an alternative viewing window
+writebox (1)         - write particles in a box to a file
+writeboxrot (1)      - write particles in a box to a file in the rotated coordinate system
+writemacro (1)       - write a macro to a file
+writemark (1)        - write indices of marked particles to a file
+xall (1)             - do an all plot projected along the y axis
+xarray (1)           - do an array plot projected along the x axis
+xgas (1)             - do a gas plot projected along the x axis
+xmag (1)             - do a magnitude plot projected along the x axis
+xpot (1)             - do a potential plot projected along the x axis
+xrad (1)             - do a radial plot projected along the x axis
+xray (1)             - make xray maps in different energy bands and write to FITS files
+xrayload (1)         - read xray data
+xstar (1)            - do a star plot projected along the x axis
+xypoints (1)         - write the plotted x and y coordinates of the particles
+xyzpoints (1)        - write the x,y, and z coordinates of the particles to a file
+yall (1)             - do an all plot projected along the y axis
+yarray (1)           - do an array plot projected along the y axis
+ygas (1)             - do a gas plot projected along the y axis
+ymag (1)             - do a magnitude plot projected along the y axis
+ypot (1)             - do a potential plot projected along the y axis
+yrad (1)             - do a radial plot projected along the y axis
+ystar (1)            - do a star plot projected along the y axis
+zall (1)             - do an all plot projected along the y axis
+zarray (1)           - do an array plot projected along the z axis
+zgas (1)             - do a gas plot projected along the z axis
+zmag (1)             - do a magnitude plot projected along the z axis
+zoom (1)             - zoom by a factor around a point
+zpot (1)             - do a potential plot projected along the z axis
+zrad (1)             - do a radial plot projected along the z axis
+zstar (1)            - do a star plot projected along the z axis

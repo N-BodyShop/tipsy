@@ -1,0 +1,43 @@
+.TH FORMCONSTANTS  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+formconstants \- set the constants related to star formation
+.SH SYNOPSIS
+.B formconstants
+.I cstar
+.I dtime
+.I temppar
+.I softpar
+.SH ALIASES
+.B fconst
+.SH DESCRIPTION
+.B formconstants
+sets the value of constants that relate to star formation for use in commands
+such as 
+.B viewgas.  
+The star formation algorithm is from Katz (Ap. J. 391:502, 1992).
+All the constants are in system units with G (the gravitational
+constant) equal to 1 and temperature in degrees Kelvin.
+.RS
+.TP 3
+.I cstar
+is the constant that is linearly proportional to the star formation rate.
+.TP 3
+.I dtime
+is the time between calls to the star formation routine.
+.TP 3
+.I temppar
+is the constant that decides how cool the gas can be before the cooling time is
+ignored.
+.TP 3
+.I softpar
+is the constant that decides when the Jean's criteria can be ignored.
+.RE
+
+.SH SEE ALSO
+.BR coolconstants (1),
+.BR gravsoft (1),
+.BR gravsoftgas (1),
+.BR lumconstants (1),
+.BR redshift (1),
+.BR viewgas (1),
+.BR viscconstants (1)

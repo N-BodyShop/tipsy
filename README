@@ -1,0 +1,22 @@
+This directory contains source and documentation for TIPSY, a
+theoretical image processing system.
+
+To build, change directory to code, and type "configure".  This
+shell script will find out what features are on your system and will
+create a Makefile.  Inspect the Makefile to insure that the flags and
+libraries are correct for your system, then type "make".  
+A tipsy executable should be created in this directory.
+
+For documentation within tipsy, set the environment variable
+"TIPSYHELPDIR" to point at the man subdirectory.  Note that the
+documentation is still being worked on.
+
+The file "run99.ascii" in the current directory is an example data
+file.
+
+To quickly test out tipsy, try the commands:
+openascii run99.ascii
+readascii run99.bin
+loadb 14
+xall
+

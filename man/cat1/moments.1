@@ -1,0 +1,132 @@
+
+
+
+MOMENTS(1)               TIPSY COMMANDS                MOMENTS(1)
+
+
+
+NAME
+     moments - write the shape as a funtion of radius
+
+SYNOPSIS
+     moments _b_o_x-_n_u_m_b_e_r _c_e_n_t_e_r-_b_o_x-_n_u_m_b_e_r _p_a_r_t_i_c_l_e  _b_i_n_n_i_n_g  _b_i_n-
+     _n_u_m_b_e_r _f_i_l_e_n_a_m_e _m_i_n_i_m_u_m__r_a_d_i_u_s
+
+DESCRIPTION
+     moments is a command that produces a file of name, _f_i_l_e_n_a_m_e,
+     that contains various physical parameters that relate to the
+     shape and orientation of the density distribution for parti-
+     cles  of type _p_a_r_t_i_c_l_e in box, _b_o_x-_n_u_m_b_e_r. If the boxes _b_o_x-
+     _n_u_m_b_e_r or _c_e_n_t_e_r-_b_o_x-_n_u_m_b_e_r are not loaded an error is  gen-
+     erated.   The  shapes  and orientations are calculated using
+     the iterative technique described in  Katz  (Ap.J.  368:325,
+     1991).  The initial guess for the center of the density dis-
+     tribution is taken to be the center of mass of  box  _c_e_n_t_e_r-
+     _b_o_x-_n_u_m_b_e_r. The _b_i_n_n_i_n_g argument refers to how the particles
+     are binned, either linearly or log  in  radius.   There  are
+     _b_i_n-_n_u_m_b_e_r  equal size bins distributed equally in radius or
+     log radius between _m_i_n_i_m_u_m__r_a_d_i_u_s and the size of  box  _b_o_x-
+     _n_u_m_b_e_r  depending  on the _b_i_n_n_i_n_g argument.  The output file
+     has the following columns: radius,  b/a,  c/a,  phi,  theta,
+     psi,  center-x,center-y,and center-z where b/a refers to the
+     ratio between the intermediate axis and the  long  axis  and
+     c/a  refers  to  the  ratio between the short and long axes.
+     Phi, theta and psi refer to the Euler angles  that  describe
+     the orientation of the density distribution.
+
+OPTIONS
+  Particle
+     The possible choices for _p_a_r_t_i_c_l_e are:
+
+          all
+             Use the all the particles in box _b_o_x-_n_u_m_b_e_r
+
+          dark
+             Use only the dark matter particles in box _b_o_x-_n_u_m_b_e_r
+
+          gas
+             Use only the gas particles in box _b_o_x-_n_u_m_b_e_r
+
+          star
+             Use only the star particles in box _b_o_x-_n_u_m_b_e_r
+
+  Binning
+     The possible choices for _b_i_n_n_i_n_g are:
+
+          lin
+             Make  _b_i_n-_n_u_m_b_e_r  bins  spaced  equally  in   radius
+             between  _m_i_n_i_m_u_m-_r_a_d_i_u_s  and  the  size  of box _b_o_x-
+             _n_u_m_b_e_r
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+
+
+
+
+MOMENTS(1)               TIPSY COMMANDS                MOMENTS(1)
+
+
+
+          log
+             Make _b_i_n-_n_u_m_b_e_r bins spaced equally  in  log  radius
+             between  _m_i_n_i_m_u_m-_r_a_d_i_u_s  and  the  size  of box _b_o_x-
+             _n_u_m_b_e_r
+
+SEE ALSO
+     profile(1), rotationcurve(1),
+
+BUGS
+     The technique doesn't always  converge,  particularily  when
+     the  density  distribution  is very clumpy.  Things converge
+     much better when the box _c_e_n_t_e_r-_b_o_x-_n_u_m_b_e_r contains the true
+     center for the density distribution in box _b_o_x-_n_u_m_b_e_r and is
+     as small as possible.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   2
+
+
+

@@ -1,0 +1,66 @@
+
+
+
+POINTSIZE(1)             TIPSY COMMANDS              POINTSIZE(1)
+
+
+
+NAME
+     pointsize - set the pointsize for plotted particles
+
+SYNOPSIS
+     pointsize _p_a_r_t_i_c_l_e _s_i_z_e
+
+ALIASES
+     psize
+
+DESCRIPTION
+     pointsize is a command that sets the  size,  in  pixels,  of
+     particles  of  type  _p_a_r_t_i_c_l_e to _s_i_z_e when they are plotted.
+     If _s_i_z_e is less than 1.0 they are just plotted one pixel  in
+     size.  The default is a _s_i_z_e of 0.  The particle size is not
+     changed until the plot is redrawn using a command like plot.
+
+OPTIONS
+  Particle
+     The possible choices for _p_a_r_t_i_c_l_e are:
+
+          dark
+             Set the size of plotted  dark  matter  particles  to
+             _s_i_z_e pixels
+
+          gas
+             Set the size of plotted gas particles to _s_i_z_e pixels
+
+          star
+             Set the size of plotted star particles to _s_i_z_e  pix-
+             els
+
+          mark
+             Set the size of marked particles to _s_i_z_e pixels
+
+SEE ALSO
+     axesscale(1), plot(1), showvec(1), showvel(1), velscale(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

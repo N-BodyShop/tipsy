@@ -1,0 +1,58 @@
+.TH HARD  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+hard \- make an X window dump (and send it to the printer)
+.SH SYNOPSIS
+.B hard
+.I filename
+.SH DESCRIPTION
+.B hard
+redraws the current plot full screen size and writes a xwd format file
+of the image into the file
+.I filename
+so that it can be sent to a color printer or displayed again later. 
+The image is written when any mouse button is pressed.  Carefully
+center the image on the screen before pressing a mouse button
+because what you see is what you get.
+If nothing is currently plotted an error will be generated.
+There are a few special
+.I filenames
+that cause the command to behave slightly differently.
+
+If the 
+.I filename
+is
+.B ``print''
+no file is written but instead a postscript file is sent to the default printer
+to be printed in black and white.
+
+If the 
+.I filename
+is
+.B ``colorprint''
+no file is written but instead a color postscript file is sent to the default
+printer to be printed in color.
+
+If the 
+.I filename
+is
+.B ``photo''
+no file is written and the image remains on the screen until a button is
+pressed.  This command is useful when taking pictures of the images.
+
+If the 
+.I filename
+is
+.B ``movie''
+a file is written to file
+.I filename
+that contains the image in the current window but with
+the same size as the current window.  Also, the command does not wait for
+a mouse button to be pressed to write the file.  It is important to make
+certain that the entire view area is uncovered when using this option
+because what you see is what you get.  This command is useful for making
+movies.
+
+.SH SEE ALSO
+.BR framepoints (1),
+.BR xypoints (1),
+.BR xyzpoints (1)

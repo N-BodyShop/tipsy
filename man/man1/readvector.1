@@ -1,0 +1,44 @@
+.TH READVECTOR  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+readvector \- read a vector
+.SH SYNOPSIS
+.B readvector
+.I filename
+.SH DESCRIPTION
+.B readvector
+reads in a three dimensional vector for each particle from the file
+.I filename
+for use by commands like
+.B viewmag
+and
+.B viewrad.
+Using the
+.B showvec
+command the vector field can be displayed in plots.
+
+The file
+.I filename
+must be an ascii file.  The file should be of the form:
+.LP
+.RS
+.TP 3
+ntotal
+.TP 3
+x_vector(i), i = 1 to ntotal
+.TP 3
+y_vector(i), i = 1 to ntotal
+.TP 3
+z_vector(i), i = 1 to ntotal
+.RE
+
+where ntotal is the total number of particles.
+Therefore, the total file length is 3*ntotal+1 lines.
+
+The
+.B readarray
+command is used to read in scalars. 
+.SH SEE ALSO
+readarray (1),
+showvec (1),
+viewmag (1),
+viewrad (1)

@@ -1,0 +1,23 @@
+.TH DELETEMACRO  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+deletemacro \- delete a macro
+.SH SYNOPSIS
+.B deletemacro
+.I macro-name
+.SH ALIASES
+.B dmac
+.SH DESCRIPTION
+.B deletemacro
+deletes the macro
+.I macro-name
+from the macro list.  Macro's are created with the 
+.B makemacro
+command or read in using the
+.B readmacro
+command.  If no macro exists with the name
+.I macro-name
+an error is generated.
+.SH SEE ALSO
+.BR macro (1),
+.BR makemacro (1),
+.BR readmacro (1)

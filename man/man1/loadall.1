@@ -1,0 +1,23 @@
+.TH LOADALL  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+loadall \- loads and sets the limits for box 0
+.SH SYNOPSIS
+.B loadall
+.SH DESCRIPTION
+.B loadall
+loads box 0. No plots can be made unless box 0 has been loaded
+with either the
+.B loadall
+or
+.B setbox
+command. 
+The size of box 0 is chosen to be the smallest rectangular prism that contains
+all the particles.  To control the size of box 0 use the
+.B setbox
+command.  If no binary file has been loaded an error is generated.
+Binary files are loaded using the
+.B loadbinary
+command.
+.SH SEE ALSO
+.BR loadbinary (1),
+.BR setbox (1)

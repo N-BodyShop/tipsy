@@ -1,0 +1,66 @@
+
+
+
+READOLDBIN(1)            TIPSY COMMANDS             READOLDBIN(1)
+
+
+
+NAME
+     readoldbin - read an old format binary file
+
+SYNOPSIS
+     readoldbin _f_i_l_e_n_a_m_e
+
+DESCRIPTION
+     readoldbin reads an old, version 1 format binary  file  from
+     the  currently  open  binary  file  and writes out a current
+     binary format file into the file _f_i_l_e_n_a_m_e. After the  binary
+     file is written the orginally open binary file is closed and
+     the binary file _f_i_l_e_n_a_m_e is opened.  Binary files  are  nor-
+     mally  created  using  either  the  readascii command or the
+     ascii2binary program.
+
+     After the binary file is made a specific time must still  be
+     loaded using the loadbinary command.
+
+     If no binary file is open an  error  is  generated.   Binary
+     files  can  be  opened using the openbinary command.  Binary
+     files can be closed using the closebinary command.
+
+SEE ALSO
+     closebinary(1) loadbinary(1), openbinary(1), readascii(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

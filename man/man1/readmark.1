@@ -1,0 +1,51 @@
+.TH READMARK  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+readmark \- read indices of marked particles from a file
+.SH SYNOPSIS
+.B readmark
+.I filename
+.SH DESCRIPTION
+.B readmark
+reads the indices of marked particles from the file
+.I filename.
+The file
+.I filename
+must be an ascii file.
+The first line in the file is:
+.LP
+.RS
+.TP 3
+ntotal, ngas, nstar
+.RE
+
+where ntotal is the total number of particles, ngas is the number of
+gas particles, ndark is the number of dark matter particles,
+and nstar is the number of star particles.
+Every additional line should contain the index of a marked particle
+(particle's indices start with one) in increasing numerical order.
+
+Marked particles appear green in
+plots.  Particles in a particular box can be unmarked using the
+.B unmarkbox
+command and all the marked particles can be unmarked using the
+.B unmarkall
+command.  Particles remain marked even when a new time frame is loaded.
+Particles can also be marked using the
+.B markarray,
+.B markbox,
+and
+.B markgal
+commands.
+Statistics about marked particles can be determined using the
+.B markstat
+command. Marked particles can be written to a file using the
+.B writemark
+command.
+.SH SEE ALSO
+.BR markarray (1),
+.BR markbox (1),
+.BR markgal (1),
+.BR markstat (1),
+.BR unmarkall (1),
+.BR unmarkbox (1),
+.BR writemark (1)

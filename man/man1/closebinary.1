@@ -1,0 +1,22 @@
+.TH CLOSEBINARY  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+closebinary \- close the currently open binary file
+.SH SYNOPSIS
+.B closebinary
+.SH DESCRIPTION
+.B closebinary
+closes the currently open binary file.  If no binary file is open, an error
+is generated.  Binary files are opened using either the
+.B openbinary
+or
+.B readascii
+commands.  Ascii files are opened and closed using the
+.B openascii
+and
+.B closeascii
+commands.
+.SH SEE ALSO
+.BR closeascii (1),
+.BR openascii (1),
+.BR openbinary (1),
+.BR readascii (1)

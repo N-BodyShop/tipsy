@@ -1,0 +1,38 @@
+.TH READARRAY  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+readarray \- read an array from a file
+.SH SYNOPSIS
+.B readarray
+.I filename
+.SH DESCRIPTION
+.B readarray
+reads in an array of scalars for each particle from the file
+.I filename
+for use by commands like
+.B arraystat,
+.B markarray,
+and
+.B viewarray.
+
+The file
+.I filename
+must be an ascii file. The file should be of the form:
+.LP
+.RS
+.TP 3
+ntotal
+.TP 3
+array_value(i), i = 1 to ntotal
+.RE
+
+where ntotal is the total number of particles.
+Therefore, the total file length is ntotal+1 lines.
+
+The
+.B readvector
+command is used to read in vectors.
+.SH SEE ALSO
+.BR arraystat (1),
+.BR markarray (1),
+.BR readvector (1),
+.BR viewarray (1)

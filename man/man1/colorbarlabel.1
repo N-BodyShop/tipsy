@@ -1,0 +1,48 @@
+.TH COLORBARLABEL  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+colorbarlabel \- place labels over the color bar
+.SH SYNOPSIS
+.B colorbarlabel
+.I position
+.I text
+.SH ALIASES
+.B colorlabel,
+.B barlabel
+.SH DESCRIPTION
+.B colorbarlabel
+places the label 
+.I text
+above the colorbar at the location
+.I position.
+Will not function for 
+.I all
+type plots.  This command is useful for making photographs or hardcopies.
+.SH OPTIONS
+.SS Position
+.LP
+The possible choices for
+.I position
+are:
+.RS
+.TP 3
+.B left
+Write
+.I text
+over the left edge of the colorbar.  The same as using
+.B l.
+.TP 3
+.B middle
+Write
+.I text
+over the center of the colorbar.  The same as using
+.B m.
+.TP 3
+.B right
+Write
+.I text
+over the right edge of the colorbar.  The same as using
+.B r.
+.RE
+.SH SEE ALSO
+.BR hard (1),
+.BR label (1)

@@ -1,0 +1,66 @@
+
+
+
+LOADBINARY(1)            TIPSY COMMANDS             LOADBINARY(1)
+
+
+
+NAME
+     loadbinary - load in data from a binary file
+
+SYNOPSIS
+     loadbinary _t_i_m_e
+
+ALIASES
+     loadb
+
+DESCRIPTION
+     loadbinary loads in the data at time _t_i_m_e from the currently
+     open  binary  file.  If more than one time is present in the
+     binary file the time closest to _t_i_m_e is used.  It is typical
+     (and  useful)  to  have  many sequential time outputs in one
+     tipsy binary file. If no binary file is  open  an  error  is
+     generated.   Binary files can be opened using the openbinary
+     command.  Binary files can be created  using  the  readascii
+     command  or  the  ascii2binary  program.  The data cannot be
+     used until box 0 is loaded using either the loadall or  set-
+     box command.
+
+SEE ALSO
+     loadall(1), openbinary(1), readascii(1), setbox(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

@@ -1,0 +1,38 @@
+.TH READMACRO  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+readmacro \- read a macro file
+.SH SYNOPSIS
+.B readmacro
+.I macro-filename
+.SH ALIASES
+.B rmac
+.SH DESCRIPTION
+.B readmacro
+reads macro's from the file
+.I macro-filename.
+The file
+.I macro-filename
+can contain many different macro's.  A macro is a sequential list of tipsy
+commands.  In the file
+.I macro-filename
+each macro must have as it first line the name of the macro and as its
+last line "end".  If a macro with that name already exists it is
+deleted when the new macro is read.  In the file put one command per line.
+Many different macro's can be in the one file
+.I macro-filename
+one after the other.
+
+Macro's can be executed using the
+.B macro
+command.  Macro's can be created interactively using the
+.B makemacro
+command and can be written to a file using the
+.B writemacro
+command.  Macro's can be deleted using the
+.B deletemacro
+command.
+.SH SEE ALSO
+.BR deletemacro (1),
+.BR macro (1),
+.BR makemacro (1),
+.BR writemacro (1)

@@ -1,0 +1,76 @@
+.TH ROTATE  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+rotate \- rotate the viewing angle
+.SH SYNOPSIS
+.B rotate
+.I direction
+.I degrees
+.SH DESCRIPTION
+.B rotate
+is a command to rotate the viewing angle
+.I degrees
+degress in the direction
+.I direction.
+.I degrees
+may be either positive or negative.  To view the particles from the new
+direction the 
+.B rotate
+command must be followed by either the
+.B viewall,
+.B viewarray,
+.B viewgas,
+.B viewmag,
+.B viewpot,
+.B viewrad,
+or
+.B viewstar
+commands.
+The
+.B clearrot
+command resets the viewing angle to be looking down the
+.IR z \-axis.
+The
+.B angleup
+command can also be used to rotate the simulation depending on the system's
+angular momentum.
+.SH OPTIONS
+.SS Direction
+.LP
+The possible choices for
+.I direction
+are:
+.RS
+.TP 3
+.B left
+Rotate the viewing angle to the left
+.I degrees
+degrees.  This option may be abbreviated
+.B l
+.TP 3
+.B right
+Rotate the viewing angle to the right
+.I degrees
+degrees.  This option may be abbreviated
+.B r
+.TP 3
+.B up
+Rotate the viewing angle up
+.I degrees
+degrees.  This option may be abbreviated
+.B u
+.TP 3
+.B down
+Rotate the viewing angle down
+.I degrees
+degrees.  This option may be abbreviated
+.B d
+.TP 3
+.B clockwise
+Rotate the viewing angle clockwise
+.I degrees
+degrees.  This option may be abbreviated
+.B c
+.RE
+.SH SEE ALSO
+.BR angleup (1),
+.BR clearrot (1)

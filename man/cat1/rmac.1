@@ -1,0 +1,66 @@
+
+
+
+READMACRO(1)             TIPSY COMMANDS              READMACRO(1)
+
+
+
+NAME
+     readmacro - read a macro file
+
+SYNOPSIS
+     readmacro _m_a_c_r_o-_f_i_l_e_n_a_m_e
+
+ALIASES
+     rmac
+
+DESCRIPTION
+     readmacro reads macro's from the  file  _m_a_c_r_o-_f_i_l_e_n_a_m_e.  The
+     file  _m_a_c_r_o-_f_i_l_e_n_a_m_e  can contain many different macro's.  A
+     macro is a sequential list of tipsy commands.  In  the  file
+     _m_a_c_r_o-_f_i_l_e_n_a_m_e  each  macro  must  have as it first line the
+     name of the macro and as its last line "end".   If  a  macro
+     with  that  name  already  exists it is deleted when the new
+     macro is read.  In the file put one command per line.   Many
+     different  macro's can be in the one file _m_a_c_r_o-_f_i_l_e_n_a_m_e one
+     after the other.
+
+     Macro's can be executed using the  macro  command.   Macro's
+     can be created interactively using the makemacro command and
+     can be written to  a  file  using  the  writemacro  command.
+     Macro's can be deleted using the deletemacro command.
+
+SEE ALSO
+     deletemacro(1), macro(1), makemacro(1), writemacro(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

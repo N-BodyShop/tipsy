@@ -1,0 +1,66 @@
+
+
+
+hubble(1)                TIPSY COMMANDS                 hubble(1)
+
+
+
+NAME
+     hubble - add or remove the Hubble expansion in a box
+
+SYNOPSIS
+     hubble _b_o_x-_n_u_m_b_e_r _h_u_b_b_l_e-_c_o_n_s_t_a_n_t _x-_c_e_n_t_e_r _y-_c_e_n_t_e_r _z-_c_e_n_t_e_r
+
+DESCRIPTION
+     hubble adds a radial hubble flow to box _b_o_x-_n_u_m_b_e_r  centered
+     on the coordinates (_x-_c_e_n_t_e_r, _y-_c_e_n_t_e_r, _z_c_e_n_t_e_r) with a Hub-
+     ble constant of _h_u_b_b_l_e-_c_o_n_s_t_a_n_t. This command is useful when
+     converting  to and from comoving coordinates.  To add a Hub-
+     ble flow to the box use a positive value for _h_u_b_b_l_e-_c_o_n_s_t_a_n_t
+     and  to subtract a hubble flow use a negative value for _h_u_b_-
+     _b_l_e _c_o_n_s_t_a_n_t. NOTE: this  command  permanently  changes  the
+     velocities of all the particles in box _b_o_x-_n_u_m_b_e_r. To undo a
+     hubble command repeat the command with a _h_u_b_b_l_e-_c_o_n_s_t_a_n_t  of
+     equal magnitude but of opposite sign.  If the box _b_o_x-_n_u_m_b_e_r
+     is not loaded an error is generated.
+
+SEE ALSO
+     pcenter (1), vcenter (1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

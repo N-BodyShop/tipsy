@@ -1,0 +1,214 @@
+# Makefile for TIPSY
+
+#### Start of system configuration section. ####
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+CC = @CC@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+MAKEINFO = makeinfo
+
+CFLAGS = @CFLAGS@ $(X_CFLAGS)
+LDFLAGS = @LDFLAGS@ $(X_LDFLAGS)
+LIBS = readline/libreadline.a @LIBS@ -lm
+# X_CFLAGS = -DFUNCPROTO=7 -DNARROWPROTO @X_CFLAGS@
+X_CFLAGS = @X_CFLAGS@
+X_LDFLAGS = @X_LDFLAGS@
+X_LIBS = @X_LIBS@ -lXaw -lXmu -lXt -lXext -lX11
+X_EXTRA_LIBS = @X_EXTRA_LIBS@
+
+# Some System V machines do not come with libPW.
+# If this is true for you, use the GNU alloca.o here.
+ALLOCA = @ALLOCA@
+
+prefix = /usr/local
+exec_prefix = $(prefix)
+
+# Prefix for each installed program, normally empty or `g'.
+binprefix =
+
+bindir = $(exec_prefix)/bin
+
+infodir = $(prefix)/info
+
+#### End of system configuration section. ####
+
+SHELL = /bin/sh
+
+# The source files for all of the programs.
+
+all: tipsy
+
+COMPILE = $(CC) -c $(CPPFLAGS) -I. -I$(srcdir) $(CFLAGS)
+
+OBJS		=  \
+acc_load.o activatebox.o add_const_mult_vec.o add_vec.o \
+angleup.o arguments.o ascii2binary.o boxstat_sub.o cconst_sub.o \
+clear_rot.o clearrot.o closeascii.o closebinary.o \
+command_interp.o cool_func.o cross_product.o diff_add_vec.o distance.o \
+distance_dim2.o divv.o dkernel_load.o dot_product.o ell_distance.o eps_sub.o \
+epsgas_sub.o fconst_sub.o find.o find_shape.o find_vel.o \
+framepoints.o grav.o help.o ikernel_load.o initialize_color_table.o \
+input_error.o jacobi.o lconst_sub.o load_color_table.o load_cool.o \
+load_eps.o load_epsgas.o load_form.o load_redshift.o loadall.o loadbinary.o \
+loadbinary_sub.o loadbox.o make_ell_matrix.o mass_add_vec.o \
+matrix_matrix_mult.o matrix_vector_mult.o maxpos.o moments.o norm.o openascii.o\
+openbinary.o packfit.o perp_distance.o plane.o \
+profile.o \
+readascii.o redshift_sub.o rot_cur.o rotate.o \
+rotate_sub.o setsize.o setbox_sub.o setvec.o showboxes_sub.o \
+showdark_sub.o showgas_sub.o showstar_sub.o showvel_sub.o sift.o spline.o \
+star_lum.o star_lum_redshift.o starform_func.o sub_vec.o transpose.o unload.o \
+vec_add_const_mult_vec.o vel_dist.o vel_sigma.o radial_color.o \
+velscale.o vista.o \
+load_visc.o vconst_sub.o markbox.o unmarkbox.o \
+unmark_all.o unload_all.o unmarkbox_sub.o oldreadascii.o oldascii2binary.o \
+xyzpoints.o loadall_sub.o axesscale.o showaxes_sub.o printhelp.o whatis.o \
+commands.o version.o writebox.o markstat.o fits.o canvas_resize_proc.o \
+plot_all.o plot_sub.o project.o view_all.o xplot_all.o yplot_all.o zplot_all.o \
+clearall.o unzoom.o bar_resize_proc.o \
+point_size_sub.o zoom_window.o view_gas.o \
+xplot_gas.o yplot_gas.o zplot_gas.o view_star.o xplot_star.o yplot_star.o \
+zplot_star.o view_rad.o xplot_rad.o yplot_rad.o  zplot_rad.o \
+make_box.o setival.o xplot_pot.o yplot_pot.o zplot_pot.o view_pot.o \
+potential_color.o hard.o xypoints.o make_macro.o run_macro.o \
+read_macro.o write_macro.o delete_macro.o my_gets.o hubble.o window.o main.o \
+reset_color.o change_color.o label_sub.o colorbar_label.o star_history.o \
+view.o rotate_xx.o readmark.o draworient.o old2binary.o readoldbin.o \
+readarray.o view_array.o array_color.o xplot_array.o yplot_array.o \
+zplot_array.o arraystat.o writemark.o markgal.o xray_lum_load.o \
+loadsphere.o setsphere_sub.o xray.o xray_load_sub.o markarray.o heatcool.o \
+neutral.o meanmwt.o nsktrq.o vcenter.o shell_sub.o all_color.o showvec_sub.o \
+readvector.o xplot_mag.o yplot_mag.o zplot_mag.o view_mag.o magnitude_color.o \
+pcenter.o writebox_rot.o absorb.o markmass.o drift.o
+
+HEADERS = comm.h defs.h fdefs.h main.h nsktrqxbm.h tipsy_icon.h
+
+SRCS	= \
+acc_load.c activatebox.c add_const_mult_vec.c add_vec.c \
+angleup.c arguments.c ascii2binary.c boxstat_sub.c cconst_sub.c \
+clear_rot.c clearrot.c closeascii.c closebinary.c \
+command_interp.c cool_func.c cross_product.c diff_add_vec.c distance.c \
+distance_dim2.c divv.c dkernel_load.c dot_product.c ell_distance.c eps_sub.c \
+epsgas_sub.c fconst_sub.c find.c find_shape.c find_vel.c \
+framepoints.c grav.c help.c ikernel_load.c initialize_color_table.c \
+input_error.c jacobi.c lconst_sub.c load_color_table.c load_cool.c \
+load_eps.c load_epsgas.c load_form.c load_redshift.c loadall.c loadbinary.c \
+loadbinary_sub.c loadbox.c make_ell_matrix.c mass_add_vec.c \
+matrix_matrix_mult.c matrix_vector_mult.c maxpos.c moments.c norm.c openascii.c\
+openbinary.c packfit.c perp_distance.c plane.c \
+profile.c \
+readascii.c redshift_sub.c rot_cur.c rotate.c \
+rotate_sub.c setsize.c setbox_sub.c setvec.c showboxes_sub.c \
+showdark_sub.c showgas_sub.c showstar_sub.c showvel_sub.c sift.c spline.c \
+star_lum.c star_lum_redshift.c starform_func.c sub_vec.c transpose.c unload.c \
+vec_add_const_mult_vec.c vel_dist.c vel_sigma.c radial_color.c \
+velscale.c vista.c \
+load_visc.c vconst_sub.c markbox.c unmarkbox.c \
+unmark_all.c unload_all.c unmarkbox_sub.c oldreadascii.c oldascii2binary.c \
+xyzpoints.c loadall_sub.c axesscale.c showaxes_sub.c printhelp.c whatis.c \
+commands.c version.c writebox.c markstat.c fits.c canvas_resize_proc.c \
+plot_all.c plot_sub.c project.c view_all.c xplot_all.c yplot_all.c zplot_all.c \
+clearall.c unzoom.c bar_resize_proc.c \
+point_size_sub.c zoom_window.c view_gas.c \
+xplot_gas.c yplot_gas.c zplot_gas.c view_star.c xplot_star.c yplot_star.c \
+zplot_star.c view_rad.c xplot_rad.c yplot_rad.c  zplot_rad.c \
+make_box.c setival.c xplot_pot.c yplot_pot.c zplot_pot.c view_pot.c \
+potential_color.c hard.c xypoints.c make_macro.c run_macro.c \
+read_macro.c write_macro.c delete_macro.c my_gets.c hubble.c window.c main.c \
+reset_color.c change_color.c label_sub.c colorbar_label.c star_history.c \
+view.c rotate_xx.c readmark.c draworient.c old2binary.c readoldbin.c \
+readarray.c view_array.c array_color.c xplot_array.c yplot_array.c \
+zplot_array.c arraystat.c writemark.c markgal.c xray_lum_load.c \
+loadsphere.c setsphere_sub.c xray.c xray_load_sub.c markarray.c heatcool.c \
+neutral.c meanmwt.c nsktrq.c vcenter.c shell_sub.c all_color.c showvec_sub.c \
+readvector.c xplot_mag.c yplot_mag.c zplot_mag.c view_mag.c magnitude_color.c \
+pcenter.c writebox_rot.c absorb.c markmass.c drift.c
+
+$(OBJS): defs.h
+main.o:  main.h
+command_interp.o: comm.h
+
+READLINE_SRC = \
+readline/acconfig.h readline/ansi_stdlib.h readline/bind.c \
+readline/chardefs.h readline/complete.c readline/display.c \
+readline/emacs_keymap.c readline/funmap.c readline/history.c \
+readline/history.h readline/isearch.c readline/keymaps.c readline/keymaps.h \
+readline/memalloc.h readline/parens.c readline/posixstat.h \
+readline/readline.c readline/readline.h readline/rlconf.h readline/rldefs.h \
+readline/rltty.c readline/search.c readline/signals.c readline/tilde.c \
+readline/tilde.h readline/vi_keymap.c readline/vi_mode.c readline/xmalloc.c
+
+CONF_FILES = \
+configure Makefile.in configure.in
+
+CONF_FILES_READLINE = \
+readline/configure readline/Makefile.in readline/COPYING readline/README \
+readline/config.h.in readline/configure.in
+
+distfiles = $(HEADERS) $(SRCS) $(CONF_FILES)
+distfiles_readline = $(READLINE_SRC) $(CONF_FILES_READLINE)
+
+.c.o:
+	$(COMPILE) $<
+
+tipsy: $(OBJS) $(ALLOCA) readline/libreadline.a
+	$(CC) -o tipsy $(LDFLAGS) $(OBJS) $(ALLOCA) $(X_LIBS) $(X_EXTRA_LIBS) $(LIBS)
+
+readline/libreadline.a:
+	cd readline; make libreadline.a
+clean:
+	rm -f *.o tipsy
+	cd readline; make clean
+
+mostlyclean: clean
+
+distclean: clean
+	rm -f Makefile config.status
+	cd readline; make distclean
+
+realclean: distclean
+	rm -f TAGS *.info*
+
+install: all
+	for p in tipsy; \
+	do $(INSTALL_PROGRAM) $$p $(bindir)/$(binprefix)$$p; done
+
+uninstall:
+	for p in diff diff3 sdiff cmp; \
+	do rm -f $(bindir)/$(binprefix)$$p; done
+	rm -f $(infodir)/diff.info*
+
+Makefile: Makefile.in config.status
+	$(SHELL) config.status
+config.status: configure
+	$(SHELL) $(srcdir)/configure --no-create
+configure: configure.in
+	cd $(srcdir); autoconf
+
+dist: $(distfiles)
+	echo tipsy-`sed -e '/version_string/!d' -e 's/[^0-9]*\([0-9a-z.]*\).*/\1/' -e q version.c` > .fname
+	rm -rf `cat .fname`
+	mkdir `cat .fname`
+	mkdir `cat .fname`/code
+	mkdir `cat .fname`/code/readline
+	-ln $(distfiles) `cat .fname`/code
+	for file in $(distfiles); do \
+	  [ -r `cat .fname`/code/$$file ] || cp -p $$file `cat .fname`/code || exit; \
+	done
+	-ln $(distfiles_readline) `cat .fname`/code/readline
+	for file in $(distfiles_readline); do \
+	  [ -r `cat .fname`/code/$$file ] || cp -p $$file `cat .fname`/code/readline || exit; \
+	done
+	for file in ../README ../run99.ascii ../install.sh; do \
+	    ln $$file `cat .fname` || cp -p $$file `cat .fname` || exit; \
+	done
+	(cd ..; tar cf - ./man | (cd code/`cat code/.fname`; tar xf -))
+	tar -chf - `cat .fname` | gzip > ../`cat .fname`.tar.gz
+	rm -rf `cat .fname` .fname
+
+# Prevent GNU make v3 from overflowing arg limit on SysV.
+.NOEXPORT:

@@ -1,0 +1,38 @@
+.TH hubble  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+hubble \- add or remove the Hubble expansion in a box
+.SH SYNOPSIS
+.B hubble
+.I box-number
+.I hubble-constant
+.I x-center
+.I y-center
+.I z-center
+.SH DESCRIPTION
+.B hubble
+adds a radial hubble flow to box
+.I box-number
+centered on the coordinates
+.I (x-center, y-center, zcenter)
+with a Hubble constant of
+.I hubble-constant.
+This command is useful when converting to and from comoving coordinates.
+To add a Hubble flow to the box use a positive value for
+.I hubble-constant
+and to subtract a hubble flow use a negative value for
+.I hubble constant.
+NOTE: this command permanently changes the velocities of all the particles in
+box
+.I box-number.
+To undo a
+.B hubble
+command repeat the command with a 
+.I hubble-constant
+of equal magnitude but of opposite sign.
+If the box
+.I box-number
+is not loaded an error is generated.
+.SH SEE ALSO
+drift (1),
+pcenter (1),
+vcenter (1)

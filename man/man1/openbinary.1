@@ -1,0 +1,32 @@
+.TH OPENBINARY  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+openbinary \- open a binary file
+.SH SYNOPSIS
+.B openbinary
+.I filename
+.SH ALIASES
+.B openb
+.SH DESCRIPTION
+.B openbinary
+is a command that opens a binary file of the name,
+.I filename.
+Once a binary file is open a specific time must still be loaded using the
+.B loadbinary
+command.  If a binary file is already open an error is generated.
+Binary files can be closed using the
+.B closebinary
+command.  Binary files can be opened and created using the
+.B readascii
+command.  Binary files can also be created using the
+.B ascii2binary
+program. Ascii files are opened and closed using the
+.B openascii
+and
+.B closeascii
+commands.
+.SH SEE ALSO
+.BR closeascii (1),
+.BR closebinary (1),
+.BR loadbinary (1),
+.BR openascii (1),
+.BR readascii (1)

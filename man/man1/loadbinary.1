@@ -1,0 +1,34 @@
+.TH LOADBINARY  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+loadbinary \- load in data from a binary file
+.SH SYNOPSIS
+.B loadbinary
+.I time
+.SH ALIASES
+.B loadb
+.SH DESCRIPTION
+.B loadbinary 
+loads in the data at time
+.I time
+from the currently open binary file.  If more than one time is present
+in the binary file the time closest to 
+.I time
+is used.  It is typical (and useful) to have many sequential time outputs
+in one tipsy binary file. If no binary file is open an error is generated.
+Binary files can be opened using the
+.B openbinary
+command.
+Binary files can be created using the
+.B readascii
+command or the
+.B ascii2binary
+program.  The data cannot be used until box 0 is loaded using either the
+.B loadall
+or
+.B setbox
+command.
+.SH SEE ALSO
+.BR loadall (1),
+.BR openbinary (1),
+.BR readascii (1),
+.BR setbox (1)

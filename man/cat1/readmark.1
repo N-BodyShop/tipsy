@@ -1,0 +1,66 @@
+
+
+
+READMARK(1)              TIPSY COMMANDS               READMARK(1)
+
+
+
+NAME
+     readmark - read indices of marked particles from a file
+
+SYNOPSIS
+     readmark _f_i_l_e_n_a_m_e
+
+DESCRIPTION
+     readmark reads the indices of marked particles from the file
+     _f_i_l_e_n_a_m_e.  The  file  _f_i_l_e_n_a_m_e  must  be an ascii file.  The
+     first line in the file is:
+
+          ntotal, ngas, nstar
+
+     where ntotal is the total number of particles, ngas  is  the
+     number  of gas particles, ndark is the number of dark matter
+     particles, and nstar is the number of star particles.  Every
+     additional  line should contain the index of a marked parti-
+     cle (particle's indices start with one) in increasing numer-
+     ical order.
+
+     Marked particles appear green in plots.  Particles in a par-
+     ticular  box can be unmarked using the unmarkbox command and
+     all the marked particles can be unmarked using the unmarkall
+     command.  Particles remain marked even when a new time frame
+     is loaded.  Particles can also be marked using  the  markar-
+     ray, markbox, and markgal commands.  Statistics about marked
+     particles can be  determined  using  the  markstat  command.
+     Marked  particles  can be written to a file using the write-
+     mark command.
+
+SEE ALSO
+     markarray(1), markbox(1),  markgal(1),  markstat(1),  unmar-
+     kall(1), unmarkbox(1), writemark(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

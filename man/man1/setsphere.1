@@ -1,0 +1,58 @@
+.TH SETSPHERE  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+setsphere \- make and load a spherical "box" from the command line
+.SH SYNOPSIS
+.B setsphere
+.I box
+.I xcenter
+.I ycenter
+.I zcenter
+.I radius
+.SH DESCRIPTION
+.B setsphere
+is used to define the boundaries of
+.I box
+through the command line.  The requested box must be between 1 and
+.I MAXBOX
+or an error will be generated.  The value of
+.I MAXBOX
+can be found by using the 
+.B version
+command.
+The box is a sphere of radius
+.I radius
+centered on the coordinates
+.I (xcenter, ycenter, zcenter).
+
+Once a box is made and loaded it still isn't the active box for plotting
+until the
+.B activatebox
+command is used.
+Boxes are removed using the
+.B unload
+command.
+
+Boxes with numbers greater than box 0 cannot be made until
+box 0 is loaded.
+Boxes can also be made and loaded using the
+.B makebox
+and
+.B setbox
+commands.  Box 0 can also be made and loaded using the
+.B loadall
+command.
+.SH SEE ALSO
+.BR activatebox(1),
+.BR loadall(1),
+.BR makebox(1),
+.BR setbox(1),
+.BR unload(1),
+.BR version(1)
+.SH BUGS
+The volume of the box is not done correctly in commands such as
+.B boxstat
+and the box is not plotted correctly when 
+.B showboxes
+is
+.I yes
+if the box is spherical.

@@ -1,0 +1,51 @@
+'\" e
+.EQ
+delim $$
+.EN
+.TH COOLCONSTANTS  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+coolconstants \- set the values of constants related to cooling
+.SH SYNOPSIS
+.B coolconstants
+.I kpcunit
+.I msolunit
+.I fhydrogen
+.I jnu21
+.I alphaj
+.SH ALIASES
+.B cconst
+.SH DESCRIPTION
+.B coolconstants
+sets the value of constants that relate to cooling for use in commands
+such as 
+.B viewgas.
+All the constants are in system units with G (the gravitational
+constant) equal to 1 and temperature in degrees Kelvin.
+.RS
+.TP 3
+.I kpcunit
+is the system length unit in kiloparsecs.
+.TP 3
+.I msolunit
+is the system mass unit in solar masses.
+.TP 3
+.I fhydrogen
+is the fraction of the gas by weight in hydrogen in the system.
+the density.
+.TP 3
+.I jnu21
+is the flux of the background radiation field in units of $10 sup {-21}$
+$ergs sup {-1}$ $cm sup {-2}$ $Hz sup {-1}$ $sr sup {-1}$.
+.eqn
+.TP 3
+.I alphaj
+is the slope of the UV background spectrum, j = jnu21*(nu/nu_L)**(-alphaj).
+.RE
+
+.SH SEE ALSO
+.BR formconstants (1),
+.BR gravsoft (1),
+.BR gravsoftgas (1),
+.BR lumconstants (1),
+.BR redshift (1),
+.BR viscconstants (1)

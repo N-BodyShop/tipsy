@@ -1,0 +1,132 @@
+
+
+
+FRAMEPOINTS(1)           TIPSY COMMANDS            FRAMEPOINTS(1)
+
+
+
+NAME
+     framepoints - write x, y, and z projections to files
+
+SYNOPSIS
+     framepoints _b_o_x-_n_u_m_b_e_r _p_a_r_t_i_c_l_e _f_i_l_e_n_a_m_e-_r_o_o_t
+
+ALIASES
+     frp
+
+DESCRIPTION
+     framepoints writes files that include the _x, _y, and  _z  pro-
+     jections  for  all  particles  of  type _p_a_r_t_i_c_l_e in box _b_o_x-
+     _n_u_m_b_e_r. This could be useful when  making  point  plots  for
+     publication using a plotting package like mongo. Each parti-
+     cle type and each projection  is  written  into  a  separate
+     file.   The  filename  is the root _f_i_l_e_n_a_m_e-_r_o_o_t with either
+     _d_a_r_k, _g_a_s, or _s_t_a_r appended to signify the particle type and
+     then  with either _x, _y, or _z appended to signify the projec-
+     tion.  For example, the file _f_i_l_e_n_a_m_e-_r_o_o_tdarkx  would  con-
+     tain  the  positions of all the dark matter particles in box
+     _b_o_x-_n_u_m_b_e_r when viewed down the _x-axis.   If  the  box  _b_o_x-
+     _n_u_m_b_e_r is not loaded an error is generated.
+
+OPTIONS
+  Particle
+     The possible choices for _p_a_r_t_i_c_l_e are:
+
+          all
+             Write files that include the  dark,  gas,  and  star
+             particles  in  box  _b_o_x-_n_u_m_b_e_r.  This  produces nine
+             files in all.
+
+          dark
+             Write files that only include the dark particles  in
+             box _b_o_x-_n_u_m_b_e_r. This produces three files in all.
+
+          darkandgas
+             Write files that include the dark and gas  particles
+             in box _b_o_x-_n_u_m_b_e_r. This produces six files in all.
+
+          darkandstar
+             Write files that include the dark and star particles
+             in box _b_o_x-_n_u_m_b_e_r. This produces six files in all.
+
+          gas
+             Write files that only include the gas  particles  in
+             box _b_o_x-_n_u_m_b_e_r. This produces three files in all.
+
+          gasandstar
+             Write files that include the gas and star  particles
+             in box _b_o_x-_n_u_m_b_e_r. This produces six files in all.
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+
+
+
+
+FRAMEPOINTS(1)           TIPSY COMMANDS            FRAMEPOINTS(1)
+
+
+
+          star
+             Write files that only include the star particles  in
+             box _b_o_x-_n_u_m_b_e_r. This produces three files in all.
+
+SEE ALSO
+     hard(1), xypoints(1), xyzpoints(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   2
+
+
+

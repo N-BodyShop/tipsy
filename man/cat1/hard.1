@@ -1,0 +1,66 @@
+
+
+
+HARD(1)                  TIPSY COMMANDS                   HARD(1)
+
+
+
+NAME
+     hard - make an X window dump (and send it to the printer)
+
+SYNOPSIS
+     hard _f_i_l_e_n_a_m_e
+
+DESCRIPTION
+     hard redraws the current plot full screen size and writes  a
+     xwd  format file of the image into the file _f_i_l_e_n_a_m_e so that
+     it can be sent to a color printer or displayed again  later.
+     The  image  is  written  when  any  mouse button is pressed.
+     Carefully center the image on the screen before  pressing  a
+     mouse button because what you see is what you get.  If noth-
+     ing is currently plotted an error will be generated.   There
+     are a few special _f_i_l_e_n_a_m_e_s that cause the command to behave
+     slightly differently.
+
+     If the _f_i_l_e_n_a_m_e is ``print'' no file is written but  instead
+     a  postscript  file  is  sent  to  the default printer to be
+     printed in black and white.
+
+     If the _f_i_l_e_n_a_m_e is ``colorprint'' no  file  is  written  but
+     instead  a  color  postscript  file  is  sent to the default
+     printer to be printed in color.
+
+     If the _f_i_l_e_n_a_m_e is ``photo'' no  file  is  written  and  the
+     image remains on the screen until a button is pressed.  This
+     command is useful when taking pictures of the images.
+
+     If the _f_i_l_e_n_a_m_e is ``movie''  a  file  is  written  to  file
+     _f_i_l_e_n_a_m_e  that  contains the image in the current window but
+     with the same size as the current window.  Also, the command
+     does  not wait for a mouse button to be pressed to write the
+     file.  It is important to make certain that the entire  view
+     area  is  uncovered  when using this option because what you
+     see is what you get.  This  command  is  useful  for  making
+     movies.
+
+
+SEE ALSO
+     framepoints(1), xypoints(1), xyzpoints(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

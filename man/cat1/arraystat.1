@@ -1,0 +1,66 @@
+
+
+
+ARRAYSTAT(1)             TIPSY COMMANDS              ARRAYSTAT(1)
+
+
+
+NAME
+     arraystat - print statistics about the array values
+
+SYNOPSIS
+     arraystat _b_o_x-_n_u_m_b_e_r _p_a_r_t_i_c_l_e
+
+DESCRIPTION
+     arraystat calculates the mean, median, and upper quartile of
+     the  loaded  array values for the particles of type _p_a_r_t_i_c_l_e
+     in box _b_o_x-_n_u_m_b_e_r. An array is loaded  using  the  readarray
+     command.  Boxes can be created and loaded using the makebox,
+     setbox, or setsphere commands.  If no array is loaded or  if
+     the box _b_o_x-_n_u_m_b_e_r is not loaded an error is generated.
+
+OPTIONS
+  Particle
+     The possible choices for _p_a_r_t_i_c_l_e are:
+
+          all
+             Use the array values of all  the  particles  in  box
+             _b_o_x-_n_u_m_b_e_r when calculating the statistics.
+
+          baryon
+             Use the array values of only the star and gas parti-
+             cles  in box _b_o_x-_n_u_m_b_e_r when calculating the statis-
+             tics.
+
+          dark
+             Use the array values of only the dark matter  parti-
+             cles  in box _b_o_x-_n_u_m_b_e_r when calculating the statis-
+             tics.
+
+          gas
+             Use the array values of only the  gas  particles  in
+             box _b_o_x-_n_u_m_b_e_r when calculating the statistics.
+
+          star
+             Use the array values of only the star  particles  in
+             box _b_o_x-_n_u_m_b_e_r when calculating the statistics.
+
+SEE ALSO
+     boxstat(1),  makebox(1),   readarray(1),   setbox(1),   set-
+     sphere(1), viewarray(1)
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

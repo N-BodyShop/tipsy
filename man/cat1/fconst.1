@@ -1,0 +1,66 @@
+
+
+
+FORMCONSTANTS(1)         TIPSY COMMANDS          FORMCONSTANTS(1)
+
+
+
+NAME
+     formconstants - set the constants related to star formation
+
+SYNOPSIS
+     formconstants _c_s_t_a_r _d_t_i_m_e _t_e_m_p_p_a_r _s_o_f_t_p_a_r
+
+ALIASES
+     fconst
+
+DESCRIPTION
+     formconstants sets the value of  constants  that  relate  to
+     star formation for use in commands such as viewgas. The star
+     formation algorithm is from Katz  (Ap.  J.  391:502,  1992).
+     All  the  constants are in system units with G (the gravita-
+     tional constant) equal to 1 and temperature in degrees  Kel-
+     vin.
+
+          _c_s_t_a_r
+             is the constant that is linearly proportional to the
+             star formation rate.
+
+          _d_t_i_m_e
+             is the time between calls to the star formation rou-
+             tine.
+
+          _t_e_m_p_p_a_r
+             is the constant that decides how cool the gas can be
+             before the cooling time is ignored.
+
+          _s_o_f_t_p_a_r
+             is the constant that decides when  the  Jean's  cri-
+             teria can be ignored.
+
+
+SEE ALSO
+     coolconstants(1),   gravsoft(1),   gravsoftgas(1),   lumcon-
+     stants(1), redshift(1), viewgas(1), viscconstants(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

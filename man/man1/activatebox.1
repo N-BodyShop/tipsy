@@ -1,0 +1,26 @@
+.TH ACTIVATEBOX  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+activatebox \- change the box that is being used
+.SH SYNOPSIS
+.B activatebox
+.I box-number
+.SH ALIASES
+.B abox
+.SH DESCRIPTION
+.B activatebox
+changes the box that is currently active to
+.I box-number.
+The requested active box
+.I box-number
+must have already been loaded using either the
+.B makebox
+or the
+.B setbox
+or the
+.B setsphere
+commands. All additional plotting is done with
+the new active box. Initially the active box is box 0.
+.SH SEE ALSO
+.BR makebox (1),
+.BR setbox (1),
+.BR setsphere (1)

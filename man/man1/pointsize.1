@@ -1,0 +1,58 @@
+.TH POINTSIZE  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+pointsize \- set the pointsize for plotted particles
+.SH SYNOPSIS
+.B pointsize
+.I particle
+.I size
+.SH ALIASES
+.B psize
+.SH DESCRIPTION
+.B pointsize
+is a command that sets the size, in pixels, of particles of type 
+.I particle
+to 
+.I size
+when they are plotted.
+If 
+.I size
+is less than 1.0 they are just plotted one pixel in size.
+The default is a 
+.I size 
+of 0.  The particle size is not changed until the plot is redrawn using a
+command like
+.B plot.
+.SH OPTIONS
+.SS Particle
+.LP
+The possible choices for
+.I particle
+are:
+.RS
+.TP 3
+.B dark
+Set the size of plotted dark matter particles to
+.I size
+pixels
+.TP 3
+.B gas
+Set the size of plotted gas particles to
+.I size
+pixels
+.TP 3
+.B star
+Set the size of plotted star particles to
+.I size
+pixels
+.TP 3
+.B mark
+Set the size of marked particles to
+.I size
+pixels
+.RE
+.SH SEE ALSO
+.BR axesscale (1),
+.BR plot (1),
+.BR showvec (1),
+.BR showvel (1),
+.BR velscale (1)

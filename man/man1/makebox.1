@@ -1,0 +1,73 @@
+.TH MAKEBOX  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+makebox \- make and load a box interactively
+.SH SYNOPSIS
+.B makebox
+.I box-number
+.SH ALIASES
+.B mbox
+.SH DESCRIPTION
+.B makebox
+is used to define the boundaries of box
+.I box-number
+interactively and then load that box. The requested box must be
+between 1 and 
+.I MAXBOX
+or an error will be generated.  The value of 
+.I MAXBOX 
+can be found by using the
+.B version
+command.  If the currently plotted box is not the currently active box, 
+or if the internal state has been altered since the last plot an error is
+generated.  
+
+Once the command is executed
+a pointer will appear on the view surface.    Click the left mouse button while
+holding down the shift key at the desired location of the lower left hand
+corner of box
+.I box-number.
+This fixes the lower left hand corner of the box.  As the pointer is moved
+using the mouse, the outline of the box is plotted in green.
+Once the pointer is at the desired location of the upper right hand corner
+of the box, again click the left mouse button while holding down the shift key.
+The image is then rotated down 90 degrees and redisplayed so that the other
+two edges of the box can be defined.
+The green line shows the projected edge of the box that was just previously
+defined.  Press the left mouse button while holding down the shift key
+at the desired bottom edge and press it again while holding down the shift key
+at the desired top edge.
+
+Remember, during the whole operation
+of the
+.B makebox
+command, the mouse keys perform their normal functions: zoom, unzoom, and pan.
+These can be used to aid the construction of the box.  Only if the shift key
+is held down while pressing the left mouse button will the
+.B makebox
+command record the position.  If the shift key isn't held down the
+image will just be zoomed as per usual.
+Once a box is made and loaded it still isn't the active box for plotting
+until the
+.B activatebox
+command is used.
+Boxes are removed using the
+.B unload
+command.
+
+Boxes can also be made and loaded using the
+.B setbox
+and
+.B setsphere
+commands.  Box 0 can also be made and loaded using the
+.B loadall
+command.  Boxes can be plotted using the
+.B showboxes
+command.
+.SH SEE ALSO
+.BR activatebox (1),
+.BR loadall (1),
+.BR setbox (1),
+.BR setsphere (1),
+.BR showboxes (1),
+.BR unload (1),
+.BR version (1)

@@ -1,0 +1,64 @@
+.TH ARRAYSTAT  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+arraystat \- print statistics about the array values
+.SH SYNOPSIS
+.B arraystat
+.I box-number
+.I particle
+.SH DESCRIPTION
+.B arraystat
+calculates the mean, median, and upper quartile of the loaded array values
+for the particles of type
+.I particle
+in box
+.I box-number.
+An array is loaded using the
+.B readarray
+command.  Boxes can be created and loaded using the
+.B makebox,
+.B setbox,
+or
+.B setsphere
+commands.  If no array is loaded or if the box
+.I box-number
+is not loaded an error is generated.
+.SH OPTIONS
+.SS Particle
+.LP
+The possible choices for
+.I particle
+are:
+.RS
+.TP 3
+.B all
+Use the array values of all the particles in box
+.I box-number
+when calculating the statistics.
+.TP 3
+.B baryon
+Use the array values of only the star and gas particles in box
+.I box-number
+when calculating the statistics.
+.TP 3
+.B dark
+Use the array values of only the dark matter particles in box
+.I box-number
+when calculating the statistics.
+.TP 3
+.B gas
+Use the array values of only the gas particles in box
+.I box-number
+when calculating the statistics.
+.TP 3
+.B star
+Use the array values of only the star particles in box
+.I box-number
+when calculating the statistics.
+.RE
+.SH SEE ALSO
+.BR boxstat (1),
+.BR makebox (1),
+.BR readarray (1),
+.BR setbox (1),
+.BR setsphere (1),
+.BR viewarray (1)

@@ -1,0 +1,93 @@
+.TH FRAMEPOINTS  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+framepoints \- write x, y, and z projections to files
+.SH SYNOPSIS
+.B framepoints
+.I box-number
+.I particle
+.I filename-root
+.SH ALIASES
+.B frp
+.SH DESCRIPTION
+.B framepoints
+writes files that include the 
+.I x,
+.I y,
+and
+.I z 
+projections for all particles of type
+.I particle
+in box
+.I box-number.
+This could be useful when making point plots for publication using a plotting
+package like 
+.B mongo.
+Each particle type and each projection is written into a separate file.
+The filename is the root
+.I filename-root
+with either 
+.I dark,
+.I gas,
+or
+.I star
+appended to signify the particle type and then with either
+.I x,
+.I y,
+or
+.I z 
+appended to signify the projection.  For example, the file
+.IR filename-root darkx
+would contain the positions of all the dark matter particles in box
+.I box-number
+when viewed down the 
+.IR x- axis.
+If the box
+.I box-number
+is not loaded an error is generated.
+.SH OPTIONS
+.SS Particle
+.LP
+The possible choices for
+.I particle
+are:
+.RS
+.TP 3
+.B all
+Write files that include the dark, gas, and star particles in box
+.I box-number.
+This produces nine files in all.
+.TP 3
+.B dark
+Write files that only include the dark particles in box
+.I box-number.
+This produces three files in all.
+.TP 3
+.B darkandgas
+Write files that include the dark and gas particles in box
+.I box-number.
+This produces six files in all.
+.TP 3
+.B darkandstar
+Write files that include the dark and star particles in box
+.I box-number.
+This produces six files in all.
+.TP 3
+.B gas
+Write files that only include the gas particles in box
+.I box-number.
+This produces three files in all.
+.TP 3
+.B gasandstar
+Write files that include the gas and star particles in box
+.I box-number.
+This produces six files in all.
+.TP 3
+.B star
+Write files that only include the star particles in box
+.I box-number.
+This produces three files in all.
+.RE
+.SH SEE ALSO
+.BR hard (1),
+.BR xypoints (1),
+.BR xyzpoints (1)

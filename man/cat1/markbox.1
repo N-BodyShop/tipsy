@@ -1,0 +1,66 @@
+
+
+
+MARKBOX(1)               TIPSY COMMANDS                MARKBOX(1)
+
+
+
+NAME
+     markbox - mark the particles in a box
+
+SYNOPSIS
+     markbox _b_o_x-_n_u_m_b_e_r
+
+ALIASES
+     mrbox
+
+DESCRIPTION
+     markbox marks the particles in box _b_o_x-_n_u_m_b_e_r. Marked parti-
+     cles  appear  green in plots.  Particles in a particular box
+     can be unmarked using the  unmarkbox  command  and  all  the
+     marked  particles  can  be unmarked using the unmarkall com-
+     mand.  Particles remain marked even when a new time frame is
+     loaded  but  after  a new time frame is loaded any particles
+     that were marked in the previous  time  frame  can  only  be
+     unmarked using the unmarkall command.
+
+     Particles can also be marked using the markarray and markgal
+     commands.   Statistics  about marked particles can be deter-
+     mined using the markstat command. Marked  particles  can  be
+     written to a file using the writemark command or read from a
+     file using the readmark command.
+
+     If the box _b_o_x-_n_u_m_b_e_r is not loaded an error is generated.
+
+SEE ALSO
+     markarray(1), markgal(1), markstat(1),  readmark(1),  unmar-
+     kall(1), unmarkbox(1), writemark(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

@@ -1,0 +1,29 @@
+.TH MACRO  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+macro \- execute a tipsy macro
+.SH SYNOPSIS
+.B macro
+.I macro-name
+.SH DESCRIPTION
+.B macro
+executes a the tipsy macro
+.I macro-name.
+Macro's are a series of tipsy commands that are executed with just one
+tipsy command, the
+.B macro
+command.  Macro's can be made interactively using the
+.B makemacro 
+command or can be read in from a file using the
+.B readmacro
+command.  A macro can be deleted using the
+.B deletemacro
+command.  Macro's can be written to a file using the
+.B writemacro
+command.  If no macro with the name
+.I macro-name
+exists an error is generated.
+.SH SEE ALSO
+.BR deletemacro (1),
+.BR makemacro (1),
+.BR readmacro (1),
+.BR writemacro (1)

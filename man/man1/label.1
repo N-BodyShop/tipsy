@@ -1,0 +1,24 @@
+.TH LABEL  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+label \- place a label in the upper-left corner
+.SH SYNOPSIS
+.B label
+.I text
+.SH DESCRIPTION
+.B label
+places the label 
+.I text
+in the upper-left corner of the plot window.
+This is useful when making hardcopies using the
+.B hard
+command.
+.SH SEE ALSO
+.BR colorbarlabel (1),
+.BR hard (1)
+.SH BUGS
+Repeated use of the 
+.B label
+command does not erase the previous label.  To erase the previous label
+redraw the whole screen using the
+.B plot
+command.

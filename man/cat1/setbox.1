@@ -1,0 +1,66 @@
+
+
+
+SETBOX(1)                TIPSY COMMANDS                 SETBOX(1)
+
+
+
+NAME
+     setbox - make and load a box from the command line
+
+SYNOPSIS
+     setbox _b_o_x _x_m_i_n _x_m_a_x _y_m_i_n _y_m_a_x _z_m_i_n _z_m_a_x
+
+DESCRIPTION
+     setbox is used to define the boundaries of _b_o_x  through  the
+     command  line.  The requested box must be between 1 and _M_A_X_-
+     _B_O_X or an error will be generated.  The value of _M_A_X_B_O_X  can
+     be found by using the version command.  The box extends from
+     _x_m_i_n to _x_m_a_x in the x direction, from _y_m_i_n to _y_m_a_x in the  y
+     direction, and from _z_m_i_n to _z_m_a_x in the z direction.
+
+     Once a box is made and loaded it still isn't the active  box
+     for  plotting  until the activatebox command is used.  Boxes
+     are removed using the unload command.
+
+     Boxes with numbers greater than box 0 cannot be  made  until
+     box  0  is  loaded.  Boxes can also be made and loaded using
+     the makebox and setsphere commands.  Box 0 can also be  made
+     and  loaded  using the loadall command. Boxes can be plotted
+     using the showboxes command.
+
+SEE ALSO
+     activatebox(1),   loadall(1),   makebox(1),    setsphere(1),
+     showboxes(1), unload(1), version(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

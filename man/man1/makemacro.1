@@ -1,0 +1,34 @@
+.TH MAKEMACRO  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+makemacro \- make a macro interactively
+.SH SYNOPSIS
+.B makemacro
+.I macro-name
+.SH ALIASES
+.B mmac
+.SH DESCRIPTION
+.B makemacro
+allows one to interactively define a macro with the name
+.I macro-name.
+Once the command is entered the user is prompted to enter a sequence of
+tipsy commands.  Each command is followed by <return>.  When the sequence
+of commands for the macro
+.I macro-name
+is completed, type "end <return>".
+
+If the macro
+.I macro-name
+already exists an error is generated.  To delete a macro use the
+.B deletemacro
+command.  To use a macro use the
+.B macro 
+command. Macro's can also be read in from a file.  To read in a file of
+macros use the
+.B readmacro
+command.  To write a macro to a file use the
+.B writemacro
+command.
+.SH SEE ALSO
+.BR deletemacro (1)
+.BR macro (1)
+.BR writemacro (1)

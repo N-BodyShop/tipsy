@@ -1,0 +1,31 @@
+.TH PLOT  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+plot \- plot using current projection and zoom
+.SH SYNOPSIS
+.B plot
+.SH DESCRIPTION
+.B plot
+is a command that redraws the plot using the current projection and zoom
+and takes no arguments.  It is a convenient way to erase labels or redraw
+after the pointsize is changed using the
+.B pointsize
+command.
+The command only works to redraw a plot that was already made with either the
+.B viewall,
+.B viewarray,
+.B viewgas,
+.B viewmag,
+.B viewpot,
+.B viewrad,
+or
+.B viewstar
+commands.
+.SH SEE ALSO
+.BR pointsize (1),
+.BR viewall (1),
+.BR viewarray (1),
+.BR viewgas (1),
+.BR viewmag (1),
+.BR viewpot (1),
+.BR viewrad (1),
+.BR viewstar (1)

@@ -1,0 +1,53 @@
+.TH BOXSTAT  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+boxstat \- print the physical parameters of a box
+.SH SYNOPSIS
+.B boxstat
+.I box-number
+.I particle
+.SH DESCRIPTION
+.B boxstat
+prints physical parameters of the specified box,
+.I box-number.
+These parameters are for particles within the
+box of type 
+.I particle.
+Parameters that are listed are: the mass, the density, the volume of the box,
+the size of the box, the center of mass coordinates,
+the center of mass velocity,
+and the angular momentum per unit mass in the center of mass frame.
+If the box is not loaded an error is generated.
+.SH OPTIONS
+.SS Particle
+.LP
+The possible choices for
+.I particle
+are:
+.RS
+.TP 3
+.B all
+Show the physical parameters of all the particles in box
+.I box-number
+.TP 3
+.B star
+Show the physical parameters of only the star and gas particles in box
+.I box-number
+.TP 3
+.B dark
+Show the physical parameters of only the dark matter particles in box
+.I box-number
+.TP 3
+.B gas
+Show the physical parameters of only the gas particles in box
+.I box-number
+.TP 3
+.B star
+Show the physical parameters of only the star particles in box
+.I box-number
+.RE
+.SH SEE ALSO
+.BR loadall (1),
+.BR makebox (1),
+.BR markstat (1),
+.BR setbox (1),
+.BR setsphere (1)

@@ -1,0 +1,132 @@
+
+
+
+ROTATIONCURVE(1)         TIPSY COMMANDS          ROTATIONCURVE(1)
+
+
+
+NAME
+     rotationcurve - calculate  the  circular  velocity  rotation
+     curve
+
+SYNOPSIS
+     rotationcurve  _b_o_x-_n_u_m_b_e_r  _c_e_n_t_e_r-_b_o_x-_n_u_m_b_e_r  _b_i_n_n_i_n_g   _b_i_n-
+     _n_u_m_b_e_r _f_i_l_e_n_a_m_e _m_i_n_i_m_u_m__r_a_d_i_u_s _m_a_x_i_m_u_m__r_a_d_i_u_s
+
+ALIASES
+     rotcur
+
+DESCRIPTION
+     rotationcurve is a command that  produces  a  file  of  name
+     _f_i_l_e_n_a_m_e  that  contains the circular velocity as a function
+     of radius gravitationally induced by the  particles  in  box
+     _b_o_x-_n_u_m_b_e_r.
+
+     The center of rotation is taken to be the center of mass  of
+     the particles in box _c_e_n_t_e_r-_b_o_x-_n_u_m_b_e_r. The _b_i_n_n_i_n_g argument
+     refers to the distribution of the bins  where  the  circular
+     velocity  is  evaluated,  either  linearly or log in radius.
+     There are _b_i_n-_n_u_m_b_e_r  bins  equally  distributed  in  either
+     radius    or   log   radius   between   _m_i_n_i_m_u_m__r_a_d_i_u_s   and
+     _m_a_x_i_m_u_m__r_a_d_i_u_s.
+
+     The output file has the following four columns: the  radius,
+     the  total  circular velocity, the circular velocity if only
+     the dark matter were included, and the circular velocity  if
+     only the baryonic matter (stars and gas) were included.  The
+     circular velocity is calculated in a plane perpendicular  to
+     the  angular  momentum axis of the gas particles in box _b_o_x-
+     _n_u_m_b_e_r. The calculated velocity is the average of four  per-
+     pendicular directions in this plane.
+
+     If the boxes _b_o_x-_n_u_m_b_e_r or _c_e_n_t_e_r-_b_o_x-_n_u_m_b_e_r are not  loaded
+     an error is generated.  Boxes can be loaded using either the
+     _m_a_k_e_b_o_x, _s_e_t_b_o_x, or _s_e_t_s_p_h_e_r_e commands.
+
+OPTIONS
+  Binning
+     The possible choices for _b_i_n_n_i_n_g are:
+
+          lin
+             Make  _b_i_n-_n_u_m_b_e_r  bins  spaced  equally  in   radius
+             between _m_i_n_i_m_u_m-_r_a_d_i_u_s and _m_a_x_i_m_u_m__r_a_d_i_u_s
+
+          log
+             Make _b_i_n-_n_u_m_b_e_r bins spaced equally  in  log  radius
+             between _m_i_n_i_m_u_m-_r_a_d_i_u_s and _m_a_x_i_m_u_m__r_a_d_i_u_s
+
+SEE ALSO
+     makebox(1), moments(1), profile(1), setbox(1), setsphere(1)
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+
+
+
+
+ROTATIONCURVE(1)         TIPSY COMMANDS          ROTATIONCURVE(1)
+
+
+
+BUGS
+     This command assumes  the  existence  of  gas  particles  to
+     determine  the  plane  in which the rotation curve is calcu-
+     lated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   2
+
+
+

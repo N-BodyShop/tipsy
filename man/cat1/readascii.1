@@ -1,0 +1,132 @@
+
+
+
+READASCII(1)             TIPSY COMMANDS              READASCII(1)
+
+
+
+NAME
+     readascii - read an ascii file
+
+SYNOPSIS
+     readascii _f_i_l_e_n_a_m_e
+
+DESCRIPTION
+     readascii is a command to read in the currently  open  ascii
+     file and write it out in binary form into file _f_i_l_e_n_a_m_e. The
+     ascii2binary program also converts TIPSY ascii  format  into
+     TIPSY  binary  format.  The oldreadascii command is used for
+     ascii files with the old format.
+
+     If no ascii file is open or if a binary file is already open
+     an  error  is  generated.   Ascii files are opened using the
+     openascii command.  After the binary  file  is  written  the
+     ascii file is closed and the binary file _f_i_l_e_n_a_m_e is opened.
+     Binary files can be opened or closed  using  the  openbinary
+     and closebinary commands.
+
+     The ascii file should be of the TIPSY ascii form  and  typi-
+     cally  contains  all  the  time  frames in sequential order.
+     Each time frame should be of the form:
+
+          ntotal, ngas, nstar
+
+          ndimensions
+
+          time
+
+          mass(i), i = 1 to ntotal
+
+          x_position(i), i = 1 to ntotal
+
+          y_position(i), i = 1 to ntotal
+
+          z_position(i), i = 1 to ntotal
+
+          x_velocity(i), i = 1 to ntotal
+
+          y_velocity(i), i = 1 to ntotal
+
+          z_velocity(i), i = 1 to ntotal
+
+          grav_softening_length_dark_particles(i), i = 1 to ndark
+
+          grav_softening_length_star_particles(i), i = 1 to nstar
+
+          density(i), i = 1 to ngas
+
+          temperature(i), i = 1 to ngas
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+
+
+
+
+READASCII(1)             TIPSY COMMANDS              READASCII(1)
+
+
+
+          sph_smoothing_length(i), i = 1 to ngas,
+
+          metals_gas(i), i = 1 to ngas,
+
+          metals_star(i), i = 1 to nstar,
+
+          formation_time(i), i = 1 to nstar,
+
+          potential_energy(i), i = 1 to ntotal,
+
+     where ntotal is the total number of particles, ngas  is  the
+     number  of gas particles, ndark is the number of dark matter
+     particles, and nstar is the number of star  particles.   The
+     first  ngas  particles  should  be the gas particles and the
+     last nstar particles should be the star particles  with  the
+     dark  particles  being  in the middle.  Therefore, each time
+     frame should contain 9*ntotal+3*ngas+2nstar +3 lines.
+
+     After the binary file is made a specific time must still  be
+     loaded using the loadbinary command.
+
+SEE ALSO
+     closeascii(1),   closebinary(1),   loadbinary(1),   oldread-
+     ascii(1), openbinary(1), openascii(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   2
+
+
+

@@ -1,0 +1,35 @@
+.TH PCENTER  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+pcenter \- recenter a periodic box
+.SH SYNOPSIS
+.B pcenter
+.I box-number
+.I center_x
+.I center_y
+.I center_z
+.I period_x
+.I period_y
+.I period_z
+.SH DESCRIPTION
+.B pcenter
+recenters the box
+.I box-number
+at
+.I (center_x, center_y, center_z)
+assuming periodic boundaries
+with a periodic length in the x direction of
+.I x_period,
+a periodic length in the y direction of
+.I y_period,
+and a periodic length in the z direction of
+.I z_period.
+NOTE: this command permanently changes the positions of all
+the particles in box
+.I box-number.
+If the box
+.I box-number
+is not loaded an error is generated.
+.SH SEE ALSO
+.BR drift (1),
+.BR hubble (1),
+.BR vcenter (1)

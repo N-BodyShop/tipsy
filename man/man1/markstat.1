@@ -1,0 +1,78 @@
+.TH MARKSTAT  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+markstat \- print physical parameters of marked particles
+.SH SYNOPSIS
+.B markstat
+.I box
+.I particle
+.SH ALIASES
+.B mstat
+.SH DESCRIPTION
+.B markstat
+prints physical parameters of the marked particles in box
+.I box-number
+for the marked particles of type 
+.I particle.
+Parameters that are listed are: the mass, the density, the volume of the box,
+the size of the box, the center of mass coordinates, 
+the center of mass velocity,
+and the angular momentum per unit mass in the center of mass frame.
+This is similar to the
+.B boxstat
+command but only for the marked particles.
+
+Particles can be marked using the
+.B markarray,
+.B markbox,
+.B markgal,
+and
+.B readmark
+commands. Marked particles can be written to a file using the
+.B writemark
+command.
+
+Particles in a particular box can be unmarked using the
+.B unmarkbox
+command and all the marked particles can be unmarked using the
+.B unmarkall
+command.  Particles remain marked even when a new time frame is loaded but
+after a new time frame is loaded any particles that were marked in the
+previous time frame can only be unmarked using the
+.B unmarkall
+command.
+
+If no particles are marked or if box
+.I box-number
+is not loaded an error is generated.
+.SH OPTIONS
+.SS Particle
+.LP
+The possible choices for
+.I particle
+are:
+.RS
+.TP 3
+.B all
+Show the physical parameters of all the marked particles.
+.TP 3
+.B baryon
+Show the physical parameters of only the marked gas and star particles.
+.TP 3
+.B dark
+Show the physical parameters of only the marked dark matter particles.
+.TP 3
+.B gas
+Show the physical parameters of only the marked gas particles.
+.TP 3
+.B star
+Show the physical parameters of only the marked star particles.
+.RE
+.SH SEE ALSO
+.BR boxstat (1),
+.BR markarray (1),
+.BR markbox (1),
+.BR markgal (1),
+.BR readmark (1),
+.BR unmarkall (1),
+.BR unmarkbox (1),
+.BR writemark (1)

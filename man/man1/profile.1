@@ -1,0 +1,188 @@
+.TH PROFILE  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+profile \- write physical profiles as a funtion of radius
+.SH SYNOPSIS
+.B profile
+.I box-number
+.I center-box-number
+.I particle
+.I projection
+.I binning
+.I bin-number
+.I filename
+.I minimum_radius
+.SH DESCRIPTION
+.B profile
+is a command that produces a file of name,
+.I filename,
+that contains various physical profiles as a function of radius for particles
+of type
+.I particle
+in box, 
+.I box-number.
+If the box
+.I box-number
+or
+.I center-box-number
+are not loaded an error is generated.
+Boxes can be loaded using either the
+.B makebox,
+.B setbox,
+or
+.B setsphere
+commands.
+
+The center of the radial distribution is taken to be the center of mass of
+the particles of the type
+.I particle
+in box
+.I center-box-number.
+If the string "pot" is given instead of a box number for the argument
+.I center-box-number
+the particle in box
+.I box 
+with the lowest potential energy is used as the center of the radial bins.
+
+The
+.I projection
+argument refers to the shape of the bins and the 
+.I binning
+argument refers to how the particles are binned, either linearly 
+or log in radius.  There are
+.I bin-number
+bins distributed equally in either radius or log radius between
+.I minimum_radius
+and the size of box
+.I box-number.
+
+The output file has the following columns: radius, number in bin, density,
+cumulative mass (M(<r)), circular velocity (sqrt(M(<r)/r)), radial velocity,
+radial velocity dispersion, tangential velocity, tangential velocity
+dispersion, specific angular momentum (j),j_theta,
+j_phi.  The j_theta and j_phi angles specify the direction of the specific
+angular momentum vector.
+If
+.I particle 
+is either 
+.I gas, baryon,
+or 
+.I all
+three additional columns containing the mean mass weighted gas density, 
+mass weighted gas temperature, and mass weighted gas pressure are added.
+If
+.I particle 
+is either 
+.I star, baryon
+or 
+.I all
+an additional column containing the stellar luminosity in the Johnson
+.I V band
+is added.  This is calculated using the ages of the star particles as in
+Katz (Ap.J. 391: 502, 1992).
+.SH OPTIONS
+.SS Particle
+.LP
+The possible choices for
+.I particle
+are:
+.RS
+.TP 3
+.B all
+Use the all the particles in box
+.I box-number.
+Adds columns containing the mean mass weighted gas density,
+mass weighted gas temperature, and mass weighted gas pressure.
+.TP 3
+.B baryon
+Use the gas and star particles in box
+.I box-number.
+Adds columns containing the mean mass weighted gas density,
+mass weighted gas temperature, and mass weighted gas pressure,
+and stellar luminosity.
+.TP 3
+.B dark
+Use only the dark matter particles in box
+.I box-number
+.TP 3
+.B gas
+Use only the gas particles in box
+.I box-number.
+Adds columns containing the mean mass weighted gas density,
+mass weighted gas temperature, and mass weighted gas pressure.
+.TP 3
+.B star
+Use only the star particles in box
+.I box-number.
+Adds a column containing the stellar luminosity.
+.RE
+.SS Projection
+.LP
+The possible choices for
+.I projection
+are:
+.RS
+.TP 3
+.B sphere
+Make spherical bins centered on the center of mass of the particles of type
+.I particle
+in box
+.I center-box-number.
+The option can be abbreviated
+.B sph.
+.TP 3
+.B cylinder
+Make cylindrical bins centered on the center of mass of the particles of type
+.I particle
+in box
+.I center-box-number.
+The radii of the cylinders are oriented
+perpendicular to the angular momentum axis of
+the particles of type
+.I particle
+in box
+.I box-number.
+The option can be abbreviated
+.B cyl.
+.TP 3
+.B ellipse
+Make similar elliptical bins centered on the center of mass of the particles
+of type
+.I particle
+in box
+.I center-box-number.
+When this option is used you will be prompted for the radius where the shape
+and orientation of the ellipses will be determined.  This is determined as in
+the
+.B moments
+command.  The option can be abbreviated
+.B ell.
+.RE
+.SS Binning
+.LP
+The possible choices for
+.I binning
+are:
+.RS
+.TP 3
+.B lin
+Make 
+.I bin-number
+bins spaced equally in radius between
+.I minimum-radius
+and the size of box
+.I box-number
+.TP 3
+.B log
+Make 
+.I bin-number
+bins spaced equally in log radius between
+.I minimum-radius
+and the size of box
+.I box-number
+.RE
+.SH SEE ALSO
+.BR makebox (1),
+.BR moments (1),
+.BR rotationcurve (1),
+.BR setbox (1),
+.BR setsphere (1)

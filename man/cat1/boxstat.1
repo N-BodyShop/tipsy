@@ -1,0 +1,66 @@
+
+
+
+BOXSTAT(1)               TIPSY COMMANDS                BOXSTAT(1)
+
+
+
+NAME
+     boxstat - print the physical parameters of a box
+
+SYNOPSIS
+     boxstat _b_o_x-_n_u_m_b_e_r _p_a_r_t_i_c_l_e
+
+DESCRIPTION
+     boxstat prints physical parameters  of  the  specified  box,
+     _b_o_x-_n_u_m_b_e_r.  These  parameters  are for particles within the
+     box of type _p_a_r_t_i_c_l_e. Parameters that are  listed  are:  the
+     mass,  the  density,  the volume of the box, the size of the
+     box, the center of mass  coordinates,  the  center  of  mass
+     velocity,  and  the  angular  momentum  per unit mass in the
+     center of mass frame.  If the box is not loaded an error  is
+     generated.
+
+OPTIONS
+  Particle
+     The possible choices for _p_a_r_t_i_c_l_e are:
+
+          all
+             Show the physical parameters of all the particles in
+             box _b_o_x-_n_u_m_b_e_r
+
+          star
+             Show the physical parameters of only  the  star  and
+             gas particles in box _b_o_x-_n_u_m_b_e_r
+
+          dark
+             Show the physical parameters of only the dark matter
+             particles in box _b_o_x-_n_u_m_b_e_r
+
+          gas
+             Show the physical parameters of only the gas  parti-
+             cles in box _b_o_x-_n_u_m_b_e_r
+
+          star
+             Show the physical parameters of only the star parti-
+             cles in box _b_o_x-_n_u_m_b_e_r
+
+SEE ALSO
+     loadall(1), makebox(1), markstat(1), setbox(1), setsphere(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+

@@ -1,0 +1,96 @@
+.TH OLDREADASCII  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+oldreadascii \- read an old format ascii file
+.SH SYNOPSIS
+.B oldreadascii
+.I filename
+.I type
+.SH DESCRIPTION
+.B oldreadascii
+is a command to read in the currently open ascii file if it is in the old
+ascii format and write it out in binary form into file 
+.I filename.
+This command only exists to preserve backwards compatibility.
+The 
+.B readascii 
+command is used for ascii files with the usual format.
+If no ascii file is open or if a binary file is already open an error is
+generated.  Ascii files are opened using the
+.B openascii
+command
+and binary files are closed using the
+.B closebinary
+command.  After the binary file is written the ascii file is closed
+and the binary file
+.I file-name
+is opened. 
+After the binary file is made a specific time must still be loaded using
+the 
+.B loadbinary
+command before any plotting can be done.
+
+The ascii file should be of the old ascii form and contain all
+the time frames in sequential order.  If
+.I type
+is
+.B sph
+each time frame should be of the form:
+.LP
+.RS
+.TP 3
+ntotal, ndimensions, time, ngas, nstar
+.TP 3
+mass(i), i = 1 to ntotal
+.TP 3
+x_position(i), i = 1 to ntotal
+.TP 3
+y_position(i), i = 1 to ntotal
+.TP 3
+z_position(i), i = 1 to ntotal
+.TP 3
+x_velocity(i), i = 1 to ntotal
+.TP 3
+y_velocity(i), i = 1 to ntotal
+.TP 3
+z_velocity(i), i = 1 to ntotal
+.TP 3
+density(i), i = 1 to ngas
+.TP 3
+temperature(i), i = 1 to ngas
+.TP 3
+sph_smoothing_length(i), i = 1 to ngas,
+.RE
+where ntotal is the total number of particles, ngas is the number of
+gas particles, and nstar is the number of star particles.  The first
+ngas particles should be the gas particles and the last nstar
+particles should be the star particles with the dark particles being
+in the middle.  If
+.I type
+is
+.B nosph
+each time frame should be of the form:
+.LP
+.RS
+.TP 3
+ntotal, ndimensions, time
+.TP 3
+mass(i), i = 1 to ntotal
+.TP 3
+x_position(i), i = 1 to ntotal
+.TP 3
+y_position(i), i = 1 to ntotal
+.TP 3
+z_position(i), i = 1 to ntotal
+.TP 3
+x_velocity(i), i = 1 to ntotal
+.TP 3
+y_velocity(i), i = 1 to ntotal
+.TP 3
+z_velocity(i), i = 1 to ntotal.
+.RE
+.SH SEE ALSO
+.BR closeascii (1),
+.BR closebinary (1),
+.BR loadbinary (1),
+.BR openascii (1),
+.BR readascii (1)

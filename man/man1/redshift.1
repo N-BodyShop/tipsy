@@ -1,0 +1,43 @@
+.TH REDSHIFT  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+redshift \- set the redshift and coordinate system
+.SH SYNOPSIS
+.B redshift
+.I z
+.I coordinates
+.I hubble-constant
+.I omega
+.I boundary
+.I period
+.SH DESCRIPTION
+.B redshift
+sets the value of the redshift to
+.I z
+for use in commands such as 
+.B vista.
+.I coordinates
+tells TIPSY if the simulation used comoving or physical coordinates.
+If 
+.I coordinates
+is "physical" or "p" this means physical coordinates were used and if 
+.I coordinates
+is "comoving" or "c" this means comoving coodinates were used.
+.I hubble-constant
+is the value of the hubble constant in km/sec/Mpc.
+.I boundary
+concerns the boundary conditions.  If
+.I boundary
+is "vacuum" or "v" vacuum boundary conditions are used and
+.I period
+is ingored. If
+.I boundary
+is "periodic" or "p" then periodic boundary conditions are used with a period
+.I period.
+.SH SEE ALSO
+.BR coolconstants (1),
+.BR formconstants (1),
+.BR gravsoft (1),
+.BR gravsoftgas (1),
+.BR lumconstants (1),
+.BR viscconstants (1),
+.BR vista (1)

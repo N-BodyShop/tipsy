@@ -1,0 +1,52 @@
+.TH MARKMASS  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+markmass \- mark particles according to their mass
+.SH SYNOPSIS
+.B markmass
+.I box-number
+.I minimum
+.I maximum
+.SH DESCRIPTION
+.B markmass
+marks all the particles in box
+.I box-number
+that have masses between
+.I minimum
+and
+.I maximum,
+inclusive.  
+If box
+.I box-number
+is not loaded an error is generated.
+
+To unmark particles use either the
+.B unmarkall
+or
+.B unmarkbox
+commands.
+Remember, marked particles are always plotted in green.
+Particles remain marked even when a new time frame is loaded but
+after a new time frame is loaded  any particles that were marked in the
+previous time frame can only be unmarked using the
+.B unmarkall
+command.
+Marked particles can be written to a file using the
+.B writemark
+command or read from a file using the 
+.B readmark
+command. Particles can also be marked using the
+.B markarray, markbox
+and
+.B markgal
+commands.
+Statistics about marked particles can be determined using the
+.B markstat command.
+.SH SEE ALSO
+.BR markbox (1),
+.BR markarray (1),
+.BR markgal (1),
+.BR markstat (1),
+.BR readarray (1),
+.BR unmarkall (1),
+.BR unmarkbox (1),
+.BR writemark (1)

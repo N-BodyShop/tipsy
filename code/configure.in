@@ -1,0 +1,64 @@
+AC_INIT(version.c)
+echo Configuring readline library
+if test "x$srcdir" != "x."; then
+    mkdir readline
+    if echo "$srcdir" | grep '^/' > /dev/null; then
+	read_srcdir=${srcdir}/readline
+        (cd readline; ${read_srcdir}/configure ${configure_args} --srcdir=${read_srcdir})
+    else
+	read_srcdir=../${srcdir}/readline
+    	(cd readline; ${read_srcdir}/configure ${configure_args} --srcdir=${read_srcdir})
+    fi
+else
+    (cd readline; ./configure ${configure_args})
+fi
+PROGS="tipsy"
+AC_PROG_CC
+
+AC_ISC_POSIX
+AC_PROG_INSTALL
+AC_PROG_RANLIB
+AC_ALLOCA
+AC_FIND_XTRA
+
+# Find any funky flags that X needs.
+if test "x$with_x" != xno; then
+test -n "$silent" || echo "checking for CFLAGS need by X with xmkmf"
+rm -fr conftestdir
+if mkdir conftestdir; then
+  cd conftestdir
+  # Make sure to not put "make" in the Imakefile rules, since we grep it out.
+  cat > Imakefile <<'EOF'
+acfindx:
+	@echo 'ac_im_xdefines="${ALLDEFINES}" ac_im_xldflags="${EXTRA_LOAD_FLAGS}" ac_im_xextralibs="${EXTRA_LIBRARIES}";'
+EOF
+  if (xmkmf) >/dev/null 2>/dev/null && test -f Makefile; then
+    no_x=
+    # GNU make sometimes prints "make[1]: Entering...", which would confuse us.
+    eval `make acfindx 2>/dev/null | grep -v make`
+    # Open Windows xmkmf reportedly sets LIBDIR instead of USRLIBDIR.
+  fi
+  cd ..
+  rm -fr conftestdir
+fi
+if test -n "$ac_im_xdefines"; then
+  X_CFLAGS="$X_CFLAGS $ac_im_xdefines"
+fi
+if test -n "$ac_im_xldflags"; then
+  X_LDFLAGS="$X_LDFLAGS $ac_im_xldflags"
+fi
+if test -n "$ac_im_xextralibs"; then
+  X_EXTRA_LIBS="$X_EXTRA_LIBS $ac_im_xextralibs"
+fi
+fi
+
+AC_IRIX_SUN
+
+AC_HAVE_LIBRARY(termlib, [LIBS="$LIBS -ltermlib"])
+AC_HAVE_LIBRARY(termcap, [LIBS="$LIBS -ltermcap"])
+
+AC_SUBST(CFLAGS)dnl
+AC_SUBST(LDFLAGS)dnl
+AC_SUBST(X_LDFLAGS)dnl
+
+AC_OUTPUT(Makefile)

@@ -1,0 +1,88 @@
+.TH ROTATIONCURVE  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.SH NAME
+rotationcurve \- calculate the circular velocity rotation curve
+.SH SYNOPSIS
+.B rotationcurve
+.I box-number
+.I center-box-number
+.I binning
+.I bin-number
+.I filename
+.I minimum_radius
+.I maximum_radius
+.SH ALIASES
+.B rotcur
+.SH DESCRIPTION
+.B rotationcurve
+is a command that produces a file of name
+.I filename
+that contains the circular velocity as a function of radius
+gravitationally induced by the particles in box 
+.I box-number.
+
+The center of rotation is taken to be the center of mass of
+the particles in box
+.I center-box-number.
+The
+.I binning
+argument refers to the distribution of the bins where the circular velocity
+is evaluated, either linearly or log in radius.  There are
+.I bin-number
+bins equally distributed in either radius or log radius between
+.I minimum_radius
+and
+.I maximum_radius.
+
+The output file has the following four columns: the radius, the total circular
+velocity, the circular velocity if only the dark matter were included, and the
+circular velocity if only the baryonic matter (stars and gas) were included.
+The circular velocity is calculated in a plane perpendicular to the angular
+momentum axis of the gas particles in box
+.I box-number.
+The calculated velocity is the average of four perpendicular directions in
+this plane.
+
+If the boxes
+.I box-number
+or
+.I center-box-number
+are not loaded an error is generated.
+Boxes can be loaded using either the
+.I makebox,
+.I setbox,
+or
+.I setsphere
+commands.
+.SH OPTIONS
+.SS Binning
+.LP
+The possible choices for
+.I binning
+are:
+.RS
+.TP 3
+.B lin
+Make 
+.I bin-number
+bins spaced equally in radius between
+.I minimum-radius
+and
+.I maximum_radius
+.TP 3
+.B log
+Make 
+.I bin-number
+bins spaced equally in log radius between
+.I minimum-radius
+and
+.I maximum_radius
+.RE
+.SH SEE ALSO
+.BR makebox (1),
+.BR moments (1),
+.BR profile (1),
+.BR setbox (1),
+.BR setsphere (1)
+.SH BUGS
+This command assumes the existence of gas particles to determine the plane
+in which the rotation curve is calculated.

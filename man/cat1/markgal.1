@@ -1,0 +1,66 @@
+
+
+
+MARKGAL(1)               TIPSY COMMANDS                MARKGAL(1)
+
+
+
+NAME
+     markgal - mark gas particles that are likely to be in galax-
+     ies
+
+SYNOPSIS
+     markgal _b_o_x-_n_u_m_b_e_r _m_a_x-_t_e_m_p _m_i_n-_r_h_o
+
+DESCRIPTION
+     markgal marks all the gas particles in box  _b_o_x-_n_u_m_b_e_r  that
+     have  temperatures  less  than or equal to _m_a_x-_t_e_m_p and have
+     densities greater than or equal to _m_i_n-_r_h_o. This command can
+     be used to mark those gas particles that are likely to be in
+     galaxies.  Marked particles appear green in all plots.  Par-
+     ticles in a particular box can be unmarked using the unmark-
+     box command and all the marked  particles  can  be  unmarked
+     using  the  unmarkall command.  Particles remain marked even
+     when a new time frame is loaded but after a new  time  frame
+     is  loaded  any  particles  that were marked in the previous
+     time frame can only be unmarked using the unmarkall command.
+
+     Particles can also be marked using the markarray and markbox
+     commands.   Statistics  about marked particles can be deter-
+     mined using the markstat command. Marked  particles  can  be
+     written to a file using the writemark command or read from a
+     file using the readmark command.
+
+     If the box _b_o_x-_n_u_m_b_e_r is not loaded an error is generated.
+
+SEE ALSO
+     markarray(1), markbox(1), markstat(1),  readmark(1),  unmar-
+     kall(1), unmarkbox(1), writemark(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KQ Release 2.0     Last change: 22 MARCH 1994                   1
+
+
+
