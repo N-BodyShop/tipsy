@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/02/17 21:45:13  nsk
+ * Revision 1.3  1995/02/17 21:58:49  trq
+ * Vista: changed ssprintf -> sprintf
+ *
+ * heatcool: fixed some comments.
+ *
+ * Revision 1.2  1995/02/17  21:45:13  nsk
  * changed what hneut does so that it outputs nuetral weighted hfrac and temp as
  * well.
  *
@@ -830,10 +835,10 @@ vista(job)
 			quantity[i][j] = (float)pixel ;
 		    }
 		}
-                ssprintf(name1,"%s.frac",name) ;
+                sprintf(name1,"%s.frac",name) ;
 		fits(quantity,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name1) ;
-                ssprintf(name1,"%s.temp",name) ;
+                sprintf(name1,"%s.temp",name) ;
                 low = 0.0 ;
                 high = 1.e10 ;
 		for(i = 0; i < vista_size; i++){

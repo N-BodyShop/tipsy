@@ -371,7 +371,7 @@ double calc_hneutral(temp, density)
 /* c  crate is cooling rate in units of (erg cm^3/s) */
 /* c  hrate is heating rate */
 /* c */
-/* c  alphaj is spectral index J \propto \nu^\alpha */
+/* c  alphaj is spectral index J \propto \nu^-\alpha */
 /* c */
 /* c  t  is temperature in K */
 /* c */
@@ -420,7 +420,7 @@ double calc_meanmwt(temp, density)
 /* c  crate is cooling rate in units of (erg cm^3/s) */
 /* c  hrate is heating rate */
 /* c */
-/* c  alphaj is spectral index J \propto \nu^\alpha */
+/* c  alphaj is spectral index J \propto \nu^-\alpha */
 /* c */
 /* c  t  is temperature in K */
 /* c */
