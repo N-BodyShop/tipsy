@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.14.4.2  2000/07/07 03:23:47  nsk
+ * Revision 1.14.4.3  2000/07/13 01:23:16  nsk
+ * Added "expose" command.  (maf)
+ *
+ * Revision 1.14.4.2  2000/07/07  03:23:47  nsk
  * Added variable-oriented command: set_var, delete_var, print.  (maf/cm)
  * Added xverbose command. (maf)
  * Added openmanifest, closemanifest commands.   (maf)
@@ -119,6 +122,7 @@ extern void delete_window() ;
 extern void drift();
 extern void eps_sub() ;
 extern void epsgas_sub() ;
+extern void expose_sub() ;
 extern void fconst_sub() ;
 
 extern void framepoints() ;
@@ -301,8 +305,9 @@ struct comm c_list[] = {
      {"gasify",      gasify,            0},
      {"frp",         framepoints,	0},
      {"gravsoft",    eps_sub,		0},
-
      {"gravsoftgas", epsgas_sub,	0},
+
+     {"expose",      expose_sub,	0},
      {"hard",        hard,		1},
      {"help",        help,		0},
      {"hubble",      hubble,		0},
