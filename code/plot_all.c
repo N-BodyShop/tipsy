@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1996/08/19 20:56:03  trq
+ * Revision 1.4  1999/08/27 19:01:50  trq
+ * Fix placement of psize > 0 points.
+ *
+ * Revision 1.3  1996/08/19  20:56:03  trq
  * main.c, plot_all.c: allow use of pseudocolor visuals with depth >= 8.
  * nsktrq.c: include fdefs.h.
  *
@@ -68,7 +71,7 @@ plot_all(job)
     XPoint box[BOXPTS + 8] ;
     int i,j ;
     int point_size ;
-    int twopoint_size ;
+    int draw_point_size ;
     int point_size_m ;
     int offset ;
     int tmp_color;
@@ -141,10 +144,10 @@ plot_all(job)
 		if(mark_dark[boxlist[active_box].dpi[i]]){
 		    tmp_color = particle_color[i];
 		    particle_color[i] = 255 ; /* give precedence to marks */
-		    twopoint_size = 2 * point_size_m ;
+		    draw_point_size = point_size_m ;
 		}
 		else {
-		    twopoint_size = 2 * point_size ;
+		    draw_point_size = point_size ;
 		}
 		x = can_size * ((*xi)/(double)span_x) + offset_x ;
 		y = can_size * ((*yi)/(double)span_y) + offset_y ;
@@ -157,10 +160,11 @@ plot_all(job)
 		    vy = can_size * ((*vyi)/(double)span_y) + offset_y ;
 		    XDrawLine(baseframe_dpy,back_xid,
 			      gc_color[particle_color[i]],x,y,vx,vy) ;
-		    if(twopoint_size) {
+		    if(draw_point_size) {
 		      XFillArc(baseframe_dpy,back_xid,
 			       gc_color[particle_color[i]],
-			       x,y,twopoint_size,twopoint_size,0,23040) ;
+			       x-draw_point_size,y-draw_point_size,
+			       2*draw_point_size,2*draw_point_size,0,23040) ;
 		    }
 		}
 		if(mark_dark[boxlist[active_box].dpi[i]])
@@ -173,10 +177,10 @@ plot_all(job)
 		if(mark_dark[boxlist[active_box].dpi[i]]){
 		    tmp_color = particle_color[i];
 		    particle_color[i] = 255 ;
-		    twopoint_size = 2 * point_size_m ;
+		    draw_point_size = point_size_m ;
 		}
 		else{
-		    twopoint_size = 2 * point_size ;
+		    draw_point_size = point_size ;
 		}
 		x = can_size * ((*xi)/(double)span_x) + offset_x ;
 		y = can_size * ((*yi)/(double)span_y) + offset_y ;
@@ -185,10 +189,11 @@ plot_all(job)
 		    c_array[x][y] = particle_color[i];
 		    if(particle_color[i] == 255)
 		      particle_color[i] = 1;
-		    if(twopoint_size) {
+		    if(draw_point_size) {
 		      XFillArc(baseframe_dpy,back_xid,
 			       gc_color[particle_color[i]],
-			       x,y,twopoint_size,twopoint_size,0,23040) ;
+			       x-draw_point_size,y-draw_point_size,
+			       2*draw_point_size,2*draw_point_size,0,23040) ;
 		    }
 		    else{
 		      XDrawPoint(baseframe_dpy,back_xid,
@@ -209,7 +214,6 @@ plot_all(job)
 	}
 	point_size = point_size_gas ;
 	point_size = max(point_size,0) ;
-	twopoint_size = 2 * point_size ;
 	if (showvel || showvec) {
 	    for (xi = gas_x, yi = gas_y, vxi = gasvel_x, vyi = gasvel_y,
 		    i = 0 ; i < boxlist[active_box].ngas ; xi++, yi++, vxi++,
@@ -217,10 +221,10 @@ plot_all(job)
 		if(mark_gas[boxlist[active_box].gpi[i]]){
 		    tmp_color = particle_color[i+offset];
 		    particle_color[i+offset] = 255 ;
-		    twopoint_size = 2 * point_size_m ;
+		    draw_point_size = point_size_m ;
 		}
 		else{
-		  twopoint_size = 2 * point_size ;
+		  draw_point_size = point_size ;
 		}
 		x = can_size * ((*xi)/(double)span_x) + offset_x ;
 		y = can_size * ((*yi)/(double)span_y) + offset_y ;
@@ -233,10 +237,11 @@ plot_all(job)
 		    vy = can_size * ((*vyi)/(double)span_y) + offset_y ;
 		    XDrawLine(baseframe_dpy,back_xid,
 			      gc_color[particle_color[i+offset]],x,y,vx,vy) ;
-		    if(twopoint_size) {
+		    if(draw_point_size) {
 		      XFillArc(baseframe_dpy,back_xid,
 			       gc_color[particle_color[i+offset]],
-			       x,y,twopoint_size,twopoint_size,0,23040) ;
+			       x-draw_point_size,y-draw_point_size,
+			       2*draw_point_size,2*draw_point_size,0,23040) ;
 		    }
 		}
 		if(mark_gas[boxlist[active_box].gpi[i]])
@@ -249,10 +254,10 @@ plot_all(job)
 		if(mark_gas[boxlist[active_box].gpi[i]]){
 		    tmp_color = particle_color[i+offset];
 		    particle_color[i+offset] = 255 ;
-		    twopoint_size = 2 * point_size_m ;
+		    draw_point_size = point_size_m ;
 		}
 		else{
-		  twopoint_size = 2 * point_size ;
+		  draw_point_size = point_size ;
 		}
 		x = can_size * ((*xi)/(double)span_x) + offset_x ;
 		y = can_size * ((*yi)/(double)span_y) + offset_y ;
@@ -261,10 +266,11 @@ plot_all(job)
 		    c_array[x][y] = particle_color[i+offset];
 		    if(particle_color[i+offset] == 255)
 		      particle_color[i+offset] = 1;
-		    if(twopoint_size) {
+		    if(draw_point_size) {
 		      XFillArc(baseframe_dpy,back_xid,
 			       gc_color[particle_color[i+offset]],
-			       x,y,twopoint_size,twopoint_size,0,23040) ;
+			       x-draw_point_size,y-draw_point_size,
+			       2*point_size,2*point_size,0,23040) ;
 		    }
 		    else{
 		      XDrawPoint(baseframe_dpy,back_xid,
@@ -285,7 +291,6 @@ plot_all(job)
 	}
 	point_size = point_size_star ;
 	point_size = max(point_size,0) ;
-	twopoint_size = 2 * point_size ;
 	if (showvel || showvec) {
 	    for (xi = star_x, yi = star_y, vxi = starvel_x, vyi = starvel_y,
 		    i = 0 ; i < boxlist[active_box].nstar ; xi++, yi++, vxi++,
@@ -293,10 +298,10 @@ plot_all(job)
 		if(mark_star[boxlist[active_box].spi[i]]){
 		    tmp_color = particle_color[i+offset];
 		    particle_color[i+offset] = 255 ;
-		    twopoint_size = 2 * point_size_m ;
+		    draw_point_size = point_size_m ;
 		}
 		else{
-		  twopoint_size = 2 * point_size ;
+		  draw_point_size = point_size ;
 		}
 		x = can_size * ((*xi)/(double)span_x) + offset_x ;
 		y = can_size * ((*yi)/(double)span_y) + offset_y ;
@@ -309,10 +314,11 @@ plot_all(job)
 		    vy = can_size * ((*vyi)/(double)span_y) + offset_y ;
 		    XDrawLine(baseframe_dpy,back_xid,
 			      gc_color[particle_color[i+offset]],x,y,vx,vy) ;
-		    if(twopoint_size) {
+		    if(draw_point_size) {
 		      XFillArc(baseframe_dpy,back_xid,
 			       gc_color[particle_color[i+offset]],
-			       x,y,twopoint_size,twopoint_size,0,23040) ;
+			       x-draw_point_size,y-draw_point_size,
+			       2*draw_point_size,2*draw_point_size,0,23040) ;
 		    }
 		}
 		if(mark_star[boxlist[active_box].spi[i]])
@@ -325,10 +331,10 @@ plot_all(job)
 		if(mark_star[boxlist[active_box].spi[i]]){
 		    tmp_color = particle_color[i+offset];
 		    particle_color[i+offset] = 255 ;
-		    twopoint_size = 2 * point_size_m ;
+		    draw_point_size = point_size_m ;
 		}
 		else{
-		  twopoint_size = 2 * point_size ;
+		  draw_point_size = point_size ;
 		}
 		x = can_size * ((*xi)/(double)span_x) + offset_x ;
 		y = can_size * ((*yi)/(double)span_y) + offset_y ;
@@ -337,10 +343,11 @@ plot_all(job)
 		    c_array[x][y] = particle_color[i+offset];
 		    if(particle_color[i+offset] == 255)
 		      particle_color[i+offset] = 1;
-		    if(twopoint_size) {
+		    if(draw_point_size) {
 		      XFillArc(baseframe_dpy,back_xid,
 			       gc_color[particle_color[i+offset]],
-			       x,y,twopoint_size,twopoint_size,0,23040) ;
+			       x-draw_point_size,y-draw_point_size,
+			       2*draw_point_size,2*draw_point_size,0,23040) ;
 		    }
 		    else{
 		      XDrawPoint(baseframe_dpy,back_xid,
