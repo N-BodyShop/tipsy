@@ -4,7 +4,7 @@ void
 closebinary(job)
     char *job ;
 {
-    if (!binaryopen){
+    if (!binaryopen || ismanifest){
 	printf("<sorry, binary file not open, %s>\n",title) ;
     }
     else {
