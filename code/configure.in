@@ -54,6 +54,7 @@ fi
 
 AC_IRIX_SUN
 
+AC_HAVE_LIBRARY(curses, [LIBS="$LIBS -lcurses"])
 AC_HAVE_LIBRARY(termlib, [LIBS="$LIBS -ltermlib"])
 AC_HAVE_LIBRARY(termcap, [LIBS="$LIBS -ltermcap"])
 
