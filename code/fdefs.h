@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.5  1996/06/29 00:17:02  trq
+ * Revision 1.6  1996/08/19 20:56:01  trq
+ * main.c, plot_all.c: allow use of pseudocolor visuals with depth >= 8.
+ * nsktrq.c: include fdefs.h.
+ *
+ * Revision 1.5  1996/06/29  00:17:02  trq
  * Changed loadbinary to load subboxes.
  *
  * Revision 1.4  1996/04/11  21:27:53  trq
@@ -82,6 +86,7 @@ PROTO(void, fits_xray, (float **data, int xsize, int ysize,
 			double xmin, double ymin, double deltax,
 			double deltay, double zmin, double zmax, char
 			*outfile));
+PROTO(void, get_nsktrq, (char **bitP, int *widthP, int *heightP));
 PROTO(double, heatcool, (double temp, double density));
 PROTO(void, hneutral_func, ());
 PROTO(void, ikernel_load, ());

@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/05/10 18:32:45  trq
+ * Revision 1.3  1996/08/19 20:56:03  trq
+ * main.c, plot_all.c: allow use of pseudocolor visuals with depth >= 8.
+ * nsktrq.c: include fdefs.h.
+ *
+ * Revision 1.2  1995/05/10  18:32:45  trq
  * Added "dump" parameter to hard command which dumps the backing pixmap in
  * XWD format.
  *
@@ -51,6 +55,7 @@
 #include <malloc.h>
 
 Pixmap back_xid = 0;
+extern Widget canvas;
 
 void
 plot_all(job)
@@ -100,6 +105,9 @@ plot_all(job)
       }
     if(!back_xid)
       {
+	Arg args[1];
+	int depth;
+
 	w_back = can_width;
 	h_back = can_height;
 	c_array = (unsigned char **)malloc(w_back*sizeof(*c_array));
@@ -107,16 +115,10 @@ plot_all(job)
 	for(i = 1; i < w_back; i++)
 	  c_array[i] = &(c_array[0][i*h_back]);
 	
-	if(mono == YES)
-	  {
-	    back_xid = XCreatePixmap(baseframe_dpy, currentview_xid,
-				     w_back, h_back, 1);
-	  }
-	else
-	  {
-	    back_xid = XCreatePixmap(baseframe_dpy, currentview_xid,
-				     w_back, h_back, 8);
-	  }
+	XtSetArg(args[0], XtNdepth, &depth);
+	XtGetValues(canvas, args, 1);
+	back_xid = XCreatePixmap(baseframe_dpy, currentview_xid,
+				     w_back, h_back, depth);
 	/* XXX - check for bad return? */
       }
     XFillRectangle(baseframe_dpy, back_xid, back_gc, 0, 0, w_back,

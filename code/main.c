@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1996/02/16 17:19:22  trq
+ * Revision 1.4  1996/08/19 20:56:01  trq
+ * main.c, plot_all.c: allow use of pseudocolor visuals with depth >= 8.
+ * nsktrq.c: include fdefs.h.
+ *
+ * Revision 1.3  1996/02/16  17:19:22  trq
  * Fixed bug in window for non-8 bit displays.
  * Added optional size arguments to the window command.
  *
@@ -229,7 +233,8 @@ int argc;
     Pixel bg_pix;
 
     Visual *visual;
-    XVisualInfo vinfo;
+    XVisualInfo vinfo, *vret;
+    int nv;
 
     sprintf(title,"master") ;
     for(i=1;i<argc;i++){
@@ -252,7 +257,8 @@ int argc;
 	XtAppAddActions(app_con, actionTable, actionTsize);
 	
 	baseframe_dpy = XtDisplay(toplevel);
-	/* for debugging: XSynchronize(baseframe_dpy, True); */
+	/* for debugging:
+	XSynchronize(baseframe_dpy, True); */
 
 	XtSetArg(args[0], XtNiconPixmap,
 		 XCreateBitmapFromData(baseframe_dpy,
@@ -268,17 +274,31 @@ int argc;
 	if(mono != YES) 
 	  {
 	    
-	    if(XMatchVisualInfo(baseframe_dpy, DefaultScreen(baseframe_dpy), 8,
-				PseudoColor, &vinfo) == 0)
+	    vinfo.class = PseudoColor;
+	    vret = XGetVisualInfo(baseframe_dpy, VisualClassMask,
+				  &vinfo, &nv);
+	    if(nv <= 0) {
+		printf("<sorry %s, I need a Pseudocolor display\n",title);
+		return(-1);
+	    }
+	    
+	    visual = NULL;
+	    for(i = 0; i < nv; i++) {
+		if(vret[i].depth >= 8) {
+		    visual = vret[i].visual;
+		    break;
+		}
+	    }
+	    if(visual == NULL)
 	      {
-		printf("<sorry %s, I need an 8 bit Pseudocolor display\n",title);
+		printf("<sorry %s, I need an 8+ bit Pseudocolor display\n",title);
 		return(-1);
 	      }
-	    visual = vinfo.visual;
+	    printf("Using %d bit visual\n", vret[i].depth);
 	    if(visual != DefaultVisualOfScreen(XtScreen(toplevel)))
 	      {
 		XtSetArg(args[0], XtNvisual, visual);
-		XtSetArg(args[1], XtNdepth, vinfo.depth);
+		XtSetArg(args[1], XtNdepth, vret[i].depth);
 	        default_cmap = XCreateColormap(baseframe_dpy,
 				RootWindowOfScreen(XtScreen(toplevel)),
 				visual, AllocNone);
@@ -295,6 +315,7 @@ int argc;
 		XtSetArg( args[0], XtNcolormap, default_cmap );
 		XtSetValues( toplevel, args, ONE );
 	    }
+	    XFree(vret);
 	  }
 	
 	    

@@ -1,3 +1,8 @@
+Mon Aug 19 12:50:45 1996  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* main.c, plot_all.c: Allow use of pseudocolor visuals with depth
+	>= 8.
+
 Thu Apr 13 13:15:48 1995  Tom Quinn  <trq@hermes.astro.washington.edu>
 
 	* zspace.c: new command to make redshift space particle plot.
