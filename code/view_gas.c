@@ -1,7 +1,10 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.5  2000/01/12 22:55:27  nsk
+ * Revision 1.6  2000/06/07 23:32:10  trq
+ * Added "cooling time" argument to viewgas.
+ *
+ * Revision 1.5  2000/01/12  22:55:27  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
  *
@@ -665,6 +668,27 @@ view_gas(job)
 		    }
 		}
 	    }
+	    else if ( strcmp(type,"coolingtime") == 0) {
+		if(!cooling_loaded){
+		    cool_func() ;
+		}
+		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+		    double tcool;
+
+		    gp = boxlist[active_box].gp[i] ;
+		    if(cooling[i] == 0.0) {
+			tcool = 1e300;
+			}
+		    else {
+			tcool = 1.5*KBOLTZ*gp->temp*MSOLG*msolunit*gp->rho/
+			    (MHYDR*0.6)/(cosmof3*pow(kpcunit*KPCCM, 3.0))/
+			    (cooling[i])/1.4e13 ;
+			}
+		    particle_color[i] = (int)(color_slope *
+				tcool + color_offset +0.5) ;
+		}
+	    }
+	    
 	    else if ( strcmp(type,"mfrac") == 0 ){
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
