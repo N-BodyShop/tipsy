@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/06/06 17:47:53  trq
+ * Revision 1.3  1995/12/11 20:00:44  nsk
+ * added helium, dark absorb,  integral for elcetronic heating,
+ * and read in 6 numbers for background
+ *
+ * Revision 1.2  1995/06/06  17:47:53  trq
  * dump_pixmap.c: Cleaned up declarations.
  *
  * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
@@ -37,7 +41,8 @@ PROTO(void, add_const_mult_vec, (Real *a,double constant, Real *b));
 PROTO(void, all_color, ());
 PROTO(void, arguments, (char *job));
 PROTO(void, array_color, ());
-PROTO(double, calc_hneutral, (double temp, double density));
+PROTO(void, calc_hneutral, (double temp, double density, double *hneutral_p,
+			     double *heneutral_p, double *heII_p));
 PROTO(double, calc_meanmwt, (double temp, double density));
 PROTO(void, canvas_resize_proc, (Widget canvas, XEvent *event, String
 				 *params, Cardinal *n_params));

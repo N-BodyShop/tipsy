@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.5  1995/06/06 17:47:51  trq
+ * Revision 1.6  1995/12/11 20:00:43  nsk
+ * added helium, dark absorb,  integral for elcetronic heating,
+ * and read in 6 numbers for background
+ *
+ * Revision 1.5  1995/06/06  17:47:51  trq
  * dump_pixmap.c: Cleaned up declarations.
  *
  * Added kd.c and smooth.c for variable smoothing; NOW WITH LOSER TREES.
@@ -436,6 +440,8 @@ extern double *dwsmooth;
 extern double *hsmdivv ;
 extern double *cooling ;
 extern double *hneutral ;
+extern double *heneutral ;
+extern double *heII ;
 extern double *meanmwt ;
 extern double *starform ;
 extern double *xray_lum ;
@@ -445,6 +451,9 @@ extern int number_xray_data ;
 extern double gp0_H ;
 extern double gp0_He ;
 extern double gp0_Hep ;
+extern double eps_H ;
+extern double eps_He ;
+extern double eps_Hep ;
 
 extern unsigned char wrbb_red[256] ;
 extern unsigned char wrbb_green[256] ;

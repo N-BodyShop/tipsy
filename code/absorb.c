@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.5  1995/11/07 17:08:00  trq
+ * Revision 1.6  1995/12/11 20:00:41  nsk
+ * added helium, dark absorb,  integral for elcetronic heating,
+ * and read in 6 numbers for background
+ *
+ * Revision 1.5  1995/11/07  17:08:00  trq
  * absorb.c: fixed bug with velocities beyond bounds.
  * fits.c: deleted unused variable.
  * hubble.c: fixed argument parsing.
@@ -79,9 +83,15 @@
 #include <malloc.h>
 
 #define SUBBIN 10
+#define SPECTRA 1
+#define COLUMN  2
+#define DARKM  3
 
 /* Lyman alpha cross section in cm^2 per atom */
-#define LYCS (1.34e-12)
+#define LYCS_HI (1.34e-12)
+#define LYCS_HeI (4.278e-12)
+#define LYCS_HeII (3.358e-13)
+#define MASSHE (3.971)
 
 void
 absorb(job)
@@ -90,19 +100,30 @@ absorb(job)
     char command[MAXCOMM] ;
     char type[MAXCOMM] ;        /* type of velocity column */
     char name[MAXCOMM] ;	/* file name for output */
+    char col_name[MAXCOMM] ;	/* file name for output */
     int nvbin;			/* number of velocity bins */
     double vmin, vmax;          /* minimum and maximum velocity */
     int zbin;			/* number of spatial bins */
     char x_string[MAXCOMM] ;
     char y_string[MAXCOMM] ;
     Real x1[MAXDIM];            /* x and y coordinates of pencil beam */
-    Real *vbins;
-    Real *vbins_t;
-    Real *mass ;
-    Real *vel ;
-    Real *temp ;
+    Real *vbins_HI;
+    Real *vbins_HeI;
+    Real *vbins_HeII;
+    Real *vbins_t_HI;
+    Real *mass_tot ;
+    Real *mass_HI ;
+    Real *mass_HeI ;
+    Real *mass_HeII ;
+    Real *vel_tot ;
+    Real *vel_HI ;
+    Real *vel_HeI ;
+    Real *vel_HeII ;
+    Real *temp_tot ;
+    Real *temp_HI ;
+    Real *temp_HeI ;
+    Real *temp_HeII ;
     Real *res ;
-    Real tau ;
     int plot_type;
     int i,j,k ;
     double part_pos[MAXDIM] ;
@@ -140,12 +161,14 @@ absorb(job)
     double d ;
     double vz ;
     struct gas_particle *gp ;
+    struct dark_particle *dp ;
     double offset_x, offset_y ;
     double span_x, span_y ;
     double rsys ;
     double vsys ;
     double msys ;
-    double bsys ;
+    double bsys_H ;
+    double bsys_He ;
     double z ;
     double b ;
     double vbin_size ;
@@ -156,6 +179,7 @@ absorb(job)
     double voffset ;
     double v_interp ;
     double t_interp ;
+    double hsmooth ;
     int irep[MAXDIM];
     int autolim ;
     int ibin;
@@ -167,6 +191,20 @@ absorb(job)
       /* arguments. */
       if (sscanf(job,"%s %s %d %lf %lf %d %s %s %s",command,type,&zbin,
 	    &vmin,&vmax,&nvbin, name,x_string,y_string) >= 8) {
+	if(strcmp(type,"spectra") == 0){
+	  plot_type = SPECTRA ;
+	}
+	else if(strcmp(type,"column") == 0 || strcmp(type,"col") == 0){
+	  plot_type = COLUMN ;
+	}
+	else if(strcmp(type,"dark") == 0){
+	  plot_type = DARKM ;
+	}
+	else
+	  {
+	    printf("<sorry, %s is not an absorption type, %s>\n",type,title) ;
+	    return;
+	  }
 	if ( plotted_box != active_box ) {
 	    printf("<the box that is plotted is not the ") ;
 	    printf("active box, %s>\n",title) ;
@@ -182,98 +220,156 @@ absorb(job)
 		return;
 	    }
 	}
-	fp = fopen(name, "w");
-	if(fp == NULL)
-	  {
-	    printf("<sorry, cannot open file %s, %s>\n",name, title) ;
-	    return;
-	  }
-	vbins = (Real *)malloc(nvbin*sizeof(*vbins));
-	if(vbins == NULL)
-	  {
-	    printf("<sorry, no memory for velocity bins, %s>\n",title) ;
-	    return ;
-	  }
-	vbins_t = (Real *)malloc(nvbin*sizeof(*vbins_t));
-	if(vbins_t == NULL)
-	  {
-	    printf("<sorry, no memory for velocity bins, %s>\n",title) ;
-	    free(vbins);
-	    return ;
-	  }
-	mass = (Real *)malloc(zbin*sizeof(*mass));
-	if(mass == NULL)
-	  {
-	    printf("<sorry, no memory for column bins, %s>\n",title) ;
-	    free(vbins);
-	    free(vbins_t);
-	    return ;
-	  }
-	vel = (Real *)malloc(zbin*sizeof(*vel));
-	if(vel == NULL)
-	  {
-	    printf("<sorry, no memory for column bins, %s>\n",title) ;
-	    free(vbins);
-	    free(vbins_t);
-	    free(mass);
-	    return ;
-	  }
-	temp = (Real *)malloc(zbin*sizeof(*temp));
-	if(temp == NULL)
-	  {
-	    printf("<sorry, no memory for column bins, %s>\n",title) ;
-	    free(vbins);
-	    free(vbins_t);
-	    free(mass);
-	    free(vel);
-	    return ;
-	  }
-	res = (Real *)malloc(zbin*sizeof(*res));
-	if(res == NULL)
-	  {
-	    printf("<sorry, no memory for column bins, %s>\n",title) ;
-	    free(vbins);
-	    free(vbins_t);
-	    free(mass);
-	    free(vel);
-	    free(temp);
-	    return ;
-	  }
-	if (!cool_loaded ){
-	    load_cool() ;
+	if(plot_type == DARKM){
+	    mass_tot = (Real *)malloc(zbin*sizeof(*mass_tot));
+	    if(mass_tot == NULL)
+	      {
+		printf("<sorry, no memory for column bins, %s>\n",title) ;
+		return ;
+	      }
+	    vel_tot = (Real *)malloc(zbin*sizeof(*vel_tot));
+	    if(vel_tot == NULL)
+	      {
+		printf("<sorry, no memory for column bins, %s>\n",title) ;
+		free(mass_tot);
+		return ;
+	      }
+	    res = (Real *)malloc(zbin*sizeof(*res));
+	    if(res == NULL)
+	      {
+		printf("<sorry, no memory for column bins, %s>\n",title) ;
+		free(mass_tot);
+		free(vel_tot);
+		return ;
+	      }
+	    if (!cool_loaded ){
+		load_cool() ;
+	    }
+	    if (!redshift_loaded ){
+		load_redshift() ;
+	    }
+	    for(i = 0; i < zbin; i++){
+		mass_tot[i] = 0.0;
+		vel_tot[i] = 0.0;
+		res[i] = 0.0;
+	    }
 	}
-	if (!redshift_loaded ){
-	    load_redshift() ;
-	}
-	if (strcmp(type,"all") == 0 || strcmp(type,"allcol") == 0 ||
-		strcmp(type,"allcolumn") == 0){
-	  plot_type = RHO ;
-	}
-	else if(strcmp(type,"hneutral") == 0 || strcmp(type,"hneut") == 0 ||
-		strcmp(type,"hneutralcolumn") == 0 ||
-		strcmp(type,"hneutralcol") == 0 ||
-		strcmp(type,"hneutcol") == 0){
-	  plot_type = HNEUT ;
-	  if(!hneutral_loaded){
-	    hneutral_func() ;
-	  }
-	}
-	else
-	  {
-	    printf("<sorry, %s is not an absorption type, %s>\n",type,title) ;
-	    free(vbins);
-	    free(vbins_t);
-	    free(mass);
-	    free(vel);
-	    free(temp);
-	    free(res);
-	    return;
-	  }
-	for(i = 0; i < zbin; i++){
-	    mass[i] = 0.0;
-	    vel[i] = 0.0;
-	    temp[i] = 0.0;
-	    res[i] = 0.0;
+	else {
+	    vbins_t_HI = (Real *)malloc(nvbin*sizeof(*vbins_t_HI));
+	    if(vbins_t_HI == NULL)
+	      {
+		printf("<sorry, no memory for velocity bins, %s>\n",title) ;
+		return ;
+	      }
+	    vbins_HI = (Real *)malloc(nvbin*sizeof(*vbins_HI));
+	    vbins_HeI = (Real *)malloc(nvbin*sizeof(*vbins_HeI));
+	    vbins_HeII = (Real *)malloc(nvbin*sizeof(*vbins_HeII));
+	    if(vbins_HI == NULL || vbins_HeI == NULL || vbins_HeII == NULL)
+	      {
+		printf("<sorry, no memory for velocity bins, %s>\n",title) ;
+		free(vbins_t_HI);
+		return ;
+	      }
+	    mass_tot = (Real *)malloc(zbin*sizeof(*mass_tot));
+	    mass_HI = (Real *)malloc(zbin*sizeof(*mass_HI));
+	    mass_HeI = (Real *)malloc(zbin*sizeof(*mass_HeI));
+	    mass_HeII = (Real *)malloc(zbin*sizeof(*mass_HeII));
+	    if(mass_tot == NULL || mass_HI == NULL || mass_HeI == NULL ||
+		    mass_HeII == NULL)
+	      {
+		printf("<sorry, no memory for column bins, %s>\n",title) ;
+		free(vbins_HI);
+		free(vbins_HeI);
+		free(vbins_HeII);
+		free(vbins_t_HI);
+		return ;
+	      }
+	    vel_tot = (Real *)malloc(zbin*sizeof(*vel_tot));
+	    vel_HI = (Real *)malloc(zbin*sizeof(*vel_HI));
+	    vel_HeI = (Real *)malloc(zbin*sizeof(*vel_HeI));
+	    vel_HeII = (Real *)malloc(zbin*sizeof(*vel_HeII));
+	    if(vel_tot == NULL || vel_HI == NULL || vel_HeI == NULL ||
+		    vel_HeII == NULL)
+	      {
+		printf("<sorry, no memory for column bins, %s>\n",title) ;
+		free(vbins_t_HI);
+		free(vbins_HI);
+		free(vbins_HeI);
+		free(vbins_HeII);
+		free(mass_tot);
+		free(mass_HI);
+		free(mass_HeI);
+		free(mass_HeII);
+		return ;
+	      }
+	    temp_tot = (Real *)malloc(zbin*sizeof(*temp_tot));
+	    temp_HI = (Real *)malloc(zbin*sizeof(*temp_HI));
+	    temp_HeI = (Real *)malloc(zbin*sizeof(*temp_HeI));
+	    temp_HeII = (Real *)malloc(zbin*sizeof(*temp_HeII));
+	    if(temp_tot == NULL || temp_HI == NULL || temp_HeI == NULL ||
+		    temp_HeII == NULL)
+	      {
+		printf("<sorry, no memory for column bins, %s>\n",title) ;
+		free(vbins_t_HI);
+		free(vbins_HI);
+		free(vbins_HeI);
+		free(vbins_HeII);
+		free(mass_tot);
+		free(mass_HI);
+		free(mass_HeI);
+		free(mass_HeII);
+		free(vel_tot);
+		free(vel_HI);
+		free(vel_HeI);
+		free(vel_HeII);
+		return ;
+	      }
+	    res = (Real *)malloc(zbin*sizeof(*res));
+	    if(res == NULL)
+	      {
+		printf("<sorry, no memory for column bins, %s>\n",title) ;
+		free(vbins_t_HI);
+		free(vbins_HI);
+		free(vbins_HeI);
+		free(vbins_HeII);
+		free(mass_tot);
+		free(mass_HI);
+		free(mass_HeI);
+		free(mass_HeII);
+		free(vel_tot);
+		free(vel_HI);
+		free(vel_HeI);
+		free(vel_HeII);
+		free(temp_tot);
+		free(temp_HI);
+		free(temp_HeI);
+		free(temp_HeII);
+		return ;
+	      }
+	    if (!cool_loaded ){
+		load_cool() ;
+	    }
+	    if (!redshift_loaded ){
+		load_redshift() ;
+	    }
+	    if(!hneutral_loaded){
+	      hneutral_func() ;
+	    }
+	    for(i = 0; i < zbin; i++){
+		mass_tot[i] = 0.0;
+		mass_HI[i] = 0.0;
+		mass_HeI[i] = 0.0;
+		mass_HeII[i] = 0.0;
+		vel_tot[i] = 0.0;
+		vel_HI[i] = 0.0;
+		vel_HeI[i] = 0.0;
+		vel_HeII[i] = 0.0;
+		temp_tot[i] = 0.0;
+		temp_HI[i] = 0.0;
+		temp_HeI[i] = 0.0;
+		temp_HeII[i] = 0.0;
+		res[i] = 0.0;
+	    }
 	}
 	if(strcmp(x_string, "auto") == 0 || strcmp(x_string, "a") == 0){
 		  /* N.B.  I am reusing variables make_box_flag and */
@@ -385,6 +481,272 @@ absorb(job)
 
 	rsys = cosmof*kpcunit/1.e3 ;
 	vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
+	if(plot_type == DARKM){
+	calc_balls(&box0_smx, 1, 0 , 0);
+	for (i = 0 ;i < boxlist[0].ndark ;i++) {
+	    dp = boxlist[0].dp[i] ;
+	    hsmooth = sqrt(box0_smx->kd->p[i].fBall2);
+	    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
+	      for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
+		for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
+		  if(periodic
+		     || (irep[0] == 0 && irep[1] == 0 && irep[2] == 0)) {
+
+		    if(irep[0]*period_size + dp->pos[0] > bound_max[0]
+		       && irep[0]*period_size+dp->pos[0]-hsmooth
+		       > bound_max[0])
+		      continue;
+		    if(irep[0]*period_size + dp->pos[0] < bound_min[0]
+		       && irep[0]*period_size+dp->pos[0]+hsmooth
+		       < bound_min[0])
+		      continue;
+		    if(irep[1]*period_size + dp->pos[1] > bound_max[1]
+		       && irep[1]*period_size+dp->pos[1]-hsmooth
+		       > bound_max[1])
+		      continue;
+		    if(irep[1]*period_size + dp->pos[1] < bound_min[1]
+		       && irep[1]*period_size+dp->pos[1]+hsmooth
+		       < bound_min[1])
+		      continue;
+		    if(irep[2]*period_size + dp->pos[2] > bound_max[2]
+		       && irep[2]*period_size+dp->pos[2]-hsmooth
+		       > bound_max[2])
+		      continue;
+		    if(irep[2]*period_size + dp->pos[2] < bound_min[2]
+		       && irep[2]*period_size+dp->pos[2]+hsmooth
+		       < bound_min[2])
+		      continue;
+		    
+		    for (part_pos[0] = part_pos[1] = part_pos[2] = 0.0,j = 0 ;
+			    j < header.ndim ;j++) {
+			for (k = 0 ; k < header.ndim ; k++){
+			    part_pos[k] += rot_matrix[k][j] *
+			      (irep[j]*period_size + dp->pos[j]
+			       - boxes[active_box].center[j]) ;
+			}
+		    }
+		    distnorm = 1. / (hsmooth * hsmooth) ;
+		    if((radius2 = ((part_pos[0] - x1[0])*(part_pos[0] - x1[0])+
+			    (part_pos[1] - x1[1])*(part_pos[1] - x1[1]))*
+			    distnorm) < 4.0){
+			radius = sqrt(radius2) ;
+			zo2 = 4. - radius2 ;
+			zo = sqrt(zo2) ;
+			if(radius2 < 1.){
+			    zi2 = 1. - radius2 ;
+			    zi = sqrt(zi2) ;
+			}
+			else{
+			    zi2 = zi = 0.0;
+			}
+			for (vz = 0.0,j = 0 ; j < header.ndim ;j++) {
+			    vz += rot_matrix[2][j] * (dp->vel[j]) ;
+			}
+			bin_min = floor((part_pos[2] - zo*hsmooth-zmin)
+					/bin_size) ;
+			bin_max = floor((part_pos[2] + zo*hsmooth-zmin)
+					/bin_size) ;
+			if((part_pos[2] + zo*hsmooth-zmin)/bin_size
+			   == (double) bin_max)
+			  bin_max--;
+			bin_min = max(bin_min, bin_box_min);
+			bin_max = min(bin_max, bin_box_max);
+			if(bin_min > bin_box_max || bin_max < bin_box_min)
+			  continue;
+
+			for(bin = bin_min; bin <= bin_max; bin++){
+			    zlower = ((double)(bin)*bin_size + zmin
+				      - part_pos[2])/ hsmooth ;
+			    zupper = ((double)(bin+1)*bin_size + zmin
+				      - part_pos[2])/ hsmooth ;
+			    kernel = 0.0 ;
+			    vkernel = 0.0 ;
+			    abs_zlower = fabs(zlower) ;
+			    if(abs_zlower >= zo){
+				kernel += 1.3125*radius2*zo - 1.5*zo + 
+					0.5*zo2*zo - (1.5*radius2 +
+					0.09375*radius2*radius2)*log(zo + 2.0);
+				/*kernel at zo in region 2 */
+				if(comove == YES){
+				    vkernel -= zo2 + 0.75*radius2*zo2 +
+					    0.375*zo2*zo2 - 9.6 ;
+				}
+			    }
+			    else if(abs_zlower < zo && (abs_zlower > zi ||
+				    zlower == zi)){
+				d2 = radius2 + zlower*zlower ;
+				d = sqrt(d2) ;
+				kernel -= copysign(1.0,zlower)*((2.0 +
+				1.5*radius2)* abs_zlower + 
+				0.5*abs_zlower*abs_zlower*abs_zlower -
+				0.0625*abs_zlower*d*d2 - (1.5 + 0.09375*
+				radius2)* abs_zlower*d - (1.5*radius2 +
+			        0.09375*radius2* radius2)*log(abs_zlower + d));
+			/* sign(zlower)*kernel at abs_zlower in region 2 */
+				if(comove == YES){
+				    vkernel -= zlower*zlower*(1. +
+					    0.75*radius2) + 0.375*zlower*
+					    zlower*zlower*zlower - d*d2 -
+					    0.05*d2*d2*d ;
+				}
+			    }
+			    else {
+				d2 = radius2 + zlower*zlower ;
+				d = sqrt(d2) ;
+				kernel -= copysign(1.0,zlower)*((1.0 -
+					1.5*radius2)*abs_zlower - 0.5*
+					abs_zlower*abs_zlower*abs_zlower +
+					0.1875*abs_zlower*d2*d + 0.28125*
+					radius2*abs_zlower*d + 0.28125*radius2*
+					radius2*log(abs_zlower + d)) ;
+			/* sign(zlower)* kernel at abs_zlower in region 1 */
+				if(comove == YES){
+				    vkernel -= (0.5 - 0.75*radius2)*zlower*
+					    zlower - 0.375*zlower*zlower*
+					    zlower*zlower + 0.15*d2*d2*d ;
+				}
+			    }
+			    abs_zupper = fabs(zupper) ;
+			    if(zlower*zupper <= 0.0){  /* bin stradles zero */
+				if(radius2 < 1.){
+				    kernel -= 0.5625*radius2*radius2*
+					    log(radius) ;
+				    /* 2.0 * kernel at zero in region 1 */
+				}
+				else {
+				    kernel -= -(3.0*radius2
+					    + 0.1875*radius2*radius2)*
+					    log(radius) ;
+				    /* 2.0 *kernel at zero in region 2 */
+				}
+			    }
+			    if(radius2 < 1.){
+				if(zlower*zupper < 0.0 && abs_zupper > zi &&
+					abs_zlower > zi) {
+				    kernel += 2.375*zi - 2.4375*radius2*zi -
+					    zi2*zi + 0.5625*radius2*radius2*
+					    log(zi+1) ;
+				    /* 2.0 * kernel at zi in region 1 */
+				    kernel -= 0.875*zi + 2.8125*radius2*zi +
+					    zi2*zi - (3.0*radius2 + 0.1875*
+					    radius2*radius2)*log(zi + 1) ;
+				    /* 2.0 * kernel at zi in region 2 */
+				}
+				else {
+				    if((zlower < -zi && zupper > -zi) ||
+					    (zlower < zi && zupper > zi)){
+					 kernel += 1.1875*zi - 1.21875*radius2*
+						zi - 0.5*zi2*zi + 0.28125*
+						radius2*radius2*log(zi+1) ;
+					 /* kernel at zi in region 1 */
+					 if(comove == YES){
+					    vkernel += copysign(1.0, zlower)
+					      *((0.5 - 0.75*radius2)*
+						    zi2 - 0.375*zi2*zi2 + 0.15) ;
+					 }
+					 kernel -= 0.4375*zi + 1.40625*radius2*
+					 	zi + 0.5*zi2*zi - (1.5*radius2 +
+						0.09375*radius2*radius2)*
+						log(zi + 1) ;
+					 /* kernel at zi in region 2 */
+					 if(comove == YES){
+					    vkernel -= copysign(1.0, zlower)
+					      *((1.0 + 0.75*radius2)*
+						    zi2 + 0.375*zi2*zi2 - 1.05) ;
+					 }
+				    }
+				}
+			    }
+
+			    if(abs_zupper >= zo){
+				kernel += 1.3125*radius2*zo - 1.5*zo + 
+					0.5*zo2*zo - (1.5*radius2 +
+					0.09375*radius2*radius2)*log(zo + 2.0) ;
+					  /* kernel at zo in region 2 */
+			        if(comove == YES){
+				    vkernel += zo2 + 0.75*radius2*zo2 +
+					    0.375*zo2*zo2 - 9.6 ;
+				}
+			    }
+			    else if(abs_zupper < zo && abs_zupper >= zi){
+				d2 = radius2 + zupper*zupper ;
+				d = sqrt(d2) ;
+				kernel += copysign(1.0,zupper)*((2.0 + 1.5*
+					radius2)*abs_zupper + 0.5*abs_zupper*
+					abs_zupper*abs_zupper - 0.0625*
+					abs_zupper*d*d2 - (1.5 + 0.09375*
+					radius2)* abs_zupper*d - (1.5*radius2 +
+					0.09375*radius2* radius2)*
+					log(abs_zupper + d)) ;
+			/* sign(zupper)*kernel at abs_zupper in region 2 */
+			        if(comove == YES){
+				    vkernel += zupper*zupper*(1. +
+					    0.75*radius2) + 0.375*zupper*
+					    zupper*zupper*zupper - d*d2 -
+					    0.05*d2*d2*d ;
+				}
+			    }
+			    else {
+				d2 = radius2 + zupper*zupper ;
+				d = sqrt(d2) ;
+				kernel += copysign(1.0,zupper)*((1.0 -
+					1.5*radius2)*abs_zupper - 0.5*
+					abs_zupper*abs_zupper*abs_zupper +
+					0.1875*abs_zupper*d2*d + 0.28125*
+					radius2*abs_zupper*d + 0.28125*radius2*
+					radius2*log(abs_zupper + d)) ;
+			/* sign(zupper)* kernel at abs_zupper in region 1 */
+			        if(comove == YES){
+				    vkernel += (0.5 - 0.75*radius2)*zupper*
+					    zupper - 0.375*zupper*zupper*
+					    zupper*zupper + 0.15*d2*d2*d ;
+				}
+			    }
+			    kernel *= distnorm/PI ;
+			    if(comove == YES){
+				vkernel /= PI*hsmooth ;
+			    }
+			    mass_tot[bin] += kernel*dp->mass ;
+			    vel_tot[bin] += kernel*(dp->mass)*vsys*vz ;
+			    if(comove == YES){
+				vel_tot[bin] += vkernel*(dp->mass)*rsys*
+					hubble_constant ;
+			    }
+			    res[bin] += kernel*(dp->mass)*(hsmooth) ;
+			}
+		    }
+		}
+	      }
+	    }
+	  }
+	}
+	for(i = 0; i < zbin; i++){
+	    if(mass_tot[i] != 0.0){
+		vel_tot[i] /= mass_tot[i] ;
+		res[i] /= mass_tot[i] ;
+	    }
+	}
+	msys = msolunit/(cosmof*kpcunit*cosmof*kpcunit)*
+                (MSOLG/(KPCCM*KPCCM)) ;
+	for(i = 0; i < zbin; i++){
+	    mass_tot[i] *= msys ;
+	}
+	sprintf(col_name,"%s.col",name) ;
+	fp = fopen(col_name, "w");
+	if(fp == NULL)
+	  {
+	    printf("<sorry, cannot open file %s, %s>\n",col_name, title) ;
+	    return;
+	  }
+	for(i = 0; i < zbin; i++)
+	  {
+	    fprintf(fp, "%g %g %g %g\n",
+		    rsys*(bin_size*(i+0.5) + zmin),
+		    mass_tot[i], vel_tot[i], rsys*res[i]);
+	  }
+	fclose(fp);
+	}
+	else {
 	for (i = 0 ;i < boxlist[0].ngas ;i++) {
 	    gp = boxlist[0].gp[i] ;
 	    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
@@ -604,23 +966,49 @@ absorb(job)
 				}
 			    }
 			    kernel *= distnorm/PI ;
-			    if(plot_type == HNEUT) {
-			        kernel *= fhydrogen*hneutral[gp-gas_particles];
-			    }
 			    if(comove == YES){
 				vkernel /= PI*gp->hsmooth ;
-				if(plot_type == HNEUT) {
-				    vkernel *= fhydrogen*
-					    hneutral[gp-gas_particles];
-				}
 			    }
-			    mass[bin] += kernel*gp->mass ;
-			    vel[bin] += kernel*(gp->mass)*vsys*vz ;
+			    mass_tot[bin] += kernel*gp->mass ;
+			    mass_HI[bin] += kernel*fhydrogen*
+				    hneutral[gp-gas_particles]*gp->mass ;
+			    mass_HeI[bin] += kernel*(1.0 - fhydrogen)*
+				    heneutral[gp-gas_particles]*gp->mass ;
+			    mass_HeII[bin] += kernel*(1.0 - fhydrogen)*
+				    heII[gp-gas_particles]*gp->mass ;
+			    vel_tot[bin] += kernel*(gp->mass)*vsys*vz ;
+			    vel_HI[bin] += kernel*fhydrogen*
+				    hneutral[gp-gas_particles]*
+				    (gp->mass)*vsys*vz ;
+			    vel_HeI[bin] += kernel*(1.0 - fhydrogen)*
+				    heneutral[gp-gas_particles]*
+				    (gp->mass)*vsys*vz ;
+			    vel_HeII[bin] += kernel*(1.0 - fhydrogen)*
+				    heII[gp-gas_particles]*
+				    (gp->mass)*vsys*vz ;
 			    if(comove == YES){
-				vel[bin] += vkernel*(gp->mass)*rsys*
+				vel_tot[bin] += vkernel*(gp->mass)*rsys*
 					hubble_constant ;
+				vel_HI[bin] += vkernel*fhydrogen*
+					hneutral[gp-gas_particles]*
+					(gp->mass)*rsys*hubble_constant ;
+				vel_HeI[bin] += vkernel*(1.0 - fhydrogen)*
+					heneutral[gp-gas_particles]*
+					(gp->mass)*rsys*hubble_constant ;
+				vel_HeII[bin] += vkernel*(1.0 - fhydrogen)*
+					heII[gp-gas_particles]*
+					(gp->mass)*rsys*hubble_constant ;
 			    }
-			    temp[bin] += kernel*(gp->mass)*(gp->temp) ;
+			    temp_tot[bin] += kernel*(gp->mass)*(gp->temp) ;
+			    temp_HI[bin] += kernel*fhydrogen*
+				    hneutral[gp-gas_particles]*
+				    (gp->mass)*(gp->temp) ;
+			    temp_HeI[bin] += kernel*(1.0 - fhydrogen)*
+				    heneutral[gp-gas_particles]*
+				    (gp->mass)*(gp->temp) ;
+			    temp_HeII[bin] += kernel*(1.0 - fhydrogen)*
+				    heII[gp-gas_particles]*
+				    (gp->mass)*(gp->temp) ;
 			    res[bin] += kernel*(gp->mass)*(gp->hsmooth) ;
 			}
 		    }
@@ -630,36 +1018,60 @@ absorb(job)
 	  }
 	}
 	for(i = 0; i < zbin; i++){
-	    if(mass[i] != 0.0){
-		vel[i] /= mass[i] ;
-		temp[i] /= mass[i] ;
-		res[i] /= mass[i] ;
+	    if(mass_tot[i] != 0.0){
+		vel_tot[i] /= mass_tot[i] ;
+		temp_tot[i] /= mass_tot[i] ;
+		res[i] /= mass_tot[i] ;
+	    }
+	    if(mass_HI[i] != 0.0){
+		vel_HI[i] /= mass_HI[i] ;
+		temp_HI[i] /= mass_HI[i] ;
+	    }
+	    if(mass_HeI[i] != 0.0){
+		vel_HeI[i] /= mass_HeI[i] ;
+		temp_HeI[i] /= mass_HeI[i] ;
+	    }
+	    if(mass_HeII[i] != 0.0){
+		vel_HeII[i] /= mass_HeII[i] ;
+		temp_HeII[i] /= mass_HeII[i] ;
 	    }
 	}
 	msys = msolunit/(cosmof*kpcunit*cosmof*kpcunit)*
                 (MSOLG/(KPCCM*KPCCM*MHYDR)) ;
 	for(i = 0; i < zbin; i++){
-	    mass[i] *= msys ;
+	    mass_tot[i] *= msys ;
+	    mass_HI[i] *= msys ;
+	    mass_HeI[i] *= msys/MASSHE ;
+	    mass_HeII[i] *= msys/MASSHE ;
 	}
-	if (strcmp(type,"allcol") == 0 || strcmp(type,"allcolumn") == 0 ||
-		strcmp(type,"hneutralcolumn") == 0 ||
-		strcmp(type,"hneutralcol") == 0 ||
-		strcmp(type,"hneutcol") == 0){
+	if (plot_type == COLUMN){
+	    sprintf(col_name,"%s.col",name) ;
+	    fp = fopen(col_name, "w");
+	    if(fp == NULL)
+	      {
+		printf("<sorry, cannot open file %s, %s>\n",col_name, title) ;
+		return;
+	      }
 	    for(i = 0; i < zbin; i++)
 	      {
-		fprintf(fp, "%g %g %g %g %g\n", rsys*(bin_size*(i+0.5) + zmin),
-			mass[i], vel[i], temp[i],rsys*res[i]);
+		fprintf(fp, "%g %g %g %g %g %g %g %g %g %g %g %g %g %g\n",
+			rsys*(bin_size*(i+0.5) + zmin),
+			mass_tot[i], vel_tot[i], temp_tot[i],
+			mass_HI[i], vel_HI[i], temp_HI[i],
+			mass_HeI[i], vel_HeI[i], temp_HeI[i],
+			mass_HeII[i], vel_HeII[i], temp_HeII[i],
+			rsys*res[i]);
 	      }
 	    fclose(fp);
-	    free(vbins);
-	    free(vbins_t);
-	    free(mass);
-	    free(vel);
-	    free(temp);
-	    free(res);
-	    return ;
 	}
-	bsys = sqrt(2.*KBOLTZ/MHYDR)/1.e5 ;
+	fp = fopen(name, "w");
+	if(fp == NULL)
+	  {
+	    printf("<sorry, cannot open file %s, %s>\n",name, title) ;
+	    return;
+	  }
+	bsys_H = sqrt(2.*KBOLTZ/MHYDR)/1.e5 ;
+	bsys_He = sqrt(2.*KBOLTZ/(MASSHE*MHYDR))/1.e5 ;
 	vmin *= vsys ;
 	vmax *= vsys ;
 	voffset = 0.0 ;
@@ -670,8 +1082,8 @@ absorb(job)
 		vmin = HUGE ;
 		vmax = -HUGE ;
 		for(i = 0; i < zbin; i++){
-		    vmin = min(vmin,vel[i]) ;
-		    vmax = max(vmax,vel[i]) ;
+		    vmin = min(vmin,vel_tot[i]) ;
+		    vmax = max(vmax,vel_tot[i]) ;
 		}
 	    }
 	    else{
@@ -681,11 +1093,13 @@ absorb(job)
 	}
 	vbin_size = (vmax - vmin)/(double)nvbin ;
 	for(i = 0; i < nvbin; i++){
-	    vbins[i] = 0.0;
-	    vbins_t[i] = 0.0;
+	    vbins_HI[i] = 0.0;
+	    vbins_HeI[i] = 0.0;
+	    vbins_HeII[i] = 0.0;
+	    vbins_t_HI[i] = 0.0;
 	}
 	for(i = 0; i < zbin; i++){
-	    if(mass[i] == 0.0)
+	    if(mass_HI[i] == 0.0)
 		continue ;
 	    for(j = 0; j < SUBBIN; j++){
 		z = ((double)(i) + ((double)(j))/((double)(SUBBIN)))*bin_size ;
@@ -697,11 +1111,11 @@ absorb(job)
 		}
 		k = max(0,k) ;
 		k = min(zbin-2,k) ;
-		v_interp = (vel[k+1] - vel[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + vel[k] ;
-		t_interp = (temp[k+1] - temp[k])*(i + ((double)(j))/
-			((double)(SUBBIN)) - (k + 0.5)) + temp[k] ;
-		b = bsys*sqrt(t_interp) ;
+		v_interp = (vel_HI[k+1] - vel_HI[k])*(i + ((double)(j))/
+			((double)(SUBBIN)) - (k + 0.5)) + vel_HI[k] ;
+		t_interp = (temp_HI[k+1] - temp_HI[k])*(i + ((double)(j))/
+			((double)(SUBBIN)) - (k + 0.5)) + temp_HI[k] ;
+		b = bsys_H*sqrt(t_interp) ;
 		if(comove == YES){
 		    v_interp += hubble_constant*z*rsys + voffset ;
 		}
@@ -712,7 +1126,7 @@ absorb(job)
 		    if(ibin < 0) {
 		      ibin += nvbin;
 		    }
-		    vbins_t[ibin] += mass[i]/(double)SUBBIN ;
+		    vbins_t_HI[ibin] += mass_HI[i]/(double)SUBBIN ;
 		}
 		bin_min = floor((v_interp - 6.0*b - vmin)/vbin_size) ;
 		bin_max = floor((v_interp + 6.0*b - vmin)/vbin_size) ;
@@ -744,17 +1158,173 @@ absorb(job)
 			  ibin += nvbin;
 			}
 			if(vupper*vlower < 0){
-			    vbins[ibin] += mass[i]/(double)SUBBIN*0.5*
+			    vbins_HI[ibin] += mass_HI[i]/(double)SUBBIN*0.5*
 				    (erf(abs_vlower) + erf(vupper)) ;
 			}
 			else{
 			    if(abs_vlower < abs_vupper){
-				vbins[ibin] += mass[i]/(double)SUBBIN*
+				vbins_HI[ibin] += mass_HI[i]/(double)SUBBIN*
 					0.5*(erf(abs_vupper) -
 					erf(abs_vlower)) ;
 			    }
 			    else{
-				vbins[ibin] += mass[i]/(double)SUBBIN*
+				vbins_HI[ibin] += mass_HI[i]/(double)SUBBIN*
+					0.5*(erf(abs_vlower) -
+					erf(abs_vupper)) ;
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	for(i = 0; i < zbin; i++){
+	    if(mass_HeI[i] == 0.0)
+		continue ;
+	    for(j = 0; j < SUBBIN; j++){
+		z = ((double)(i) + ((double)(j))/((double)(SUBBIN)))*bin_size ;
+		if(2*j < SUBBIN){
+		    k = i - 1 ;
+		}
+		else {
+		    k = i ;
+		}
+		k = max(0,k) ;
+		k = min(zbin-2,k) ;
+		v_interp = (vel_HeI[k+1] - vel_HeI[k])*(i + ((double)(j))/
+			((double)(SUBBIN)) - (k + 0.5)) + vel_HeI[k] ;
+		t_interp = (temp_HeI[k+1] - temp_HeI[k])*(i + ((double)(j))/
+			((double)(SUBBIN)) - (k + 0.5)) + temp_HeI[k] ;
+		b = bsys_He*sqrt(t_interp) ;
+		if(comove == YES){
+		    v_interp += hubble_constant*z*rsys + voffset ;
+		}
+		if((v_interp < vmax && v_interp >= vmin) ||
+			(autolim == YES && periodic == YES)){
+	            bin = floor((v_interp - vmin)/vbin_size) ;
+		    ibin = bin%nvbin;
+		    if(ibin < 0) {
+		      ibin += nvbin;
+		    }
+		}
+		bin_min = floor((v_interp - 6.0*b - vmin)/vbin_size) ;
+		bin_max = floor((v_interp + 6.0*b - vmin)/vbin_size) ;
+		if((v_interp + 6.0*b - vmin)/vbin_size == (double) bin_max)
+		  bin_max--;
+		for(bin = bin_min; bin <= bin_max; bin++){
+		    if((bin >= 0 && bin < nvbin) || 
+			    (autolim == YES && periodic == YES)){
+			if(bin == bin_min){
+			    vlower = -6.0*b ;
+			}
+			else{
+			    vlower = ((double)(bin))*vbin_size+vmin -
+				    v_interp ;
+			}
+			if(bin == bin_max){
+			    vupper = 6.0*b ;
+			}
+			else{
+			    vupper = ((double)(bin+1))*vbin_size+vmin -
+				    v_interp ;
+			}
+			vlower /= b ;
+			vupper /= b ;
+			abs_vlower = fabs(vlower) ;
+			abs_vupper = fabs(vupper) ;
+			ibin = bin%nvbin;
+			if(ibin < 0) {
+			  ibin += nvbin;
+			}
+			if(vupper*vlower < 0){
+			    vbins_HeI[ibin] += mass_HeI[i]/(double)SUBBIN*0.5*
+				    (erf(abs_vlower) + erf(vupper)) ;
+			}
+			else{
+			    if(abs_vlower < abs_vupper){
+				vbins_HeI[ibin] += mass_HeI[i]/(double)SUBBIN*
+					0.5*(erf(abs_vupper) -
+					erf(abs_vlower)) ;
+			    }
+			    else{
+				vbins_HeI[ibin] += mass_HeI[i]/(double)SUBBIN*
+					0.5*(erf(abs_vlower) -
+					erf(abs_vupper)) ;
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	for(i = 0; i < zbin; i++){
+	    if(mass_HeII[i] == 0.0)
+		continue ;
+	    for(j = 0; j < SUBBIN; j++){
+		z = ((double)(i) + ((double)(j))/((double)(SUBBIN)))*bin_size ;
+		if(2*j < SUBBIN){
+		    k = i - 1 ;
+		}
+		else {
+		    k = i ;
+		}
+		k = max(0,k) ;
+		k = min(zbin-2,k) ;
+		v_interp = (vel_HeII[k+1] - vel_HeII[k])*(i + ((double)(j))/
+			((double)(SUBBIN)) - (k + 0.5)) + vel_HeII[k] ;
+		t_interp = (temp_HeII[k+1] - temp_HeII[k])*(i + ((double)(j))/
+			((double)(SUBBIN)) - (k + 0.5)) + temp_HeII[k] ;
+		b = bsys_He*sqrt(t_interp) ;
+		if(comove == YES){
+		    v_interp += hubble_constant*z*rsys + voffset ;
+		}
+		if((v_interp < vmax && v_interp >= vmin) ||
+			(autolim == YES && periodic == YES)){
+	            bin = floor((v_interp - vmin)/vbin_size) ;
+		    ibin = bin%nvbin;
+		    if(ibin < 0) {
+		      ibin += nvbin;
+		    }
+		}
+		bin_min = floor((v_interp - 6.0*b - vmin)/vbin_size) ;
+		bin_max = floor((v_interp + 6.0*b - vmin)/vbin_size) ;
+		if((v_interp + 6.0*b - vmin)/vbin_size == (double) bin_max)
+		  bin_max--;
+		for(bin = bin_min; bin <= bin_max; bin++){
+		    if((bin >= 0 && bin < nvbin) || 
+			    (autolim == YES && periodic == YES)){
+			if(bin == bin_min){
+			    vlower = -6.0*b ;
+			}
+			else{
+			    vlower = ((double)(bin))*vbin_size+vmin -
+				    v_interp ;
+			}
+			if(bin == bin_max){
+			    vupper = 6.0*b ;
+			}
+			else{
+			    vupper = ((double)(bin+1))*vbin_size+vmin -
+				    v_interp ;
+			}
+			vlower /= b ;
+			vupper /= b ;
+			abs_vlower = fabs(vlower) ;
+			abs_vupper = fabs(vupper) ;
+			ibin = bin%nvbin;
+			if(ibin < 0) {
+			  ibin += nvbin;
+			}
+			if(vupper*vlower < 0){
+			    vbins_HeII[ibin] += mass_HeII[i]/(double)SUBBIN*0.5*
+				    (erf(abs_vlower) + erf(vupper)) ;
+			}
+			else{
+			    if(abs_vlower < abs_vupper){
+				vbins_HeII[ibin] += mass_HeII[i]/(double)SUBBIN*
+					0.5*(erf(abs_vupper) -
+					erf(abs_vlower)) ;
+			    }
+			    else{
+				vbins_HeII[ibin] += mass_HeII[i]/(double)SUBBIN*
 					0.5*(erf(abs_vlower) -
 					erf(abs_vupper)) ;
 			    }
@@ -764,19 +1334,32 @@ absorb(job)
 	    }
 	}
 	for(i = 0; i < nvbin; i++){
-	    tau=LYCS*vbins[i]/vbin_size ;
-	    vbins[i] = exp(-tau);
-	    vbins_t[i] = exp(-LYCS*vbins_t[i]/vbin_size);
-	    fprintf(fp, "%g %g %g %g\n", vmin + (i+0.5)*vbin_size,
-		    vbins[i],vbins_t[i],tau) ;
+	    vbins_HI[i] = LYCS_HI*vbins_HI[i]/vbin_size ;
+	    vbins_HeI[i] = LYCS_HeI*vbins_HeI[i]/vbin_size ;
+	    vbins_HeII[i] = LYCS_HeII*vbins_HeII[i]/vbin_size ;
+	    vbins_t_HI[i] = LYCS_HI*vbins_t_HI[i]/vbin_size ;
+	    fprintf(fp, "%g %g %g %g %g\n", vmin + (i+0.5)*vbin_size,
+		    vbins_HI[i],vbins_HeI[i],vbins_HeII[i],vbins_t_HI[i]) ;
 	}
 	fclose(fp);
-	free(vbins);
-	free(vbins_t);
-	free(mass);
-	free(vel);
-	free(temp);
+	free(vbins_t_HI);
+	free(vbins_HI);
+	free(vbins_HeI);
+	free(vbins_HeII);
+	free(mass_tot);
+	free(mass_HI);
+	free(mass_HeI);
+	free(mass_HeII);
+	free(vel_tot);
+	free(vel_HI);
+	free(vel_HeI);
+	free(vel_HeII);
+	free(temp_tot);
+	free(temp_HI);
+	free(temp_HeI);
+	free(temp_HeII);
 	free(res);
+      }
       }
       else {
 	input_error(command) ;

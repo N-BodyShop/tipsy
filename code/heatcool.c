@@ -328,13 +328,13 @@ double heatcool(temp, density)
 
     y = 1.0 - fhydrogen;
     r = y / 4.0 / (1.0 - y);
-    g0 = jnu21 * 4 * PI * 1.e-21 * gp0_H ;
-    g1 = jnu21 * 4 * PI * 1.e-21 * gp0_He ;
-    g2 = jnu21 * 4 * PI * 1.e-21 * gp0_Hep ;
+    g0 = gp0_H ;
+    g1 = gp0_He ;
+    g2 = gp0_Hep ;
 
-    h0 = jnu21 * 2.6e-22 /(alphaj + 2.0)/(alphaj + 3.0);
-    h1 = jnu21 * 5.98e-22 * pow(3.29/5.95, alphaj)/(alphaj + 2.0)/(alphaj + 3.0);
-    h2 = jnu21 * 2.32e-22 * pow(3.29/13.2, alphaj)/(alphaj + 2.0)/(alphaj + 3.0);
+    h0 = eps_H ;
+    h1 = eps_He ;
+    h2 = eps_Hep ;
 
     xion(temp, &x, &x_1, &x_2);
     f_e = 1.0 - x + x_2*r + (1.0 - x_1 - x_2)*2.0*r;
@@ -356,11 +356,13 @@ double heatcool(temp, density)
     return hrate - (crate + compcrate);
 }
 
-double calc_hneutral(temp, density)
+calc_hneutral(temp, density, hneutral_p, heneutral_p, heII_p)
      double temp;
      double density;
+     double *hneutral_p;
+     double *heneutral_p;
+     double *heII_p;
 {
-    double x, x_1, x_2;
     double y;
 
     n_h = (density/cosmof3)*MSOLG*msolunit* 
@@ -397,12 +399,13 @@ double calc_hneutral(temp, density)
 
     y = 1.0 - fhydrogen;
     r = y / 4.0 / (1.0 - y);
-    g0 = jnu21 * 4 * PI * 1.e-21 * gp0_H ;
-    g1 = jnu21 * 4 * PI * 1.e-21 * gp0_He ;
-    g2 = jnu21 * 4 * PI * 1.e-21 * gp0_Hep ;
+    g0 = gp0_H ;
+    g1 = gp0_He ;
+    g2 = gp0_Hep ;
 
-    xion(temp, &x, &x_1, &x_2);
-    return x;
+    xion(temp, hneutral_p, heneutral_p, heII_p);
+
+    return ;
 }
 
 double calc_meanmwt(temp, density)
@@ -443,9 +446,9 @@ double calc_meanmwt(temp, density)
 
     y = 1.0 - fhydrogen;
     r = y / 4.0 / (1.0 - y);
-    g0 = jnu21 * 4 * PI * 1.e-21 * gp0_H ;
-    g1 = jnu21 * 4 * PI * 1.e-21 * gp0_He ;
-    g2 = jnu21 * 4 * PI * 1.e-21 * gp0_Hep ;
+    g0 = gp0_H ;
+    g1 = gp0_He ;
+    g2 = gp0_Hep ;
 
     xion(temp, &x, &x_1, &x_2);
     return (1.0 - y/4.0)/(2.0 - x) + y/(3.0 - x_1 - x_2);
@@ -459,10 +462,12 @@ ionize()
     double e0_He ;
     double e0_Hep ;
     double gint ;
+    double eint ;
     double at ;
     double beta ;
     double s ;
     double fac1() ;
+    double fac2() ;
     double midpnt() ;
     double qromo() ;
 
@@ -484,6 +489,9 @@ ionize()
     gint = qromo(fac1,0.,1.,midpnt) ;
     gp0_H = a0*gint/planck ;
     gp0_Hep = gp0_H*pow((e0_H/e0_Hep),alphaj)/4. ;
+    eint = qromo(fac2,0.,1.,midpnt) ;
+    eps_H = a0*eint*(e0_H/planck) ;
+    eps_Hep = eps_H*pow((e0_H/e0_Hep),(alphaj-1.))/4. ;
 
     at = 7.83e-18 ;
     beta = 1.66 ;
@@ -491,7 +499,8 @@ ionize()
 
     gp0_He = (at/planck)*pow((e0_H/e0_He),alphaj)*(beta/(alphaj+s)+(1.-beta)/
 	    (alphaj+s+1)) ;
-
+    eps_He = (e0_He/planck)*at*pow((e0_H/e0_He),alphaj)*(beta/(alphaj+s-1)+
+	    (1-2*beta)/(alphaj+s)-(1-beta)/(alphaj+s+1)) ;
     return ;
 }
 double fac1(t)
@@ -506,6 +515,20 @@ double fac1(t)
     fac = exp(4.-4.*atan(eps)/eps)/(1.-exp(-2.*PI/eps))*pow(t,(alphaj+3.));
     return fac ;
 }
+double fac2(t)
+    double t;
+{
+    double tinv ;
+    double eps ;
+    double fac ;
+
+    tinv = 1./t ;
+    eps = sqrt(tinv-1.) ;
+    fac = exp(4.-4.*atan(eps)/eps)/(1.-exp(-2.*PI/eps))*pow(t,(alphaj+3.));
+    fac = fac*(tinv-1.) ;
+    return fac ;
+}
+
 
 #include <math.h>
 #define EPS 1.0e-6
