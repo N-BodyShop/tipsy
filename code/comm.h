@@ -1,7 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:20  trq
- * Initial revision
+ * Revision 1.2  1995/03/30 00:14:40  trq
+ * Added "ruler" command.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:21  trq
+ * Import to CVS
  *
  * Revision 2.12  1994/12/22  01:37:54  nsk
  * added drift
@@ -105,6 +108,7 @@ extern void reset_color() ;
 extern void rhomap() ;
 extern void rot_cur() ;
 extern void rotate_sub() ;
+extern void ruler() ;
 extern void run_macro() ;
 extern void setbox_sub() ;
 extern void setsphere_sub() ;
@@ -278,6 +282,7 @@ struct comm c_list[] = {
      {"rotate",      rotate_sub,	0},
      {"rotationcurve",rot_cur,		0},
      {"rotcur",      rot_cur,		0},
+     {"ruler",       ruler,		1},
 
      {"saxes",       showaxes_sub,	0},
      {"sbox",	     showboxes_sub,	0},

@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1995/03/02 23:27:18  trq
+ * Revision 1.3  1995/03/30 00:14:39  trq
+ * Added "ruler" command.
+ *
+ * Revision 1.2  1995/03/02  23:27:18  trq
  * Changed documentation for setbox.
  *
  * Revision 1.1.1.1  1995/01/10  22:57:23  trq
@@ -271,6 +274,9 @@ arguments(job)
 	    strcmp(command,"rotcur") == 0 ) {
 	printf("rotationcurve box-number center-box-number binning") ;
 	printf(" bin_number filename minimum_radius maximum_radius\n") ; 
+    }
+    else if ( strcmp(command,"ruler") ==0 ) {
+	printf("ruler\n") ;
     }
     else if ( strcmp(command,"setbox") == 0 ) {
       printf("setbox box xcenter ycenter zcenter xradius yradius zradius\n");

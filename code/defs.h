@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1995/03/24 18:49:06  trq
+ * Revision 1.4  1995/03/30 00:14:41  trq
+ * Added "ruler" command.
+ *
+ * Revision 1.3  1995/03/24  18:49:06  trq
  * Added "revrain" colormap.
  *
  * divv.c: included malloc.h.
@@ -202,6 +205,9 @@ extern Dimension can_height, can_width ;
 extern int hard_height, hard_width ;
 extern Dimension bar_height, bar_width ;
 extern int can_size ;
+extern int ruler_flag ;
+extern int ruler_x ;
+extern int ruler_y ;
 extern int make_box_flag ;
 extern int make_box_x1 ;
 extern int make_box_y1 ;

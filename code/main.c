@@ -1,7 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:34  trq
- * Initial revision
+ * Revision 1.2  1995/03/30 00:14:43  trq
+ * Added "ruler" command.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:35  trq
+ * Import to CVS
  *
  * Revision 2.20  1994/12/29  02:26:49  trq
  * changed can_size from min to max of height and width.
@@ -182,7 +185,6 @@ XFontStruct *label_font;
 void setbuf();
 void initialize_color_table();
 void unload_all();
-int getuid();
 int fclose();
 void command_interp();
 
@@ -654,6 +656,14 @@ ZoomIn(viewport, event, params, n_params)
       printf(", %s>\n",title) ;
       return;
     }
+   if(ruler_flag == 1 || ruler_flag == 2) {
+      ExtractPosition(event, &x, &y);
+      ruler_x = x;
+      ruler_y = y;
+      ruler_flag = 0;
+      return;
+   }
+
     if(make_box_flag != 2 && make_box_flag != 3 &&
 	    make_box_flag != 6 && make_box_flag != 7){
       ExtractPosition(event, &x, &y);
@@ -673,6 +683,7 @@ ZoomIn(viewport, event, params, n_params)
 	    make_box_flag = 4 ;
 	}
    }
+  
 }
 
 static void
@@ -692,6 +703,8 @@ ZoomOut(viewport, event, params, n_params)
       printf(", %s>\n",title) ;
       return;
     }
+   if(ruler_flag == 1 || ruler_flag == 2)
+       return;
     if (view_size < INTMAX && make_box_flag != 2 &&
 	    make_box_flag != 3 && make_box_flag != 6 &&
 	    make_box_flag != 7) {
@@ -725,6 +738,8 @@ Pan(viewport, event, params, n_params)
       printf(", %s>\n",title) ;
       return;
     }
+   if(ruler_flag == 1 || ruler_flag == 2)
+       return;
   if (make_box_flag != 2 &&
       make_box_flag != 3 && make_box_flag != 6 &&
       make_box_flag != 7) {
