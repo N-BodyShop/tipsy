@@ -208,7 +208,8 @@ profile(job)
 			vel_radial[bin] += (dp->mass) * vel ;
 			vel_radial_sigma[bin] += (dp->mass) * vel * vel ;
 			if(array)
-			  ar_mean[bin] += dp->mass*array[boxlist[box].dpi[i]];
+			  ar_mean[bin] += dp->mass
+			      *array[boxlist[box].dpi[i]+header.nsph];
 		    }
 		}
 	    }
@@ -268,7 +269,8 @@ profile(job)
 			vel_radial[bin] += (sp->mass) * vel ;
 			vel_radial_sigma[bin] += (sp->mass) * vel * vel ;
 			if(array)
-			  ar_mean[bin] += sp->mass*array[boxlist[box].spi[i]];
+			  ar_mean[bin] += sp->mass
+			      *array[boxlist[box].spi[i] + header.nsph + header.ndark];
 		    }
 		}
 	    }
