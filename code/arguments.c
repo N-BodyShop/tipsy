@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.18  1998/02/27 19:51:31  nsk
+ * Revision 1.19  1998/03/31 00:26:54  trq
+ * New command: scale.  N.B.  This command will mess up makebox and ruler.
+ * This needs to be fixed.
+ *
+ * Revision 1.18  1998/02/27  19:51:31  nsk
  * Fixed star formation stuff, added starform routine
  *
  * Revision 1.17  1997/09/30  17:32:43  nsk
@@ -342,6 +346,9 @@ arguments(job)
     }
     else if ( strcmp(command,"ruler") ==0 ) {
 	printf("ruler\n") ;
+    }
+    else if ( strcmp(command,"scale") == 0 ) {
+	printf("scale scale-factor\n") ;
     }
     else if ( strcmp(command,"setbox") == 0 ) {
       printf("setbox box xcenter ycenter zcenter xradius yradius zradius\n");

@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.10  1998/02/27 19:51:33  nsk
+ * Revision 1.11  1998/03/31 00:26:53  trq
+ * New command: scale.  N.B.  This command will mess up makebox and ruler.
+ * This needs to be fixed.
+ *
+ * Revision 1.10  1998/02/27  19:51:33  nsk
  * Fixed star formation stuff, added starform routine
  *
  * Revision 1.9  1997/09/25  18:35:10  nsk
@@ -142,6 +146,7 @@ extern void rot_cur() ;
 extern void rotate_sub() ;
 extern void ruler() ;
 extern void run_macro() ;
+extern void scale_sub() ;
 extern void setbox_sub() ;
 extern void setsphere_sub() ;
 
@@ -328,6 +333,7 @@ struct comm c_list[] = {
 
      {"saxes",       showaxes_sub,	0},
      {"sbox",	     showboxes_sub,	0},
+     {"scale",	     scale_sub,		1},
      {"sdark",       showdark_sub,	0},
      {"setbox",      setbox_sub,	0},
      {"setsphere",   setsphere_sub,	0},
