@@ -46,27 +46,89 @@ _swaplong (bp, n)
 }
 
 /*
+Some of this code comes from the xwd program which has the following notice:
+
+Copyright 1987, 1998  The Open Group
+
+All Rights Reserved.
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of The Open Group shall not be
+used in advertising or otherwise to promote the sale, use or other dealings
+in this Software without prior written authorization from The Open Group.
+
+*/
+
+#define lowbit(x) ((x) & (~(x) + 1))
+
+static int
+ReadColors(vis,cmap,colors)
+Visual *vis ;
+Colormap cmap ;
+XColor **colors ;
+{
+    int i,ncolors ;
+
+    ncolors = vis->map_entries;
+
+    if (!(*colors = (XColor *) malloc (sizeof(XColor) * ncolors))) {
+	printf("Out of memory for colors, %s>\n", title);
+	return 0;
+	}
+
+    if (vis->class == DirectColor ||
+	vis->class == TrueColor) {
+	Pixel red, green, blue, red1, green1, blue1;
+
+	red = green = blue = 0;
+	red1 = lowbit(vis->red_mask);
+	green1 = lowbit(vis->green_mask);
+	blue1 = lowbit(vis->blue_mask);
+	for (i=0; i<ncolors; i++) {
+	  (*colors)[i].pixel = red|green|blue;
+	  (*colors)[i].pad = 0;
+	  red += red1;
+	  if (red > vis->red_mask)
+	    red = 0;
+	  green += green1;
+	  if (green > vis->green_mask)
+	    green = 0;
+	  blue += blue1;
+	  if (blue > vis->blue_mask)
+	    blue = 0;
+	}
+    } else {
+	for (i=0; i<ncolors; i++) {
+	  (*colors)[i].pixel = i;
+	  (*colors)[i].pad = 0;
+	}
+    }
+
+    XQueryColors(baseframe_dpy, cmap, *colors, ncolors);
+    
+    return(ncolors);
+}
+
+/*
  * Get the XColors of all pixels in image - returns # of colors
  */
-int Get_XColors(win_info, xcolors)
+int Get_XColors(win_info, colors)
      XWindowAttributes *win_info;
-     XColor **xcolors;
+     XColor **colors;
 {
-    int i, ncolors;
+    int ncolors;
 
-    ncolors = win_info->visual->map_entries;
-    if (!(*xcolors = (XColor *) malloc (sizeof(XColor) * ncolors))) {
-	printf("<No memory for colors, %s>\n", title);
-	return 0;
-    }
-        for (i=0; i<ncolors; i++) {
-          (*xcolors)[i].pixel = i;
-          (*xcolors)[i].pad = 0;
-        }
-
-    XQueryColors(baseframe_dpy, default_cmap, *xcolors, ncolors);
-
-    return(ncolors);
+    ncolors = ReadColors(win_info->visual, default_cmap, colors) ;
+    return ncolors ;
 }
 
 void
