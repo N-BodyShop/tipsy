@@ -26,13 +26,18 @@ uv(job)
 	}
 	if(uv_sources != NULL) free(uv_sources);
 	uv_sources = 
-		(struct uv_source *) malloc(source_num*sizeof(*uv_sources));
+		(struct uv_source *) malloc((source_num+1)*sizeof(*uv_sources));
 	if(uv_sources == NULL) {
 	    printf("<sorry, no memory for uv sources, %s>\n",title) ;
 	    return ;
 	}
-	lastuvs = uv_sources + source_num ;
-	for(uvs = uv_sources; uvs < lastuvs; uvs++){
+	uvs = uv_sources ;
+	if (fscanf(infile,"%lf %lf %lf %lf %lf %lf",&uvs->gp0_H,&uvs->gp0_He,
+		&uvs->gp0_Hep,&uvs->eps_H,&uvs->eps_He,&uvs->eps_Hep) != 6){
+	    printf("<Sorry %s, source file format is wrong>\n",title);
+	}
+	lastuvs = uv_sources + source_num + 1 ;
+	for(uvs = uv_sources + 1 ; uvs < lastuvs; uvs++){
 	    if (fscanf(infile,"%f %f %f %lf %lf %lf %lf %lf %lf",&uvs->pos[0],
 		    &uvs->pos[1],&uvs->pos[2],&uvs->gp0_H,&uvs->gp0_He,
 		    &uvs->gp0_Hep,&uvs->eps_H,&uvs->eps_He,&uvs->eps_Hep) != 9){

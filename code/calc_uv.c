@@ -14,15 +14,16 @@ void calc_uv(gp)
     if (!redshift_loaded ){
         load_redshift() ;
     }
-    gp0_H = 0.0 ;
-    gp0_He = 0.0 ;
-    gp0_Hep = 0.0 ;
-    eps_H = 0.0 ;
-    eps_He = 0.0 ;
-    eps_Hep = 0.0 ;
+    uvs = uv_sources ;
+    gp0_H = uvs->gp0_H ;
+    gp0_He = uvs->gp0_He ;
+    gp0_Hep = uvs->gp0_Hep ;
+    eps_H = uvs->eps_H ;
+    eps_He = uvs->eps_He ;
+    eps_Hep = uvs->eps_Hep ;
     c1 = cosmof*cosmof*kpcunit*kpcunit*KPCCM*KPCCM ;
-    lastuvs = uv_sources + source_num ;
-    for(uvs = uv_sources; uvs < lastuvs; uvs++){
+    lastuvs = uv_sources + source_num+1 ;
+    for(uvs = uv_sources+1; uvs < lastuvs; uvs++){
 	sub_vec(dr,gp->pos,uvs->pos) ;
 /*	if(periodic == YES) {
 	    for(j = 0; j < MAXDIM; j++) {
