@@ -104,6 +104,7 @@ view_mag(job)
 		return ;
 	    }
 	    project() ;
+	    current_color = NO;
 	    magnitude_color() ;
 	    plot_sub(job) ;
 	}

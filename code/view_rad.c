@@ -84,6 +84,7 @@ view_rad(job)
 		return ;
 	    }
 	    project() ;
+	    current_color = NO;
 	    radial_color() ;
 	    plot_sub(job) ;
 	}

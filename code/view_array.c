@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.4  2003/08/28 16:00:29  trq
+ * Set current_color to NO in case xxx_color() routine runs into trouble
+ * (usually bad array loaded)
+ *
  * Revision 1.3  1997/01/17 21:24:06  trq
  * Added more informative error messages.
  *
@@ -146,6 +150,7 @@ view_array(job)
 	    color_slope = 124.0 / (high - low) ;
 	    color_offset = 2.0 - color_slope * low ;
 	    project() ;
+	    current_color = NO;
 	    array_color() ;
 	    plot_sub(job) ;
 	}
