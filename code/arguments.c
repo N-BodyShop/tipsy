@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.24.2.1  2000/06/22 21:24:54  nsk
+ * Revision 1.24.2.2  2000/07/07 03:27:10  nsk
+ * Added set_var, delete_var, print, openmanifest, closemanifest, xverbose. (maf)
+ *
+ * Revision 1.24.2.1  2000/06/22  21:24:54  nsk
  * Added setcolormap command. (maf)
  *
  * Revision 1.24  2000/06/07  23:49:28  trq
@@ -198,6 +201,10 @@ arguments(job)
 	      strcmp(command,"closeb") == 0) {
 	printf("closebinary\n") ;
     }
+    else if ( strcmp(command,"closemanifest") == 0 ||
+	      strcmp(command,"closem") == 0) {
+	printf("closemanifest\n") ;
+    }
     else if ( strcmp(command,"colorbarlabel") == 0  ||
 	    strcmp(command,"colorlabel") == 0 ||
 	    strcmp(command,"barlabel") == 0 ) {
@@ -212,6 +219,9 @@ arguments(job)
     }
     else if ( strcmp(command,"coolout") == 0 ) {
 	printf("coolout box filename\n") ;
+    }
+    else if ( strcmp(command,"delete") == 0) {
+	printf("delete variable-name\n") ;
     }
     else if ( strcmp(command,"deletemacro") == 0 ||
 	    strcmp(command,"dmac") == 0 ) {
@@ -314,6 +324,10 @@ arguments(job)
 	    strcmp(command,"openb") == 0 ) {
 	printf("openbinary filename\n") ;
     }
+    else if ( strcmp(command,"openmanifest") == 0 || 
+	    strcmp(command,"openm") == 0 ) {
+	printf("openmanifest filename\n") ;
+    }
     else if ( strcmp(command,"pcenter") == 0 ) {
 	printf("pcenter box-number center_x center_y center_z period_x period_y period_z\n") ;
     }
@@ -323,6 +337,9 @@ arguments(job)
     else if ( strcmp(command,"pointsize") == 0  ||
 	    strcmp(command,"psize") == 0) {
 	printf("pointsize particle size\n") ;
+    }
+    else if ( strcmp(command,"print") == 0) {
+	printf("print <expression possibly including $variables>\n") ;
     }
     else if ( strcmp(command,"printhelp") == 0 ||
 	    strcmp(command,"phelp") == 0) {
@@ -373,6 +390,9 @@ arguments(job)
     }
     else if ( strcmp(command,"scale") == 0 ) {
 	printf("scale scale-factor\n") ;
+    }
+    else if ( strcmp(command,"set") == 0 ) {
+      printf("set $variable = <expression>\n");
     }
     else if ( strcmp(command,"setbox") == 0 ) {
       printf("setbox box xcenter ycenter zcenter xradius yradius zradius\n");
@@ -543,6 +563,9 @@ arguments(job)
     }
     else if ( strcmp(command,"xrad") == 0 ) {
 	printf("xrad particle min max plot_type (clip)\n") ;
+    }
+    else if ( strcmp(command,"xverbose") == 0 ) {
+        printf("xverbose yes/no (or y/n, on/off)\n") ;
     }
     else if ( strcmp(command,"xypoints") == 0 ) {
 	printf("xypoints filename\n") ;
