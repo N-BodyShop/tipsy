@@ -83,6 +83,7 @@ typedef struct smContext {
 
 
 PROTO(void, calc_density, (SMX *psmx, int bDark, int bGas, int bStar));
+PROTO(void, calc_balls, (SMX *psmx, int bDark, int bGas, int bStar));
 PROTO(int, smInit, (SMX *,KD,int,float *));
 PROTO(void, smFinish, (SMX));
 PROTO(void, smBallSearch, (SMX,double,float *));
