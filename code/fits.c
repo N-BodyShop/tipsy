@@ -3,14 +3,17 @@
 	cfg 7/89
 */
 #include <malloc.h>
+#include <stdlib.h>
 #include "defs.h"
+#include "fdefs.h"
 #define BLANK 	-32768		/* short blank value */
 
+void
 fits(data,xsize,ysize,xmin,ymin,deltax,deltay,zmin,zmax,outfile)
 	float **data ;
 	double xmin,ymin,deltax,deltay,zmin,zmax ;
 	int xsize,ysize ;
-	char outfile[MAXCOMM] ;
+	char *outfile ;
 {
 	short *page = NULL;
 	short zero ;
@@ -55,7 +58,7 @@ fits(data,xsize,ysize,xmin,ymin,deltax,deltay,zmin,zmax,outfile)
 		}
 	}
 	if(!bigendian)
-	    swab(page,page,sizeof(*page)*xsize*ysize) ;
+	    swab((char *)page,(char *)page,sizeof(*page)*xsize*ysize) ;
 
 	/* output page to fits file outfile */
 	fprintf(stderr,"writing fits to file %s\n",outfile) ;
