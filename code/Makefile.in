@@ -48,7 +48,7 @@ COMPILE = $(CC) -c $(CPPFLAGS) -I. -I$(srcdir) $(CFLAGS)
 OBJS		=  \
 acc_load.o activatebox.o add_const_mult_vec.o add_vec.o \
 angleup.o arguments.o ascii2binary.o boxstat_sub.o cconst_sub.o \
-clear_rot.o clearrot.o closeascii.o closebinary.o \
+clear_rot.o clearrot.o closeascii.o closebinary.o closemanifest.o \
 command_interp.o cool_func.o cross_product.o diff_add_vec.o distance.o \
 distance_dim2.o divv.o dkernel_load.o dot_product.o ell_distance.o eps_sub.o \
 epsgas_sub.o fconst_sub.o find.o find_shape.o find_vel.o \
@@ -57,7 +57,7 @@ input_error.o jacobi.o lconst_sub.o load_color_table.o load_cool.o \
 load_eps.o load_epsgas.o load_form.o load_redshift.o loadall.o loadbinary.o \
 loadbinary_sub.o loadbox.o make_ell_matrix.o mass_add_vec.o \
 matrix_matrix_mult.o matrix_vector_mult.o maxpos.o moments.o norm.o openascii.o\
-openbinary.o packfit.o perp_distance.o plane.o \
+openbinary.o openmanifest.o packfit.o perp_distance.o plane.o \
 profile.o \
 readascii.o redshift_sub.o rot_cur.o rotate.o \
 rotate_sub.o setcolormap.o setsize.o setbox_sub.o setvec.o showboxes_sub.o \
@@ -87,7 +87,7 @@ readvector.o xplot_mag.o yplot_mag.o zplot_mag.o view_mag.o magnitude_color.o \
 pcenter.o writebox_rot.o absorb.o markmass.o drift.o ruler.o \
 zspace.o dump_pixmap.o kd.o smooth.o catbox.o gasify.o neutralize.o uv.o \
 load_uv.o calc_uv.o starform_sub.o scale_sub.o write_iv.o write_gas.o \
-cooling_sub.o dudt.o
+cooling_sub.o dudt.o xverbose_sub.o variables.o tipsy_calc.tab.o print.o
 
 HEADERS = comm.h defs.h fdefs.h main.h nsktrqxbm.h tipsy_icon.h kd.h \
 	xray.h smooth.h
@@ -95,7 +95,7 @@ HEADERS = comm.h defs.h fdefs.h main.h nsktrqxbm.h tipsy_icon.h kd.h \
 SRCS	= \
 acc_load.c activatebox.c add_const_mult_vec.c add_vec.c \
 angleup.c arguments.c ascii2binary.c boxstat_sub.c cconst_sub.c \
-clear_rot.c clearrot.c closeascii.c closebinary.c \
+clear_rot.c clearrot.c closeascii.c closebinary.c closemanifest.c \
 command_interp.c cool_func.c cross_product.c diff_add_vec.c distance.c \
 distance_dim2.c divv.c dkernel_load.c dot_product.c ell_distance.c eps_sub.c \
 epsgas_sub.c fconst_sub.c find.c find_shape.c find_vel.c \
@@ -104,7 +104,7 @@ input_error.c jacobi.c lconst_sub.c load_color_table.c load_cool.c \
 load_eps.c load_epsgas.c load_form.c load_redshift.c loadall.c loadbinary.c \
 loadbinary_sub.c loadbox.c make_ell_matrix.c mass_add_vec.c \
 matrix_matrix_mult.c matrix_vector_mult.c maxpos.c moments.c norm.c openascii.c\
-openbinary.c packfit.c perp_distance.c plane.c \
+openbinary.c openmanifest.c packfit.c perp_distance.c plane.c \
 profile.c \
 readascii.c redshift_sub.c rot_cur.c rotate.c \
 rotate_sub.c setcolormap.c setsize.c setbox_sub.c setvec.c showboxes_sub.c \
@@ -134,7 +134,7 @@ readvector.c xplot_mag.c yplot_mag.c zplot_mag.c view_mag.c magnitude_color.c \
 pcenter.c writebox_rot.c absorb.c markmass.c drift.c alloca.c ruler.c \
 zspace.c dump_pixmap.c kd.c smooth.c catbox.c gasify.c neutralize.c uv.c \
 load_uv.c calc_uv.c starform_sub.c scale_sub.c write_iv.c write_gas.c \
-cooling_sub.c dudt.c
+cooling_sub.c dudt.c xverbose_sub.c variables.c tipsy_calc.tab.c print.c
 
 $(OBJS): defs.h
 main.o:  main.h
