@@ -1,5 +1,7 @@
 Mon Aug 19 12:50:45 1996  Tom Quinn  <trq@hermes.astro.washington.edu>
 
+	* heatcool.c: Fix bug in ionization equilibrium calculation.
+
 	* main.c, plot_all.c: Allow use of pseudocolor visuals with depth
 	>= 8.
 

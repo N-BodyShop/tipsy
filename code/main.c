@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.4  1996/08/19 20:56:01  trq
+ * Revision 1.5  1996/08/19 22:53:31  trq
+ * Fixed bug in ionization equilibrium calculation.
+ *
+ * Revision 1.4  1996/08/19  20:56:01  trq
  * main.c, plot_all.c: allow use of pseudocolor visuals with depth >= 8.
  * nsktrq.c: include fdefs.h.
  *
@@ -294,7 +297,6 @@ int argc;
 		printf("<sorry %s, I need an 8+ bit Pseudocolor display\n",title);
 		return(-1);
 	      }
-	    printf("Using %d bit visual\n", vret[i].depth);
 	    if(visual != DefaultVisualOfScreen(XtScreen(toplevel)))
 	      {
 		XtSetArg(args[0], XtNvisual, visual);

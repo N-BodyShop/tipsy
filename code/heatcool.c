@@ -266,7 +266,7 @@ void xion(t, x, x_1, x_2)
 	  {
 	    zx2 = za_Hepp*n_e/(g2 + (zg_Hep + (a + 1.0)*za_Hepp)*n_e);
 	    zx1 = zx2 * a;
-	    zx3 = zx2*(g2 + zg_Hep)/za_Hepp;
+	    zx3 = zx2*(g2 + zg_Hep)/za_Hepp/n_e;
 	} else {
 	  zx3 = 0.0;
 	    zx2 = 0.0;
@@ -356,6 +356,7 @@ double heatcool(temp, density)
     return hrate - (crate + compcrate);
 }
 
+void
 calc_hneutral(temp, density, hneutral_p, heneutral_p, heII_p)
      double temp;
      double density;
@@ -453,6 +454,8 @@ double calc_meanmwt(temp, density)
     xion(temp, &x, &x_1, &x_2);
     return (1.0 - y/4.0)/(2.0 - x) + y/(3.0 - x_1 - x_2);
 }
+
+void
 ionize()
 {
     double a0 ;
