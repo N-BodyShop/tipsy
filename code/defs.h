@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.19.2.2  2000/07/07 03:24:55  nsk
+ * Revision 1.19.2.3  2000/07/13 01:24:33  nsk
+ * Added "exposed" boolean.
+ *
+ * Revision 1.19.2.2  2000/07/07  03:24:55  nsk
  * Changes for variables, parameters: added MAXCOMM, var_list structure,
  *   changed macro_list for parameters.    (cm/maf)
  * Added manifest definition, ismanifest variable.      (maf)
@@ -619,3 +622,4 @@ struct manifest_entry {
 } ;
 extern struct manifest_entry *manifest;
 
+extern int exposed;
