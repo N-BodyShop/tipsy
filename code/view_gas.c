@@ -1,7 +1,10 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.2  1996/04/11 21:27:59  trq
+ * Revision 1.3  1999/02/09 19:17:31  trq
+ * Added "entropy" plot type.
+ *
+ * Revision 1.2  1996/04/11  21:27:59  trq
  * view_star.c: fixed bug in abox vs. density calculation.
  * activatebox.c: hsmdivv is independent of abox.
  * divv.c, smooth.c, smooth.h, view_gas.c: Use tree to calculate hsmdivv[].
@@ -240,6 +243,14 @@ view_gas(job)
 		    gp = boxlist[active_box].gp[i] ;
 		    particle_color[i] = (int)(color_slope *
 			    log10(gp->rho * gp->temp) + color_offset +0.5) ;
+		}
+	    }
+	    else if ( strcmp(type,"entropy") == 0 ){
+		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+		    gp = boxlist[active_box].gp[i] ;
+		    particle_color[i] = (int)(color_slope *
+			    log10(pow(gp->temp, 1.5)/gp->rho) +
+					      color_offset +0.5) ;
 		}
 	    }
 	    else if (strcmp(type,"divv") == 0 ) {
