@@ -1,8 +1,13 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:31  trq
- * Initial revision
+ * Revision 1.2  2003/08/28 15:57:40  trq
+ * Use floating point to avoid descretization problems with large zooms.
+ * (Descreteness problems still exist: the zoom coordinates are only good
+ * to a pixel.)
+ *
+ * Revision 1.1.1.1  1995/01/10 22:57:32  trq
+ * Import to CVS
  *
  * Revision 2.3  1994/12/23  01:10:36  nsk
  * added ability to zoom to center of mass of a box
@@ -126,8 +131,8 @@ zoom_sub(job)
 	x += rot_matrix[0][j] * (center[j] - boxes[active_box].center[j]) ;
 	y += rot_matrix[1][j] * (center[j] - boxes[active_box].center[j]) ;
     }
-    ix = (int)(x * scaling +0.5) ;
-    iy = (int)(y * scaling +0.5) ;
+    x = x * scaling + 0.5 ;
+    y = y * scaling + 0.5 ;
 
     span_x = dv2_x - dv1_x ;
     offset_x = can_width/2.
@@ -135,8 +140,8 @@ zoom_sub(job)
     span_y = dv1_y - dv2_y ;
     offset_y = can_height/2.
       - can_size * ((dv2_y + dv1_y)/ (double)span_y)/2. ;
-    ix = can_size * ((ix)/(double)span_x) + offset_x ;
-    iy = can_size * ((iy)/(double)span_y) + offset_y ;
+    ix = can_size * ((x)/(double)span_x) + offset_x ;
+    iy = can_size * ((y)/(double)span_y) + offset_y ;
     
     zoom_factor = (double) INTMAX/(double) view_size;
     reset_zoom_scroll();
