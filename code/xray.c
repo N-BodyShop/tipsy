@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.2  1997/12/06 22:00:57  trq
+ * Revision 1.3  1998/02/18 22:54:56  trq
+ * Correct bounding on temperature.
+ *
+ * Revision 1.2  1997/12/06  22:00:57  trq
  * Updated xray stuff to use spline emmission files.
  *
  * Revision 1.1.1.1  1995/01/10  22:57:37  trq
@@ -64,7 +67,6 @@ xray(job)
     int band ;
     double *band_lum ;
     int xray_size ;
-    int nn ; 
 
     double total_lum ; 
 
@@ -76,7 +78,6 @@ xray(job)
 	if (current_project){
 	    if(!xray_loaded){
 		if(xray_lum_load() != 0){
-		    printf("Returning %d\n",nn);
 		    return ;
 		}
 	    }
@@ -303,16 +304,16 @@ xray(job)
 		    if(pixel < low)pixel = low ;
 		    image[i][j] = (float)pixel ;
 		    temp_image[i][j] /= density[0][i][j];
-#define LOW_TEMP 0
-#define HIGH_TEMP 20
+#define LOW_TEMP 0.0
+#define HIGH_TEMP 20.0
 		    if(temp_image[i][j] > 0. ){
 			pixel = log10((double)(temp_image[i][j]));
 		    }
 		    else{
 			pixel = LOW_TEMP ;
 		    }
-		    if(pixel > high)pixel = HIGH_TEMP ;
-		    if(pixel < low)pixel = LOW_TEMP ;
+		    if(pixel > HIGH_TEMP)pixel = HIGH_TEMP ;
+		    if(pixel < LOW_TEMP)pixel = LOW_TEMP ;
 		    temp_image[i][j] = (float) pixel;
 		}
 	    }
