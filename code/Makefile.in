@@ -88,7 +88,8 @@ pcenter.o writebox_rot.o absorb.o markmass.o drift.o ruler.o \
 zspace.o dump_pixmap.o kd.o smooth.o catbox.o gasify.o neutralize.o uv.o \
 load_uv.o calc_uv.o
 
-HEADERS = comm.h defs.h fdefs.h main.h nsktrqxbm.h tipsy_icon.h kd.h smooth.h
+HEADERS = comm.h defs.h fdefs.h main.h nsktrqxbm.h tipsy_icon.h kd.h \
+	xray.h smooth.h
 
 SRCS	= \
 acc_load.c activatebox.c add_const_mult_vec.c add_vec.c \
@@ -164,8 +165,10 @@ distfiles_readline = $(READLINE_SRC) $(CONF_FILES_READLINE)
 tipsy: $(OBJS) $(ALLOCA) readline/libreadline.a
 	$(CC) -o tipsy $(LDFLAGS) $(OBJS) $(ALLOCA) $(X_LIBS) $(X_EXTRA_LIBS) $(LIBS)
 
-readline/libreadline.a:
+readline/libreadline.a: FORCE
 	cd readline; make libreadline.a
+FORCE:
+
 clean:
 	rm -f *.o tipsy
 	cd readline; make clean

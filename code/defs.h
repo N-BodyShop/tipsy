@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.13  1997/09/25 18:35:12  nsk
+ * Revision 1.14  1997/12/06 22:00:54  trq
+ * Updated xray stuff to use spline emmission files.
+ *
+ * Revision 1.13  1997/09/25  18:35:12  nsk
  * added uv command and discrete uv sources
  *
  * Revision 1.12  1997/09/19  13:41:27  nsk
@@ -154,8 +157,8 @@
 #define LOG 2
 #define VELOCITY 1
 #define VECTOR 2
-#define MAXBANDS 200
 #define NINTERP 20000
+/* vista types */
 #define RHO 1
 #define TEMP 2
 #define PRESS 3

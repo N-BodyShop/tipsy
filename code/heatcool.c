@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 
 /* xion tolerance */
 #define TOLERANCE 1e-14
@@ -203,11 +204,12 @@ double rate_br(t)
 /* calculate ionization equilibrium */
 
 static
-void xion(t, x, x_1, x_2)
+void xion(t, x, x_1, x_2, p_ne)
      double t;
      double *x;
      double *x_1;
      double *x_2;
+     double *p_ne;
 {
     double a;
     int i;
@@ -275,6 +277,7 @@ void xion(t, x, x_1, x_2)
     *x = zx;
     *x_1 = zx1;
     *x_2 = zx2;
+    *p_ne = n_e;
 }
 
 
@@ -284,7 +287,7 @@ double heatcool(temp, density)
 {
     double crate, hrate, compcrate;
     double h0, h1, h2;
-    double x, x_1, x_2, f_e;
+    double x, x_1, x_2, f_e, n_e;
     double y;
 
       n_h = (density/cosmof3)*MSOLG*msolunit* 
@@ -330,7 +333,7 @@ double heatcool(temp, density)
     h1 = eps_He ;
     h2 = eps_Hep ;
 
-    xion(temp, &x, &x_1, &x_2);
+    xion(temp, &x, &x_1, &x_2, &n_e);
     f_e = 1.0 - x + x_2*r + (1.0 - x_1 - x_2)*2.0*r;
     crate = f_e*rate_Hp(temp)*(1.0 - x);
     crate += f_e*x_2*r*rate_Hep(temp);
@@ -359,6 +362,7 @@ calc_hneutral(temp, density, hneutral_p, heneutral_p, heII_p)
      double *heII_p;
 {
     double y;
+    double n_e;
 
     n_h = (density/cosmof3)*MSOLG*msolunit* 
 	    fhydrogen / ((kpcunit*kpcunit*kpcunit) * MHYDR * 
@@ -381,7 +385,7 @@ calc_hneutral(temp, density, hneutral_p, heneutral_p, heII_p)
     g1 = gp0_He ;
     g2 = gp0_Hep ;
 
-    xion(temp, hneutral_p, heneutral_p, heII_p);
+    xion(temp, hneutral_p, heneutral_p, heII_p, &n_e);
 
     return ;
 }
@@ -392,6 +396,7 @@ double calc_meanmwt(temp, density)
 {
     double x, x_1, x_2;
     double y;
+    double n_e;
 
     n_h = (density/cosmof3)*MSOLG*msolunit* 
 	    fhydrogen / ((kpcunit*kpcunit*kpcunit) * MHYDR * 
@@ -428,8 +433,55 @@ double calc_meanmwt(temp, density)
     g1 = gp0_He ;
     g2 = gp0_Hep ;
 
-    xion(temp, &x, &x_1, &x_2);
+    xion(temp, &x, &x_1, &x_2, &n_e);
     return (1.0 - y/4.0)/(2.0 - x) + y/(3.0 - x_1 - x_2);
+}
+
+#include "xray.h"
+
+PROTO(void, splint, (double *xa,double *ya,double *y2a,int n,double
+		     x,double *y));
+
+/*
+ * Return X-Ray emmissivity in ergs/s/MSYS
+ */
+double calc_xemiss(temp, density, band)
+     double temp;
+     double density;
+     int band;
+{
+    double x, x_1, x_2;
+    double y;
+    double xemiss;
+    double n_e;
+
+    n_h = (density/cosmof3)*MSOLG*msolunit* 
+	    fhydrogen / ((kpcunit*kpcunit*kpcunit) * MHYDR * 
+	    KPCCM*KPCCM*KPCCM);
+
+    /* See previous comments. */
+
+    y = 1.0 - fhydrogen;
+    r = y / 4.0 / (1.0 - y);
+    g0 = gp0_H ;
+    g1 = gp0_He ;
+    g2 = gp0_Hep ;
+
+    xion(temp, &x, &x_1, &x_2, &n_e);
+    if(temp < 3e4)
+	return 0.0;
+    else
+	splint(temp_spline-1,
+	       xray_lums[band].yspl-1,
+	       xray_lums[band].y2spl-1,xray_spline_n,
+	       log10(temp), &xemiss);
+    
+    /*
+     * The interpolation returns 10^{-23} ergs/s/n_e/n_h per cc of gas
+     * We need to convert to ergs/s/MSYS of gas.
+     */
+    return n_e*n_h*pow(10.0, xemiss)*1.0e-23/density
+	*cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM;
 }
 
 void
@@ -842,4 +894,26 @@ double **b;
 int nrl,nrh,ncl,nch;
 {
 	free((char*) (b+nrl));
+}
+
+void splint(xa,ya,y2a,n,x,y)
+double xa[],ya[],y2a[],x,*y;
+int n;
+{
+        int klo,khi,k;
+        double h,b,a;
+        void nrerror();
+
+        klo=1;
+        khi=n;
+        while (khi-klo > 1) {
+                k=(khi+klo) >> 1;
+                if (xa[k] > x) khi=k;
+                else klo=k;
+        }
+        h=xa[khi]-xa[klo];
+        if (h == 0.0) nrerror("Bad XA input to routine SPLINT");
+        a=(xa[khi]-x)/h;
+        b=(x-xa[klo])/h;
+        *y=a*ya[klo]+b*ya[khi]+((a*a*a-a)*y2a[klo]+(b*b*b-b)*y2a[khi])*(h*h)/6.0;
 }

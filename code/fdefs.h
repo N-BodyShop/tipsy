@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.9  1997/09/25 18:35:12  nsk
+ * Revision 1.10  1997/12/06 22:00:55  trq
+ * Updated xray stuff to use spline emmission files.
+ *
+ * Revision 1.9  1997/09/25  18:35:12  nsk
  * added uv command and discrete uv sources
  *
  * Revision 1.8  1997/01/17  21:22:58  trq
@@ -69,6 +72,7 @@ PROTO(void, calc_hneutral, (double temp, double density, double *hneutral_p,
 			     double *heneutral_p, double *heII_p));
 PROTO(double, calc_meanmwt, (double temp, double density));
 PROTO(void, calc_uv, (struct gas_particle *gp));
+PROTO(double, calc_xemiss, (double temp, double density, int band));
 PROTO(void, canvas_resize_proc, (Widget canvas, XEvent *event, String
 				 *params, Cardinal *n_params));
 PROTO(void, clear_rot, ());
