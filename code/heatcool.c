@@ -439,8 +439,8 @@ double calc_meanmwt(temp, density)
 
 #include "xray.h"
 
-PROTO(void, splint, (double *xa,double *ya,double *y2a,int n,double
-		     x,double *y));
+PROTO(double, spline_int, (double *xa,double *ya,double *y2a,int n,double
+		     x));
 
 /*
  * Return X-Ray emmissivity in ergs/s/MSYS
@@ -471,10 +471,10 @@ double calc_xemiss(temp, density, band)
     if(temp < 3e4)
 	return 0.0;
     else
-	splint(temp_spline-1,
-	       xray_lums[band].yspl-1,
-	       xray_lums[band].y2spl-1,xray_spline_n,
-	       log10(temp), &xemiss);
+	xemiss = spline_int(temp_spline,
+	       xray_lums[band].yspl,
+	       xray_lums[band].y2spl,xray_spline_n,
+	       log10(temp));
     
     /*
      * The interpolation returns 10^{-23} ergs/s/n_e/n_h per cc of gas
@@ -500,8 +500,7 @@ ionize()
     double s ;
     double fac1() ;
     double fac2() ;
-    double midpnt() ;
-    double qromo() ;
+    double romberg_o();
 
  /*  ionize -- compute photo-ionization rates and photo-ionization heating
      ionize(alphaj,gp0_H,gp0_He,gp0_Hep,eps_H,eps_He,eps_Hep)
@@ -518,10 +517,10 @@ ionize()
     e0_Hep = 54.42*ev ;
 
  /*  evaluate dimensionless integrals needed for H and He+ rates (see notes) */
-    gint = qromo(fac1,0.,1.,midpnt) ;
+    gint = romberg_o(fac1,0.,1.,1e-6) ;
     gp0_H = a0*gint/planck ;
     gp0_Hep = gp0_H*pow((e0_H/e0_Hep),alphaj)/4. ;
-    eint = qromo(fac2,0.,1.,midpnt) ;
+    eint = romberg_o(fac2,0.,1.,1e-6) ;
     eps_H = a0*eint*(e0_H/planck) ;
     eps_Hep = eps_H*pow((e0_H/e0_Hep),(alphaj-1.))/4. ;
 
@@ -561,359 +560,89 @@ double fac2(t)
     return fac ;
 }
 
-
 #include <math.h>
-#define EPS 1.0e-6
-#define JMAX 14
-#define JMAXP (JMAX+1)
-#define K 5
+#include <stdlib.h>
+#include <limits.h>
+#include <assert.h>
 
-double qromo(func,a,b,choose)
-        double (*func)() ;
-	double a,b ;
-        double (*choose)() ;
+#define MAXLEV 15
+
+double romberg_o(func,a,b,eps)
+        double (*func)() ;	/* function to integrate */
+	double a,b ;		/* endpoints */
+	double eps;		/* relative accuracy */
 {
-	void polint();
-	void nrerror();
-	int j;
-	double ss,dss,h[JMAXP+1],s[JMAXP+1];
-
-	h[1]=1.0;
-	for (j=1;j<=JMAX;j++) {
-		s[j]=(*choose)(func,a,b,j);
-		if (j >= K) {
-			polint(&h[j-K],&s[j-K],K,0.0,&ss,&dss);
-			if (fabs(dss) < EPS*fabs(ss)) return ss;
-		}
-		s[j+1]=s[j];
-		h[j+1]=h[j]/9.0;
-	}
-	nrerror("Too many steps in routing qromo");
-	return 0.0;
-}
-#undef EPS
-#undef JMAX
-#undef JMAXP
-#undef K
-#define FUNC(x) ((*func)(x))
-
-double midpnt(func,a,b,n)
-        double (*func)() ;
-	double a,b ;
-	int n ;
-{
-	double x,tnm,sum,del,ddel;
-	static float s;
-	static int it;
-	int j;
-
-	if (n == 1) {
-		it=1;
-		return (s=(b-a)*FUNC(0.5*(a+b)));
-	} else {
-		tnm=it;
-		del=(b-a)/(3.0*tnm);
-		ddel=del+del;
-		x=a+0.5*del;
-		sum=0.0;
-		for (j=1;j<=it;j++) {
-			sum += FUNC(x);
-			x += ddel;
-			sum += FUNC(x);
-			x += del;
-		}
-		it *= 3;
-		s=(s+(b-a)*sum/tnm)/3.0;
-		return s;
-	}
-}
-#undef FUNC
-
-#include <math.h>
-#define NRANSI
-
-double *vector_nr();
-double **matrix();
-double **convert_matrix();
-double *dvector_nr();
-double **dmatrix();
-int *ivector_nr();
-int **imatrix();
-double **submatrix();
-void free_vector_nr();
-void free_dvector_nr();
-void free_ivector_nr();
-void free_matrix();
-void free_dmatrix();
-void free_imatrix();
-void free_submatrix();
-void free_convert_matrix();
-void nrerror();
-
-void polint(xa,ya,n,x,y,dy)
-        double xa[],ya[],x,*y,*dy ;
-	int n ;
-{
-	int i,m,ns=1;
-	double den,dif,dift,ho,hp,w;
-	double *c,*d;
-
-	dif=fabs(x-xa[1]);
-	c=vector_nr(1,n);
-	d=vector_nr(1,n);
-	for (i=1;i<=n;i++) {
-		if ( (dift=fabs(x-xa[i])) < dif) {
-			ns=i;
-			dif=dift;
-		}
-		c[i]=ya[i];
-		d[i]=ya[i];
-	}
-	*y=ya[ns--];
-	for (m=1;m<n;m++) {
-		for (i=1;i<=n-m;i++) {
-			ho=xa[i]-x;
-			hp=xa[i+m]-x;
-			w=c[i+1]-d[i];
-			if ( (den=ho-hp) == 0.0) nrerror("Error in routine polint");
-			den=w/den;
-			d[i]=hp*den;
-			c[i]=ho*den;
-		}
-		*y += (*dy=(2*ns < (n-m) ? c[ns+1] : d[ns--]));
-	}
-	free_vector_nr(d,1,n);
-	free_vector_nr(c,1,n);
-}
-#undef NRANSI
-
-#include <malloc.h>
-#include <stdio.h>
-
-void nrerror(error_text)
-char error_text[];
-{
-	void exit();
-
-	fprintf(stderr,"Numerical Recipes run-time error...\n");
-	fprintf(stderr,"%s\n",error_text);
-	fprintf(stderr,"...now exiting to system...\n");
-	exit(1);
-}
-
-
-
-double *vector_nr(nl,nh)
-int nl,nh;
-{
-	double *v;
-
-	v=(double *)malloc((unsigned) (nh-nl+1)*sizeof(double));
-	if (!v) nrerror("allocation failure in vector_nr()");
-	return v-nl;
-}
-
-int *ivector_nr(nl,nh)
-int nl,nh;
-{
-	int *v;
-
-	v=(int *)malloc((unsigned) (nh-nl+1)*sizeof(int));
-	if (!v) nrerror("allocation failure in ivector_nr()");
-	return v-nl;
-}
-
-double *dvector_nr(nl,nh)
-int nl,nh;
-{
-	double *v;
-
-	v=(double *)malloc((unsigned) (nh-nl+1)*sizeof(double));
-	if (!v) nrerror("allocation failure in dvector_nr()");
-	return v-nl;
-}
-
-
-
-double **matrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
-{
-	int i;
-	double **m;
-
-	m=(double **) malloc((unsigned) (nrh-nrl+1)*sizeof(double*));
-	if (!m) nrerror("allocation failure 1 in matrix()");
-	m -= nrl;
-
-	for(i=nrl;i<=nrh;i++) {
-		m[i]=(double *) malloc((unsigned) (nch-ncl+1)*sizeof(double));
-		if (!m[i]) nrerror("allocation failure 2 in matrix()");
-		m[i] -= ncl;
-	}
-	return m;
-}
-
-double **dmatrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
-{
-	int i;
-	double **m;
-
-	m=(double **) malloc((unsigned) (nrh-nrl+1)*sizeof(double*));
-	if (!m) nrerror("allocation failure 1 in dmatrix()");
-	m -= nrl;
-
-	for(i=nrl;i<=nrh;i++) {
-		m[i]=(double *) malloc((unsigned) (nch-ncl+1)*sizeof(double));
-		if (!m[i]) nrerror("allocation failure 2 in dmatrix()");
-		m[i] -= ncl;
-	}
-	return m;
-}
-
-int **imatrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
-{
-	int i,**m;
-
-	m=(int **)malloc((unsigned) (nrh-nrl+1)*sizeof(int*));
-	if (!m) nrerror("allocation failure 1 in imatrix()");
-	m -= nrl;
-
-	for(i=nrl;i<=nrh;i++) {
-		m[i]=(int *)malloc((unsigned) (nch-ncl+1)*sizeof(int));
-		if (!m[i]) nrerror("allocation failure 2 in imatrix()");
-		m[i] -= ncl;
-	}
-	return m;
-}
-
-
-
-double **submatrix(a,oldrl,oldrh,oldcl,oldch,newrl,newcl)
-double **a;
-int oldrl,oldrh,oldcl,oldch,newrl,newcl;
-{
-	int i,j;
-	double **m;
-
-	m=(double **) malloc((unsigned) (oldrh-oldrl+1)*sizeof(double*));
-	if (!m) nrerror("allocation failure in submatrix()");
-	m -= newrl;
-
-	for(i=oldrl,j=newrl;i<=oldrh;i++,j++) m[j]=a[i]+oldcl-newcl;
-
-	return m;
-}
-
-
-
-void free_vector_nr(v,nl,nh)
-double *v;
-int nl,nh;
-{
-	free((char*) (v+nl));
-}
-
-void free_ivector_nr(v,nl,nh)
-int *v,nl,nh;
-{
-	free((char*) (v+nl));
-}
-
-void free_dvector_nr(v,nl,nh)
-double *v;
-int nl,nh;
-{
-	free((char*) (v+nl));
-}
-
-
-
-void free_matrix(m,nrl,nrh,ncl,nch)
-double **m;
-int nrl,nrh,ncl,nch;
-{
+    double tllnew;
+    double tll;
+    double tlk[MAXLEV+1];
+    int n = 1;
+    int nsamples = 1;
+    
+    tlk[0] = tllnew = (b-a)*(*func)((b-a)/2.0);
+    tll = 0.5*HUGE;
+    
+    while((fabs(tllnew-tll) > fabs(tllnew)*eps) && (n < MAXLEV)) {
+	/*
+	 * midpoint rule.
+	 */
+	double deltax;
+	double tlktmp;
 	int i;
 
-	for(i=nrh;i>=nrl;i--) free((char*) (m[i]+ncl));
-	free((char*) (m+nrl));
+	nsamples *= 3;
+	deltax = (b-a)/nsamples;
+	tlktmp = tlk[0];
+	tlk[0] = tlk[0]/3.0;
+	
+	for(i = 0; i < nsamples/3; i++) {
+	    tlk[0] += deltax*(*func)(a + (3*i + 0.5)*deltax);
+	    tlk[0] += deltax*(*func)(a + (3*i + 2.5)*deltax);
+	}
+    
+	/*
+	 * Romberg extrapolation.
+	 */
+
+	for(i = 0; i < n; i++) {
+	    double tlknew = (pow(9.0, i+1)*tlk[i] - tlktmp)
+		/(pow(9.0, i+1) - 1.0);
+	    
+	    tlktmp = tlk[i+1];
+	    tlk[i+1] = tlknew;
+	}
+	tll = tllnew;
+	tllnew = tlk[n];
+	n++;
+    }
+    
+    assert(n < MAXLEV);
+    return tllnew;
 }
 
-void free_dmatrix(m,nrl,nrh,ncl,nch)
-double **m;
-int nrl,nrh,ncl,nch;
+double spline_int(xa,ya,y2a,n,x)
+     double *xa;		/* x table */
+     double *ya;		/* y table */
+     double *y2a;		/* y'' table */
+     int n;			/* number of entries */
+     double x;			/* evaluation point */
 {
-	int i;
+    int lo,hi,k;
+    double h,b,a;
+    double result;
 
-	for(i=nrh;i>=nrl;i--) free((char*) (m[i]+ncl));
-	free((char*) (m+nrl));
-}
+    lo = 0;
+    hi = n-1;
+    while (hi-lo > 1) {
+	k=(hi + lo) >> 1;	/* bisect interval */
+	if (xa[k] > x) hi = k;
+	else lo = k;
+    }
+    h = xa[hi] - xa[lo];
+    assert(h > 0.0);
 
-void free_imatrix(m,nrl,nrh,ncl,nch)
-int **m;
-int nrl,nrh,ncl,nch;
-{
-	int i;
-
-	for(i=nrh;i>=nrl;i--) free((char*) (m[i]+ncl));
-	free((char*) (m+nrl));
-}
-
-
-
-void free_submatrix(b,nrl,nrh,ncl,nch)
-double **b;
-int nrl,nrh,ncl,nch;
-{
-	free((char*) (b+nrl));
-}
-
-
-
-double **convert_matrix(a,nrl,nrh,ncl,nch)
-double *a;
-int nrl,nrh,ncl,nch;
-{
-	int i,j,nrow,ncol;
-	double **m;
-
-	nrow=nrh-nrl+1;
-	ncol=nch-ncl+1;
-	m = (double **) malloc((unsigned) (nrow)*sizeof(double*));
-	if (!m) nrerror("allocation failure in convert_matrix()");
-	m -= nrl;
-	for(i=0,j=nrl;i<=nrow-1;i++,j++) m[j]=a+ncol*i-ncl;
-	return m;
-}
-
-
-
-void free_convert_matrix(b,nrl,nrh,ncl,nch)
-double **b;
-int nrl,nrh,ncl,nch;
-{
-	free((char*) (b+nrl));
-}
-
-void splint(xa,ya,y2a,n,x,y)
-double xa[],ya[],y2a[],x,*y;
-int n;
-{
-        int klo,khi,k;
-        double h,b,a;
-        void nrerror();
-
-        klo=1;
-        khi=n;
-        while (khi-klo > 1) {
-                k=(khi+klo) >> 1;
-                if (xa[k] > x) khi=k;
-                else klo=k;
-        }
-        h=xa[khi]-xa[klo];
-        if (h == 0.0) nrerror("Bad XA input to routine SPLINT");
-        a=(xa[khi]-x)/h;
-        b=(x-xa[klo])/h;
-        *y=a*ya[klo]+b*ya[khi]+((a*a*a-a)*y2a[klo]+(b*b*b-b)*y2a[khi])*(h*h)/6.0;
+    a = (xa[hi] - x)/h;
+    b = (x - xa[lo])/h;
+    result = a*ya[lo] + b*ya[hi] /* linear interpolation */
+	+ ((a*a*a - a)*y2a[lo] + (b*b*b - b)*y2a[hi])*(h*h)/6.0;
+    return result;
 }
