@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.16  1998/03/28 02:09:12  trq
+ * Revision 1.17  1998/06/11 20:26:28  trq
+ * Allow vista to run without a display: check for current project and
+ * set appropriate variables.
+ *
+ * Revision 1.16  1998/03/28  02:09:12  trq
  * Fixed bug in determining smoothing length for dark and star particles.
  *
  * Revision 1.15  1998/03/27  17:12:12  trq
@@ -161,7 +165,15 @@ vista(job)
     if(!ikernel_loaded){
 	ikernel_load() ;
     }
-    if (current_project){
+    if (!current_project){
+	dv1_x = -INTMAX ;
+	dv1_y = -INTMAX ;
+	dv2_x = INTMAX ;
+	dv2_y = INTMAX ;
+	view_size = INTMAX ;
+	zoom_factor = 1.0;
+	scaling = 2. * (double)INTMAX / boxes[active_box].size ;
+    }
 	if ((num_read = sscanf(job,"%s %s %lf %lf %s %d %lf %lf",command,type,
 		&low, &high,name, &vista_size, &vel_min, &vel_max)) >= 6) {
 	      size_pixel = (dv2_x - dv1_x) / scaling / (double)vista_size ;
@@ -973,9 +985,4 @@ vista(job)
 	else {
 	    input_error(command) ;
 	}
-    }
-    else {
-	printf("<plot does not represent the present internal state, %s>",
-		title) ;
-    }
 }
