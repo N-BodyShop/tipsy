@@ -41,7 +41,7 @@ loadbinary_sub(job)
 	    meanmwt_loaded = NO ;
 	    xray_loaded = NO ;
 	}
-	else if (sscanf(job,"%s %lf",command,&time) == 2) {
+        else if (sscanf(job,"%s %lf",command,&time) == 2) {
 	    if(loadbinary(binaryfile.ptr,time) == FALSE)
 		return;
 	    boxes_loaded[0] = NO ;
@@ -62,6 +62,7 @@ loadbinary_sub(job)
 	else {
 	    input_error(command) ;
 	}
+	if (exposed) expose_header();
     }
 }
 
@@ -81,7 +82,7 @@ loadstandard_sub(job)
 	printf("<sorry, binary file not open, %s>\n",title) ;
     }
     else {
-	if (sscanf(job,"%s %lf %f %f %f %f %f %f",command,&time,
+        if (sscanf(job,"%s %lf %f %f %f %f %f %f",command,&time,
 		   &center[0], &center[1], &center[2], &xoffset[0],
 		   &xoffset[1], &xoffset[2]) == 8) {
 	    for(k = 0; k < MAXDIM; k++){
@@ -126,5 +127,6 @@ loadstandard_sub(job)
 	else {
 	    input_error(command) ;
 	}
+	if (exposed) expose_header();
     }
 }
