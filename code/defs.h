@@ -1,6 +1,12 @@
 /* $Header$
  * $Log$
- * Revision 1.19.2.1  2000/06/22 21:18:04  nsk
+ * Revision 1.19.2.2  2000/07/07 03:24:55  nsk
+ * Changes for variables, parameters: added MAXCOMM, var_list structure,
+ *   changed macro_list for parameters.    (cm/maf)
+ * Added manifest definition, ismanifest variable.      (maf)
+ * Added xverbose variable.  (maf)
+ *
+ * Revision 1.19.2.1  2000/06/22  21:18:04  nsk
  * Added constants and variables for colormap and red temperature table. (maf)
  *
  * Revision 1.19  2000/01/12  22:55:04  nsk
@@ -140,6 +146,7 @@
 #define INTMAX 536870911
 #define CMAPSIZE 128
 #define MAXCOMM 150
+#define MAXVAR 30
 #define MAXDIM 3
 #define ON 1
 #define OFF 0
@@ -395,17 +402,27 @@ extern int ball_size_loaded;
 extern int balls_loaded;
 extern int n_smooth;
 
+struct var_list {
+  char *name;
+  char *value;
+  char *format;
+  struct var_list *next;
+};
+extern struct var_list *vars;
+
 struct command_list {
   char *command;
   struct command_list *next;
 } ;
 
 struct macro_list {
-    struct command_list *start ;
-    char *name ;
-    struct macro_list *next;
+  struct command_list *start ;
+  char *name ;
+  int n_params;
+  struct macro_list *next;
 } ;
 extern struct macro_list *macros;
+
 extern int showgas ;
 extern int showdark ;
 extern int showstar ;
@@ -413,6 +430,7 @@ extern int showboxes ;
 extern int showaxes ;
 extern int showvel ;
 extern int showvec ;
+extern int xverbose;
 
 extern int boxes_loaded[MAXBOX+1] ;
 extern int mark_box[MAXBOX+1] ;
@@ -429,6 +447,7 @@ extern int vector_size;
 extern int active_box ;
 extern int asciiopen ;
 extern int binaryopen ;
+extern int ismanifest ;
 extern int binary_loaded ;
 extern int current_project;
 extern int current_color;
@@ -472,6 +491,7 @@ extern double rot_matrix[MAXDIM][MAXDIM] ;
 extern double ell_matrix[MAXDIM][MAXDIM] ;
 extern double ell_matrix_inv[MAXDIM][MAXDIM] ;
 extern double axes_coord[6][MAXDIM] ;
+extern double scrollval_save;
 
 extern double point_size_gas ;
 extern double point_size_dark ;
@@ -573,7 +593,7 @@ extern int mono;
 extern int truecolor;
 
 struct file {
-    char name[50];
+    char name[MAXCOMM];
     FILE *ptr ;
     int pipe;
 } ;
@@ -591,3 +611,11 @@ struct comm {
      int display;		/* is this a display function */
 } ;
 extern struct comm c_list[];
+
+extern int manifest_length ;
+struct manifest_entry {
+  char name[100];
+  double time;
+} ;
+extern struct manifest_entry *manifest;
+
