@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.5  2002/07/02 21:36:17  trq
+ * plot_all.c: fixed bug in plotting marked gas particles.
+ *
  * Revision 1.4  1999/08/27 19:01:50  trq
  * Fix placement of psize > 0 points.
  *
@@ -270,7 +273,7 @@ plot_all(job)
 		      XFillArc(baseframe_dpy,back_xid,
 			       gc_color[particle_color[i+offset]],
 			       x-draw_point_size,y-draw_point_size,
-			       2*point_size,2*point_size,0,23040) ;
+			       2*draw_point_size,2*draw_point_size,0,23040) ;
 		    }
 		    else{
 		      XDrawPoint(baseframe_dpy,back_xid,
