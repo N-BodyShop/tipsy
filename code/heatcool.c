@@ -266,7 +266,7 @@ void xion(t, x, x_1, x_2)
 	  {
 	    zx2 = za_Hepp*n_e/(g2 + (zg_Hep + (a + 1.0)*za_Hepp)*n_e);
 	    zx1 = zx2 * a;
-	    zx3 = zx2*(g2 + zg_Hep)/za_Hepp/n_e;
+	    zx3 = zx2*(g2 + zg_Hep*n_e)/za_Hepp/n_e;
 	} else {
 	  zx3 = 0.0;
 	    zx2 = 0.0;
