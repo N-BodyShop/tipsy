@@ -63,6 +63,12 @@ fits(data,xsize,ysize,xmin,ymin,deltax,deltay,zmin,zmax,outfile)
 	/* output page to fits file outfile */
 	fprintf(stderr,"writing fits to file %s\n",outfile) ;
 	fpo = fopen(outfile,"w") ;
+	if(fpo == NULL) {
+	    printf("<sorry, can't open file %s, %s>\n", outfile, title) ;
+	    free(page);
+	    return ;
+	}
+	    
 	hdrwrite(fpo,zmax,zmin,bscale,bzero,xsize,ysize,xmin,ymin,deltax,deltay) ;
 
 	/* write directly onto the file descripter in fpo */
