@@ -1,6 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.4  1995/09/22 23:39:36  nsk
+ * Revision 1.5  1995/11/07 17:08:00  trq
+ * absorb.c: fixed bug with velocities beyond bounds.
+ * fits.c: deleted unused variable.
+ * hubble.c: fixed argument parsing.
+ *
+ * Revision 1.4  1995/09/22  23:39:36  nsk
  * fixed boundary bug
  *
  * Revision 1.3  1995/03/02  21:43:01  nsk
@@ -104,7 +109,6 @@ absorb(job)
     double distnorm ;
     double radius ;
     double radius2 ;
-    double radius4 ;
     double zo ;
     double zo2 ;
     double zi ;
@@ -426,7 +430,6 @@ absorb(job)
 		    if((radius2 = ((part_pos[0] - x1[0])*(part_pos[0] - x1[0])+
 			    (part_pos[1] - x1[1])*(part_pos[1] - x1[1]))*
 			    distnorm) < 4.0){
-			radius4 = radius2 * radius2 ;
 			radius = sqrt(radius2) ;
 			zo2 = 4. - radius2 ;
 			zo = sqrt(zo2) ;
@@ -711,52 +714,49 @@ absorb(job)
 		    }
 		    vbins_t[ibin] += mass[i]/(double)SUBBIN ;
 		}
-		if((v_interp + 6.0*b <= vmax && v_interp - 6.0*b >= vmin) ||
-			(autolim == YES && periodic == YES)){
-		    bin_min = floor((v_interp - 6.0*b - vmin)/vbin_size) ;
-		    bin_max = floor((v_interp + 6.0*b - vmin)/vbin_size) ;
-		    if((v_interp + 6.0*b - vmin)/vbin_size == (double) bin_max)
-		      bin_max--;
-		    for(bin = bin_min; bin <= bin_max; bin++){
-			if((bin >= 0 && bin < nvbin) || 
-				(autolim == YES && periodic == YES)){
-			    if(bin == bin_min){
-				vlower = -6.0*b ;
+		bin_min = floor((v_interp - 6.0*b - vmin)/vbin_size) ;
+		bin_max = floor((v_interp + 6.0*b - vmin)/vbin_size) ;
+		if((v_interp + 6.0*b - vmin)/vbin_size == (double) bin_max)
+		  bin_max--;
+		for(bin = bin_min; bin <= bin_max; bin++){
+		    if((bin >= 0 && bin < nvbin) || 
+			    (autolim == YES && periodic == YES)){
+			if(bin == bin_min){
+			    vlower = -6.0*b ;
+			}
+			else{
+			    vlower = ((double)(bin))*vbin_size+vmin -
+				    v_interp ;
+			}
+			if(bin == bin_max){
+			    vupper = 6.0*b ;
+			}
+			else{
+			    vupper = ((double)(bin+1))*vbin_size+vmin -
+				    v_interp ;
+			}
+			vlower /= b ;
+			vupper /= b ;
+			abs_vlower = fabs(vlower) ;
+			abs_vupper = fabs(vupper) ;
+			ibin = bin%nvbin;
+			if(ibin < 0) {
+			  ibin += nvbin;
+			}
+			if(vupper*vlower < 0){
+			    vbins[ibin] += mass[i]/(double)SUBBIN*0.5*
+				    (erf(abs_vlower) + erf(vupper)) ;
+			}
+			else{
+			    if(abs_vlower < abs_vupper){
+				vbins[ibin] += mass[i]/(double)SUBBIN*
+					0.5*(erf(abs_vupper) -
+					erf(abs_vlower)) ;
 			    }
 			    else{
-				vlower = ((double)(bin))*vbin_size+vmin -
-					v_interp ;
-			    }
-			    if(bin == bin_max){
-				vupper = 6.0*b ;
-			    }
-			    else{
-				vupper = ((double)(bin+1))*vbin_size+vmin -
-					v_interp ;
-			    }
-			    vlower /= b ;
-			    vupper /= b ;
-			    abs_vlower = fabs(vlower) ;
-			    abs_vupper = fabs(vupper) ;
-			    ibin = bin%nvbin;
-			    if(ibin < 0) {
-			      ibin += nvbin;
-			    }
-			    if(vupper*vlower < 0){
-				vbins[ibin] += mass[i]/(double)SUBBIN*0.5*
-					(erf(abs_vlower) + erf(vupper)) ;
-			    }
-			    else{
-				if(abs_vlower < abs_vupper){
-				    vbins[ibin] += mass[i]/(double)SUBBIN*
-					    0.5*(erf(abs_vupper) -
-					    erf(abs_vlower)) ;
-				}
-				else{
-				    vbins[ibin] += mass[i]/(double)SUBBIN*
-					    0.5*(erf(abs_vlower) -
-					    erf(abs_vupper)) ;
-				}
+				vbins[ibin] += mass[i]/(double)SUBBIN*
+					0.5*(erf(abs_vlower) -
+					erf(abs_vupper)) ;
 			    }
 			}
 		    }

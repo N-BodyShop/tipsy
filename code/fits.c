@@ -16,7 +16,7 @@ fits(data,xsize,ysize,xmin,ymin,deltax,deltay,zmin,zmax,outfile)
 	short zero ;
 	int fillno ;
 	double bscale,bzero ;
-	int i,j,num_points ;
+	int i,j ;
 	void hdrwrite(),gerror() ;
 	FILE *fpo ;
 	int pmax ;
@@ -32,7 +32,6 @@ fits(data,xsize,ysize,xmin,ymin,deltax,deltay,zmin,zmax,outfile)
 	bigendian = (u.c[sizeof(short) - 1] == 1);
 
 	zero = 0 ;
-	num_points = xsize * ysize ;
 	pmax = (int)(xsize * ysize) ;
 
 	/* make page,initialize,  and fill it */

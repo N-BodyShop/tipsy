@@ -14,8 +14,8 @@ hubble(job)
     struct star_particle *sp ;
     int i ;
 
-    if(sscanf(job,"%s %d %lf",command,&box,&hubble_const,&hubble_center[0],
-		&hubble_center[1],&hubble_center[2]) == 6) {
+    if(sscanf(job,"%s %d %lf %lf %lf %lf",command,&box,&hubble_const,
+	      &hubble_center[0], &hubble_center[1],&hubble_center[2]) == 6) {
 	if (boxes_loaded[box]) {
 	    for (i = 0 ;i < boxlist[box].ngas ;i++) {
 		gp = boxlist[box].gp[i] ;
