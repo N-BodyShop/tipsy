@@ -1,7 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:22  trq
- * Initial revision
+ * Revision 1.2  1995/11/21 00:02:49  trq
+ * Changed output format to be a little more usable.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:23  trq
+ * Import to CVS
  *
  * Revision 2.2  94/04/20  08:45:24  trq
  * Added title variable.
@@ -48,13 +51,13 @@ boxstat_sub(job)
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			boxes[box].gas_mass, rho, boxes[box].volume) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
-		printf("center of mass coordinates = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			boxes[box].gas_com[0],boxes[box].gas_com[1],
 			boxes[box].gas_com[2]) ;
-		printf("center of mass velocity = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass velocity = {%.6e %.6e %.6e}\n",
 			boxes[box].gas_com_vel[0],boxes[box].gas_com_vel[1],
 			boxes[box].gas_com_vel[2]) ;
-		printf("angular momentum vector = {%.6e, %.6e, %.6e}\n",
+		printf("angular momentum vector = {%.6e %.6e %.6e}\n",
 			boxes[box].gas_angular_mom[0],
 			boxes[box].gas_angular_mom[1],
 			boxes[box].gas_angular_mom[2]) ;
@@ -66,13 +69,13 @@ boxstat_sub(job)
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			boxes[box].dark_mass, rho, boxes[box].volume) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
-		printf("center of mass coordinates = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			boxes[box].dark_com[0],boxes[box].dark_com[1],
 			boxes[box].dark_com[2]) ;
-		printf("center of mass velocity = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass velocity = {%.6e %.6e %.6e}\n",
 			boxes[box].dark_com_vel[0],boxes[box].dark_com_vel[1],
 			boxes[box].dark_com_vel[2]) ;
-		printf("angular momentum vector = {%.6e, %.6e, %.6e}\n",
+		printf("angular momentum vector = {%.6e %.6e %.6e}\n",
 			boxes[box].dark_angular_mom[0],
 			boxes[box].dark_angular_mom[1],
 			boxes[box].dark_angular_mom[2]) ;
@@ -83,13 +86,13 @@ boxstat_sub(job)
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			boxes[box].star_mass, rho, boxes[box].volume) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
-		printf("center of mass coordinates = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			boxes[box].star_com[0],boxes[box].star_com[1],
 			boxes[box].star_com[2]) ;
-		printf("center of mass velocity = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass velocity = {%.6e %.6e %.6e}\n",
 			boxes[box].star_com_vel[0],boxes[box].star_com_vel[1],
 			boxes[box].star_com_vel[2]) ;
-		printf("angular momentum vector = {%.6e, %.6e, %.6e}\n",
+		printf("angular momentum vector = {%.6e %.6e %.6e}\n",
 			boxes[box].star_angular_mom[0],
 			boxes[box].star_angular_mom[1],
 			boxes[box].star_angular_mom[2]) ;
@@ -101,14 +104,14 @@ boxstat_sub(job)
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			mass, rho,boxes[box].volume) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
-		printf("center of mass coordinates = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			(boxes[box].gas_com[0] * boxes[box].gas_mass +
 			boxes[box].star_com[0] * boxes[box].star_mass)/mass,
 			(boxes[box].gas_com[1] * boxes[box].gas_mass +
 			boxes[box].star_com[1] * boxes[box].star_mass)/mass,
 			(boxes[box].gas_com[2] * boxes[box].gas_mass +
 			boxes[box].star_com[2] * boxes[box].star_mass)/mass);
-		printf("center of mass velocity = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass velocity = {%.6e %.6e %.6e}\n",
 			(boxes[box].gas_com_vel[0] * boxes[box].gas_mass +
 			boxes[box].star_com_vel[0] * boxes[box].star_mass)/
 			mass, (boxes[box].gas_com_vel[1] *
@@ -117,7 +120,7 @@ boxstat_sub(job)
 			(boxes[box].gas_com_vel[2] * boxes[box].gas_mass +
 			boxes[box].star_com_vel[2] *
 			boxes[box].star_mass)/mass);
-		printf("angular momentum vector = {%.6e, %.6e, %.6e}\n",
+		printf("angular momentum vector = {%.6e %.6e %.6e}\n",
 			(boxes[box].gas_angular_mom[0] *
 			boxes[box].gas_mass +
 			boxes[box].star_angular_mom[0] *
@@ -137,13 +140,13 @@ boxstat_sub(job)
 		printf("mass = %.6e, density = %.6e, volume = %.6e\n",
 			boxes[box].total_mass, rho, boxes[box].volume) ;
 		printf("size = (%.6e x %.6e x %.6e)\n",x_size,y_size,z_size) ;
-		printf("center of mass coordinates = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass coordinates = {%.6e %.6e %.6e}\n",
 			boxes[box].total_com[0],boxes[box].total_com[1],
 			boxes[box].total_com[2]) ;
-		printf("center of mass velocity = {%.6e, %.6e, %.6e}\n",
+		printf("center of mass velocity = {%.6e %.6e %.6e}\n",
 			boxes[box].total_com_vel[0],boxes[box].total_com_vel[1],
 			boxes[box].total_com_vel[2]) ;
-		printf("angular momentum vector = {%.6e, %.6e, %.6e}\n",
+		printf("angular momentum vector = {%.6e %.6e %.6e}\n",
 			boxes[box].total_angular_mom[0],
 			boxes[box].total_angular_mom[1],
 			boxes[box].total_angular_mom[2]) ;
