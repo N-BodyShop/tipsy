@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.21  2004/07/20 21:55:27  trq
+ * Added "STARM" plot, similar to DARKM plot.
+ *
  * Revision 1.20  2003/06/13 17:37:37  trq
  * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
  * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
@@ -133,8 +136,11 @@
 #define COLUMN  2
 #define VELCOL  3
 #define DARKM  4
+#define STARM  5
 
 /* Lyman alpha cross section in cm^2 per atom */
+/* times 1 km/s so that when we multiply by velocity bin width, we get
+a unitless number */
 #define LYCS_HI (1.34e-12)
 #define LYCS_HeI (4.278e-12)
 #define LYCS_HeII (3.358e-13)
@@ -220,6 +226,7 @@ absorb(job)
     double vz ;
     struct gas_particle *gp ;
     struct dark_particle *dp ;
+    struct star_particle *sp ;
     double offset_x, offset_y ;
     double span_x, span_y ;
     double rsys ;
@@ -266,6 +273,9 @@ absorb(job)
 	else if(strcmp(type,"dark") == 0){
 	  plot_type = DARKM ;
 	}
+	else if(strcmp(type,"star") == 0){
+	  plot_type = STARM ;
+	}
 	else
 	  {
 	    printf("<sorry, %s is not an absorption type, %s>\n",type,title) ;
@@ -286,7 +296,7 @@ absorb(job)
 		return;
 	    }
 	}
-	if(plot_type == DARKM){
+	if(plot_type == DARKM || plot_type == STARM){
 	    mass_tot = (double *)malloc(zbin*sizeof(*mass_tot));
 	    vel_tot = (double *)malloc(zbin*sizeof(*vel_tot));
 	    res = (double *)malloc(zbin*sizeof(*res));
@@ -730,6 +740,274 @@ absorb(job)
 					hubble_constant ;
 			    }
 			    res[bin] += kernel*(dp->mass)*(hsmooth) ;
+			}
+		    }
+		}
+	      }
+	    }
+	  }
+	}
+	for(i = 0; i < zbin; i++){
+	    if(mass_tot[i] != 0.0){
+		vel_tot[i] /= mass_tot[i] ;
+		res[i] /= mass_tot[i] ;
+	    }
+	}
+	msys = msolunit/(cosmof*kpcunit*cosmof*kpcunit)*
+                (MSOLG/(KPCCM*KPCCM)) ;
+	for(i = 0; i < zbin; i++){
+	    mass_tot[i] *= msys ;
+	}
+	fp = fopen(name, "w");
+	if(fp == NULL)
+	  {
+	    printf("<sorry, cannot open file %s, %s>\n",name, title) ;
+	    return;
+	  }
+	for(i = 0; i < zbin; i++)
+	  {
+	    fprintf(fp, "%g %g %g %g\n",
+		    rsys*(bin_size*(i+0.5) + zmin),
+		    mass_tot[i]/(bin_size*cosmof*kpcunit*KPCCM),
+		    vel_tot[i], rsys*res[i]);
+	  }
+	fclose(fp);
+	}
+	else if(plot_type == STARM){
+	if(balls_loaded != STAR) {
+	    calc_balls(&box0_smx, 0, 0 , 1);
+	    balls_loaded = STAR;
+	}
+	for (i = 0 ;i < boxlist[0].nstar ;i++) {
+	    sp = boxlist[0].sp[i] ;
+	    hsmooth = sqrt(box0_smx->kd->p[i].fBall2)/2.0;
+	    for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
+	      for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
+		for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
+		  if(periodic
+		     || (irep[0] == 0 && irep[1] == 0 && irep[2] == 0)) {
+
+		    if(irep[0]*period_size + sp->pos[0] > bound_max[0]
+		       && irep[0]*period_size+sp->pos[0]-2.*hsmooth
+		       > bound_max[0])
+		      continue;
+		    if(irep[0]*period_size + sp->pos[0] < bound_min[0]
+		       && irep[0]*period_size+sp->pos[0]+2.*hsmooth
+		       < bound_min[0])
+		      continue;
+		    if(irep[1]*period_size + sp->pos[1] > bound_max[1]
+		       && irep[1]*period_size+sp->pos[1]-2.*hsmooth
+		       > bound_max[1])
+		      continue;
+		    if(irep[1]*period_size + sp->pos[1] < bound_min[1]
+		       && irep[1]*period_size+sp->pos[1]+2.*hsmooth
+		       < bound_min[1])
+		      continue;
+		    if(irep[2]*period_size + sp->pos[2] > bound_max[2]
+		       && irep[2]*period_size+sp->pos[2]-2.*hsmooth
+		       > bound_max[2])
+		      continue;
+		    if(irep[2]*period_size + sp->pos[2] < bound_min[2]
+		       && irep[2]*period_size+sp->pos[2]+2.*hsmooth
+		       < bound_min[2])
+		      continue;
+		    
+		    for (part_pos[0] = part_pos[1] = part_pos[2] = 0.0,j = 0 ;
+			    j < header.ndim ;j++) {
+			for (k = 0 ; k < header.ndim ; k++){
+			    part_pos[k] += rot_matrix[k][j] *
+			      (irep[j]*period_size + sp->pos[j]
+			       - boxes[active_box].center[j]) ;
+			}
+		    }
+		    distnorm = 1. / (hsmooth * hsmooth) ;
+		    if((radius2 = ((part_pos[0] - x1[0])*(part_pos[0] - x1[0])+
+			    (part_pos[1] - x1[1])*(part_pos[1] - x1[1]))*
+			    distnorm) < 4.0){
+			radius = sqrt(radius2) ;
+			zo2 = 4. - radius2 ;
+			zo = sqrt(zo2) ;
+			if(radius2 < 1.){
+			    zi2 = 1. - radius2 ;
+			    zi = sqrt(zi2) ;
+			}
+			else{
+			    zi2 = zi = 0.0;
+			}
+			for (vz = 0.0,j = 0 ; j < header.ndim ;j++) {
+			    vz += rot_matrix[2][j] * (sp->vel[j]) ;
+			}
+			bin_min = floor((part_pos[2] - zo*hsmooth-zmin)
+					/bin_size) ;
+			bin_max = floor((part_pos[2] + zo*hsmooth-zmin)
+					/bin_size) ;
+			if((part_pos[2] + zo*hsmooth-zmin)/bin_size
+			   == (double) bin_max)
+			  bin_max--;
+			bin_min = max(bin_min, bin_box_min);
+			bin_max = min(bin_max, bin_box_max);
+			if(bin_min > bin_box_max || bin_max < bin_box_min)
+			  continue;
+
+			for(bin = bin_min; bin <= bin_max; bin++){
+			    zlower = ((double)(bin)*bin_size + zmin
+				      - part_pos[2])/ hsmooth ;
+			    zupper = ((double)(bin+1)*bin_size + zmin
+				      - part_pos[2])/ hsmooth ;
+			    kernel = 0.0 ;
+			    vkernel = 0.0 ;
+			    abs_zlower = fabs(zlower) ;
+			    if(abs_zlower >= zo){
+				kernel += 1.3125*radius2*zo - 1.5*zo + 
+					0.5*zo2*zo - (1.5*radius2 +
+					0.09375*radius2*radius2)*log(zo + 2.0);
+				/*kernel at zo in region 2 */
+				if(comove == YES){
+				    vkernel -= zo2 + 0.75*radius2*zo2 +
+					    0.375*zo2*zo2 - 9.6 ;
+				}
+			    }
+			    else if(abs_zlower < zo && (abs_zlower > zi ||
+				    zlower == zi)){
+				d2 = radius2 + zlower*zlower ;
+				d = sqrt(d2) ;
+				kernel -= copysign(1.0,zlower)*((2.0 +
+				1.5*radius2)* abs_zlower + 
+				0.5*abs_zlower*abs_zlower*abs_zlower -
+				0.0625*abs_zlower*d*d2 - (1.5 + 0.09375*
+				radius2)* abs_zlower*d - (1.5*radius2 +
+			        0.09375*radius2* radius2)*log(abs_zlower + d));
+			/* sign(zlower)*kernel at abs_zlower in region 2 */
+				if(comove == YES){
+				    vkernel -= zlower*zlower*(1. +
+					    0.75*radius2) + 0.375*zlower*
+					    zlower*zlower*zlower - d*d2 -
+					    0.05*d2*d2*d ;
+				}
+			    }
+			    else {
+				d2 = radius2 + zlower*zlower ;
+				d = sqrt(d2) ;
+				kernel -= copysign(1.0,zlower)*((1.0 -
+					1.5*radius2)*abs_zlower - 0.5*
+					abs_zlower*abs_zlower*abs_zlower +
+					0.1875*abs_zlower*d2*d + 0.28125*
+					radius2*abs_zlower*d + 0.28125*radius2*
+					radius2*log(abs_zlower + d)) ;
+			/* sign(zlower)* kernel at abs_zlower in region 1 */
+				if(comove == YES){
+				    vkernel -= (0.5 - 0.75*radius2)*zlower*
+					    zlower - 0.375*zlower*zlower*
+					    zlower*zlower + 0.15*d2*d2*d ;
+				}
+			    }
+			    abs_zupper = fabs(zupper) ;
+			    if(zlower*zupper <= 0.0){  /* bin stradles zero */
+				if(radius2 < 1.){
+				    kernel -= 0.5625*radius2*radius2*
+					    log(radius) ;
+				    /* 2.0 * kernel at zero in region 1 */
+				}
+				else {
+				    kernel -= -(3.0*radius2
+					    + 0.1875*radius2*radius2)*
+					    log(radius) ;
+				    /* 2.0 *kernel at zero in region 2 */
+				}
+			    }
+			    if(radius2 < 1.){
+				if(zlower*zupper < 0.0 && abs_zupper > zi &&
+					abs_zlower > zi) {
+				    kernel += 2.375*zi - 2.4375*radius2*zi -
+					    zi2*zi + 0.5625*radius2*radius2*
+					    log(zi+1) ;
+				    /* 2.0 * kernel at zi in region 1 */
+				    kernel -= 0.875*zi + 2.8125*radius2*zi +
+					    zi2*zi - (3.0*radius2 + 0.1875*
+					    radius2*radius2)*log(zi + 1) ;
+				    /* 2.0 * kernel at zi in region 2 */
+				}
+				else {
+				    if((zlower < -zi && zupper > -zi) ||
+					    (zlower < zi && zupper > zi)){
+					 kernel += 1.1875*zi - 1.21875*radius2*
+						zi - 0.5*zi2*zi + 0.28125*
+						radius2*radius2*log(zi+1) ;
+					 /* kernel at zi in region 1 */
+					 if(comove == YES){
+					    vkernel += copysign(1.0, zlower)
+					      *((0.5 - 0.75*radius2)*
+						    zi2 - 0.375*zi2*zi2 + 0.15) ;
+					 }
+					 kernel -= 0.4375*zi + 1.40625*radius2*
+					 	zi + 0.5*zi2*zi - (1.5*radius2 +
+						0.09375*radius2*radius2)*
+						log(zi + 1) ;
+					 /* kernel at zi in region 2 */
+					 if(comove == YES){
+					    vkernel -= copysign(1.0, zlower)
+					      *((1.0 + 0.75*radius2)*
+						    zi2 + 0.375*zi2*zi2 - 1.05) ;
+					 }
+				    }
+				}
+			    }
+
+			    if(abs_zupper >= zo){
+				kernel += 1.3125*radius2*zo - 1.5*zo + 
+					0.5*zo2*zo - (1.5*radius2 +
+					0.09375*radius2*radius2)*log(zo + 2.0) ;
+					  /* kernel at zo in region 2 */
+			        if(comove == YES){
+				    vkernel += zo2 + 0.75*radius2*zo2 +
+					    0.375*zo2*zo2 - 9.6 ;
+				}
+			    }
+			    else if(abs_zupper < zo && abs_zupper >= zi){
+				d2 = radius2 + zupper*zupper ;
+				d = sqrt(d2) ;
+				kernel += copysign(1.0,zupper)*((2.0 + 1.5*
+					radius2)*abs_zupper + 0.5*abs_zupper*
+					abs_zupper*abs_zupper - 0.0625*
+					abs_zupper*d*d2 - (1.5 + 0.09375*
+					radius2)* abs_zupper*d - (1.5*radius2 +
+					0.09375*radius2* radius2)*
+					log(abs_zupper + d)) ;
+			/* sign(zupper)*kernel at abs_zupper in region 2 */
+			        if(comove == YES){
+				    vkernel += zupper*zupper*(1. +
+					    0.75*radius2) + 0.375*zupper*
+					    zupper*zupper*zupper - d*d2 -
+					    0.05*d2*d2*d ;
+				}
+			    }
+			    else {
+				d2 = radius2 + zupper*zupper ;
+				d = sqrt(d2) ;
+				kernel += copysign(1.0,zupper)*((1.0 -
+					1.5*radius2)*abs_zupper - 0.5*
+					abs_zupper*abs_zupper*abs_zupper +
+					0.1875*abs_zupper*d2*d + 0.28125*
+					radius2*abs_zupper*d + 0.28125*radius2*
+					radius2*log(abs_zupper + d)) ;
+			/* sign(zupper)* kernel at abs_zupper in region 1 */
+			        if(comove == YES){
+				    vkernel += (0.5 - 0.75*radius2)*zupper*
+					    zupper - 0.375*zupper*zupper*
+					    zupper*zupper + 0.15*d2*d2*d ;
+				}
+			    }
+			    kernel *= distnorm/PI ;
+			    if(comove == YES){
+				vkernel /= PI*hsmooth ;
+			    }
+			    mass_tot[bin] += kernel*sp->mass ;
+			    vel_tot[bin] += kernel*(sp->mass)*vsys*vz ;
+			    if(comove == YES){
+				vel_tot[bin] += vkernel*(sp->mass)*rsys*
+					hubble_constant ;
+			    }
+			    res[bin] += kernel*(sp->mass)*(hsmooth) ;
 			}
 		    }
 		}
