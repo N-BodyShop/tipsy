@@ -1,7 +1,10 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.12  1998/06/11 20:27:21  trq
+ * Revision 1.13  1999/04/28 22:44:57  trq
+ * Added limited support for truecolor visuals.
+ *
+ * Revision 1.12  1998/06/11  20:27:21  trq
  * Add values.h and change HUGE to MAXDOUBLE.
  *
  * Revision 1.11  1998/02/27  19:51:35  nsk
@@ -290,6 +293,7 @@ unsigned char *arraymap_blue;
 int base_color ;
 int display = YES ;
 int mono = NO ;
+int truecolor = NO ;
 
 struct file hardfile ;
 struct file binaryfile ;

@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.5  1996/08/19 22:53:31  trq
+ * Revision 1.6  1999/04/28 22:44:55  trq
+ * Added limited support for truecolor visuals.
+ *
+ * Revision 1.5  1996/08/19  22:53:31  trq
  * Fixed bug in ionization equilibrium calculation.
  *
  * Revision 1.4  1996/08/19  20:56:01  trq
@@ -281,10 +284,20 @@ int argc;
 	    vret = XGetVisualInfo(baseframe_dpy, VisualClassMask,
 				  &vinfo, &nv);
 	    if(nv <= 0) {
-		printf("<sorry %s, I need a Pseudocolor display\n",title);
-		return(-1);
+		printf("<A Pseudocolor display was not detected, %s.>\n",
+		       title);
+		printf("<The color scrollbar will be disabled.>\n");
+		XFree(vret);
+		vinfo.class = TrueColor;
+		vret = XGetVisualInfo(baseframe_dpy, VisualClassMask,
+				      &vinfo, &nv);
+		if(nv <= 0) {
+		    printf("<A Truecolor display was not detected, %s.>\n",
+		       title);
+		    return(-1);
+		}
+		truecolor = YES;
 	    }
-	    
 	    visual = NULL;
 	    for(i = 0; i < nv; i++) {
 		if(vret[i].depth >= 8) {
@@ -292,11 +305,12 @@ int argc;
 		    break;
 		}
 	    }
-	    if(visual == NULL)
-	      {
-		printf("<sorry %s, I need an 8+ bit Pseudocolor display\n",title);
+	    
+	    if(visual == NULL) {
+		printf("<sorry %s, I need an 8+ bit Pseudocolor display>\n",title);
+		printf("<or an 8+ bit Truecolor display.>\n");
 		return(-1);
-	      }
+	    }
 	    if(visual != DefaultVisualOfScreen(XtScreen(toplevel)))
 	      {
 		XtSetArg(args[0], XtNvisual, visual);
@@ -307,8 +321,9 @@ int argc;
 		XtSetArg(args[2], XtNcolormap, default_cmap );
 		XtSetValues( toplevel, args, 3 );
 	      }
-	    if(XAllocColorCells(baseframe_dpy, default_cmap, False,
-			     plane_masks, 0, colors, CMAPSIZE) == 0) {
+	    if((truecolor != YES)
+	       && (XAllocColorCells(baseframe_dpy, default_cmap, False,
+			     plane_masks, 0, colors, CMAPSIZE) == 0)) {
 	        default_cmap = XCreateColormap(baseframe_dpy,
 				RootWindowOfScreen(XtScreen(toplevel)),
 				visual, AllocNone);
@@ -449,7 +464,15 @@ int argc;
 	if(mono != YES) 
 	  {
 	    initialize_color_table() ;
-	    XStoreColors(baseframe_dpy, default_cmap, clist, CMAPSIZE);
+	    if(truecolor != YES) {
+		XStoreColors(baseframe_dpy, default_cmap, clist, CMAPSIZE);
+	    } else {
+		for(i = 0; i < CMAPSIZE ; i++){
+		    XAllocColor(baseframe_dpy, default_cmap,
+				&clist[i]);
+		    colors[i] = clist[i].pixel;
+		}
+	    }
 	    for(i = 0; i < CMAPSIZE ; i++){
 	      gc_color[i] = XCreateGC(baseframe_dpy,currentview_xid,0,NULL) ;
 	      XSetForeground(baseframe_dpy,gc_color[i],colors[i]) ;

@@ -13,7 +13,7 @@ change_color(scroll, colorbar , top_ptr)
   int i;
   int size;
   
-  if(mono != YES) 
+  if(mono != YES && truecolor != YES) 
     {
       
     base_color = ((*(float *) top_ptr)) * (CMAPSIZE-3);

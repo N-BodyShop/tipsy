@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.16  1998/02/27 19:51:33  nsk
+ * Revision 1.17  1999/04/28 22:44:51  trq
+ * Added limited support for truecolor visuals.
+ *
+ * Revision 1.16  1998/02/27  19:51:33  nsk
  * Fixed star formation stuff, added starform routine
  *
  * Revision 1.15  1997/12/18  17:57:11  trq
@@ -540,6 +543,7 @@ extern unsigned char *arraymap_blue;
 extern int base_color ;
 extern int display ;
 extern int mono;
+extern int truecolor;
 
 struct file {
     char name[50];

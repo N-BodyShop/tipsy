@@ -1,3 +1,12 @@
+Tue Feb  9 15:26:32 1999  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* load_color_table.c, main.c, change_color.c, main.h, defs.h:
+	added limited support for truecolor visuals.
+
+Fri Jan 22 11:58:46 1999  Tom Quinn  <trq@hermes.astro.washington.edu>
+
+	* view_gas.c: added entropy command to view_gas.
+
 Mon Aug 19 12:50:45 1996  Tom Quinn  <trq@hermes.astro.washington.edu>
 
 	* heatcool.c: Fix bug in ionization equilibrium calculation.

@@ -45,7 +45,21 @@ load_color_table()
 	    size = CMAPSIZE;
 	}
     }
-  XStoreColors(baseframe_dpy, default_cmap, clist, size);
+    if(truecolor != YES) {
+	XStoreColors(baseframe_dpy, default_cmap, clist, size);
+	}
+    else {
+	extern Widget colorbar ;
+
+	XFreeColors(baseframe_dpy, default_cmap, colors, CMAPSIZE, 0);
+	for(i = 0; i < CMAPSIZE ; i++){
+	    XAllocColor(baseframe_dpy, default_cmap,
+			&clist[i]);
+	    colors[i] = clist[i].pixel;
+	    XSetForeground(baseframe_dpy,gc_color[i],colors[i]) ;
+	}
+	bar_resize_proc(colorbar, NULL, NULL, NULL);
+    }
     reset_color(NULL);
   }
 }
