@@ -64,6 +64,11 @@ setsphere_sub(job)
 	input_error(command) ;
 	return;
     }
+    if (!redshift_loaded ){
+        if(load_redshift()==0){
+            return ;
+        }
+    }
 	if(boxes_loaded[0] || (box == 0 && binary_loaded)){
 		if(box <= MAXBOX  && box >= 0){
 		boxes[box].x1[0] = center[0]-radius ;

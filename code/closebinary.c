@@ -61,5 +61,10 @@ closebinary(job)
            xray_lum = NULL;
 	   xray_loaded = NO ;
 	}
+	if(dudt != NULL) {
+	   free(dudt) ;
+	   dudt = NULL ;
+	   dudt_loaded = NO ;
+	}
     }
 }

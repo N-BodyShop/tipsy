@@ -29,9 +29,6 @@ cooling_sub(job)
 	    if (!uv_loaded ){
 		load_uv() ;
 	    }
-	    if (!redshift_loaded ){
-		load_redshift() ;
-	    }
 	    nbodies=boxlist[box].ngas+boxlist[box].ndark+boxlist[box].nstar ;
 	    fprintf(hardfile.ptr,"%d %d %d\n",nbodies,boxlist[box].ngas,
 		    boxlist[box].nstar) ;
@@ -43,7 +40,7 @@ cooling_sub(job)
 		if(!uniform){
 		    calc_uv(gp) ;
 		}
-		lycool(gp->temp, gp->rho,cool_vec);
+		lycool(gp,cool_vec);
 		vol = c1*gp->mass/gp->rho ;
 		fprintf(hardfile.ptr,"%g %g %g %g %g %g %g %g %g\n",
 			gp->rho,gp->temp,

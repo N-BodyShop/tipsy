@@ -1,7 +1,11 @@
 /*
  * $Header$ 
  * $Log$
- * Revision 1.13  1999/04/28 22:44:57  trq
+ * Revision 1.14  2000/01/12 22:55:17  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.13  1999/04/28  22:44:57  trq
  * Added limited support for truecolor visuals.
  *
  * Revision 1.12  1998/06/11  20:27:21  trq
@@ -168,6 +172,7 @@ int ikernel_loaded = NO ;
 int dkernel_loaded = NO ;
 int xray_loaded = NO ;
 int divv_loaded = NO ;
+int dudt_loaded = NO ;
 int cooling_loaded = NO ;
 int hneutral_loaded = NO ;
 double max_temp_old = -MAXDOUBLE ;
@@ -236,6 +241,8 @@ double epsgas_grav ;
 double kpcunit ;
 double msolunit;
 double fhydrogen ;
+double dtcool ;
+double slowcool ;
 double jnu21 ;
 double alphaj ;
 double time_unit ;
@@ -258,6 +265,7 @@ double deldr2i ;
 double *iwsmooth = NULL;
 double *dwsmooth = NULL;
 double *hsmdivv = NULL;
+double *dudt = NULL;
 double *cooling = NULL;
 double *hneutral = NULL;
 double *heneutral = NULL;

@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1998/02/18 22:54:56  trq
+ * Revision 1.4  2000/01/12 22:55:29  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.3  1998/02/18  22:54:56  trq
  * Correct bounding on temperature.
  *
  * Revision 1.2  1997/12/06  22:00:57  trq
@@ -84,9 +88,6 @@ xray(job)
 	    if (!cool_loaded ){
 	      printf("loading cool %d \n",cool_loaded);
 	       load_cool() ;
-		}
-	    if (!redshift_loaded ){
-		  load_redshift() ;
 		}
 	    
 	  density = (double ***)malloc(number_bands*sizeof(*density));

@@ -11,9 +11,6 @@ void calc_uv(gp)
     if (!cool_loaded ){
         load_cool() ;
     }
-    if (!redshift_loaded ){
-        load_redshift() ;
-    }
     uvs = uv_sources ;
     gp0_H = uvs->gp0_H ;
     gp0_He = uvs->gp0_He ;

@@ -36,6 +36,7 @@ loadbinary_sub(job)
 	    divv_loaded = NO ;
 	    cooling_loaded = NO ;
 	    starform_loaded = NO ;
+	    dudt_loaded = NO ;
 	    hneutral_loaded = NO ;
 	    meanmwt_loaded = NO ;
 	    xray_loaded = NO ;
@@ -53,6 +54,7 @@ loadbinary_sub(job)
 	    divv_loaded = NO ;
 	    cooling_loaded = NO ;
 	    starform_loaded = NO ;
+	    dudt_loaded = NO ;
 	    hneutral_loaded = NO ;
 	    meanmwt_loaded = NO ;
 	    xray_loaded = NO ;
@@ -98,6 +100,7 @@ loadstandard_sub(job)
 	    divv_loaded = NO ;
 	    cooling_loaded = NO ;
 	    starform_loaded = NO ;
+	    dudt_loaded = NO ;
 	    hneutral_loaded = NO ;
 	    meanmwt_loaded = NO ;
 	    xray_loaded = NO ;
@@ -115,6 +118,7 @@ loadstandard_sub(job)
 	    divv_loaded = NO ;
 	    cooling_loaded = NO ;
 	    starform_loaded = NO ;
+	    dudt_loaded = NO ;
 	    hneutral_loaded = NO ;
 	    meanmwt_loaded = NO ;
 	    xray_loaded = NO ;

@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.18  1998/07/24 17:43:01  trq
+ * Revision 1.19  2000/01/12 22:54:58  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.18  1998/07/24  17:43:01  trq
  * Ensure that zbins do not go out of bounds.
  *
  * Revision 1.17  1998/06/11  20:24:18  trq
@@ -292,9 +296,6 @@ absorb(job)
 	    if (!cool_loaded ){
 		load_cool() ;
 	    }
-	    if (!redshift_loaded ){
-		load_redshift() ;
-	    }
 	    for(i = 0; i < zbin; i++){
 		mass_tot[i] = 0.0;
 		vel_tot[i] = 0.0;
@@ -355,9 +356,6 @@ absorb(job)
 	    }
 	    if (!uv_loaded ){
 		load_uv() ;
-	    }
-	    if (!redshift_loaded ){
-		load_redshift() ;
 	    }
 	    if(!hneutral_loaded){
 	      hneutral_func() ;

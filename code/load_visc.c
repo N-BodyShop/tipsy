@@ -13,4 +13,6 @@ load_visc()
 	printf("<sorry, inconsistent input, %s>\n",title) ;
     }
     visc_loaded = YES ;
+    dudt_loaded = NO ;
+    starform_loaded = NO ;
 }

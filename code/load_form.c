@@ -17,4 +17,5 @@ load_form()
 	printf("<sorry, inconsistent input, %s>\n",title) ;
     }
     form_loaded = YES ;
+    starform_loaded = NO ;
 }

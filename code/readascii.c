@@ -26,6 +26,8 @@ readascii(job)
 	    visc_loaded = NO ;
 	    form_loaded = NO ;
 	    lum_loaded = NO ;
+	    starform_loaded = NO ;
+	    dudt_loaded = NO ;
 	}
 	else {
 	    input_error(command) ;

@@ -34,9 +34,6 @@ void calc_density(psmx, bDark, bGas, bStar)
     SMX smx = *psmx;
     float period[MAXDIM];
 
-    if (!redshift_loaded ){
-	load_redshift() ;
-    }
     if(smx) {
 	kdFinish(smx->kd);
 	smFinish(smx);
@@ -79,9 +76,6 @@ void calc_balls(psmx, bDark, bGas, bStar)
     SMX smx = *psmx;
     float period[MAXDIM];
 
-    if (!redshift_loaded ){
-	load_redshift() ;
-    }
     if(smx) {
 	kdFinish(smx->kd);
 	smFinish(smx);

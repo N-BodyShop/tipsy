@@ -20,9 +20,6 @@ divv()
     if(!dkernel_loaded){
 	dkernel_load() ;
     }
-    if(!redshift_loaded){
-	load_redshift() ;
-    }
     if (!cool_loaded ){
 	load_cool() ;
     }
@@ -37,7 +34,9 @@ divv()
 	loadall();
     }
 
-    if(hsmdivv != NULL) free(hsmdivv);
+    if(hsmdivv != NULL){
+	free(hsmdivv);
+    }
     if(boxlist[0].ngas != 0) {
 	hsmdivv = (double *)malloc(boxlist[0].ngas *sizeof(*hsmdivv));
 	if(hsmdivv == NULL) {
@@ -47,6 +46,7 @@ divv()
     }
     else
       hsmdivv = NULL;
+
     
     if(box0_smx) {
 	kdFinish(box0_smx->kd);
@@ -72,7 +72,7 @@ divv()
     kdOrder(kd);
     for(i = 0; i < boxlist[0].ngas; i++) {
 	gp = boxlist[0].gp[i];
-	hsmdivv[i] = 0.5*kd->p[i].fDensity/gp->rho;
+	hsmdivv[i] = 0.5*gp->hsmooth*kd->p[i].fDensity/gp->rho;
     }
     divv_loaded = YES ;
 }

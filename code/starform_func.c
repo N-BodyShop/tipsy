@@ -31,6 +31,9 @@ starform_func()
     if(!divv_loaded){
 	divv() ;
     }
+    if(!dudt_loaded){
+	calc_dudt() ;
+    }
     srhomin = rhomin*pow(kpcunit*KPCCM, 3.0)/(MSOLG*msolunit)/fhydrogen*MHYDR ;
     if(starform != NULL) free(starform);
     if(boxlist[active_box].ngas != 0) {
@@ -48,9 +51,11 @@ starform_func()
 	gp = boxlist[active_box].gp[i] ;
 	if(hsmdivv[gp-gas_particles] < 0.) {
  	    tdyn = GYRSEC*time_unit/sqrt(4.*(gp->rho/cosmof3)*PI);
-	    adiabatic = -5.*KBOLTZ*gp->temp*gp->rho/(MHYDR*meanmwt[i])/
-	    	    2.*(hsmdivv[gp-gas_particles]/gp->hsmooth)*MSOLG*msolunit/
+	    adiabatic = -KBOLTZ*gp->temp*gp->rho/(MHYDR*meanmwt[i])*
+	    	    (hsmdivv[gp-gas_particles]/gp->hsmooth)*MSOLG*msolunit/
 		    (cosmof3*pow(kpcunit*KPCCM, 3.0))/time_unit/GYRSEC ;
+	    adiabatic = dudt[gp-gas_particles]*(gp->rho) /(kpcunit*KPCCM) /
+		    (time_unit*GYRSEC*time_unit*GYRSEC*time_unit*GYRSEC) ;
 	    tcool = 1.5*KBOLTZ*gp->temp*MSOLG*msolunit*gp->rho/
 		    (MHYDR*meanmwt[i])/(cosmof3*pow(kpcunit*KPCCM, 3.0))/
 		     (cooling[i] + adiabatic) ;

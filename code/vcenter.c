@@ -1,7 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:36  trq
- * Initial revision
+ * Revision 1.2  2000/01/12 22:55:26  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:37  trq
+ * Import to CVS
  *
  * Revision 2.2  94/04/20  08:46:13  trq
  * Added title variable.
@@ -68,6 +72,9 @@ void vcenter(job)
 		sp->vel[1] -= cvel[1] ;
 		sp->vel[2] -= cvel[2] ;
 	    }
+	    divv_loaded = NO ;
+	    starform_loaded = NO ;
+	    dudt_loaded = NO ;
 	}
 	else {
 	  if (boxes_loaded[center_box]) {

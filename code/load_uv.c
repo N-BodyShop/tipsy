@@ -64,6 +64,8 @@ load_uv()
 	uniform = NO ;
 	cooling_loaded = NO ;
 	meanmwt_loaded = NO ;
+	starform_loaded = NO ;
+	dudt_loaded = NO ;
     }
     else if(((number = sscanf(cool_const,"%s %lf %lf %lf %lf %lf %lf", 
 	      uv_type,&c1,&c2,&c3,&c4,&c5,&c6)) == 3 || number == 7) &&
@@ -102,5 +104,7 @@ load_uv()
 	uniform = YES ;
 	cooling_loaded = NO ;
 	meanmwt_loaded = NO ;
+	starform_loaded = NO ;
+	dudt_loaded = NO ;
     }
 }

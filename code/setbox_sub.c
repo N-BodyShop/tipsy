@@ -1,7 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:27  trq
- * Initial revision
+ * Revision 1.2  2000/01/12 22:55:22  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:28  trq
+ * Import to CVS
  *
  * Revision 2.4  1994/12/23  19:26:39  nsk
  * made setbox take offsets
@@ -91,6 +95,11 @@ setbox_sub(job)
     for(k = 0; k < header.ndim; k++){
 	xmax[k] = center[k] + xoffset[k] ;
 	xmin[k] = center[k] - xoffset[k] ;
+    }
+    if (!redshift_loaded ){
+	if(load_redshift()==0){
+	    return ;
+	}
     }
     if(boxes_loaded[0] || box == 0){
 	if(box <= MAXBOX  && box >= 0){

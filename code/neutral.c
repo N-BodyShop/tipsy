@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.5  1997/09/25 18:35:18  nsk
+ * Revision 1.6  2000/01/12 22:55:19  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.5  1997/09/25  18:35:18  nsk
  * added uv command and discrete uv sources
  *
  * Revision 1.4  1997/09/05  01:02:23  nsk
@@ -40,9 +44,6 @@ hneutral_func()
     }
     if (!uv_loaded ){
 	load_uv() ;
-    }
-    if (!redshift_loaded ){
-	load_redshift() ;
     }
     max_temp_old = -HUGE ;
     min_rho_old = HUGE ;

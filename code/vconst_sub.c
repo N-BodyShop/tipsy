@@ -8,8 +8,9 @@ vconst_sub(job)
     char command[MAXCOMM] ;
 
     if(sscanf(job,"%s %lf %lf", command,
-	    &alpha,&beta) == 5){
+	    &alpha,&beta) == 3){
 	visc_loaded = YES ;
+	dudt_loaded = NO ;
     }
     else {
 	input_error(command) ;

@@ -14,9 +14,6 @@ meanmwt_func()
     if (!uv_loaded ){
 	load_uv() ;
     }
-    if (!redshift_loaded ){
-	load_redshift() ;
-    }
     if(meanmwt != NULL) free(meanmwt);
     if(boxlist[active_box].ngas != 0) {
 	meanmwt = (double *)malloc(boxlist[active_box].ngas

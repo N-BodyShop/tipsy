@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.18  1999/08/25 22:05:30  nsk
+ * Revision 1.19  2000/01/12 22:55:28  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.18  1999/08/25  22:05:30  nsk
  * added center to boxstat, checks for periodic in smooth, prints out
  * cooling stuff, vista makes plots
  *
@@ -192,9 +196,6 @@ vista(job)
 	      if (!cool_loaded ){
 		  load_cool() ;
 	      }
-	      if (!redshift_loaded ){
-		  load_redshift() ;
-	      }
 	      if (strcmp(type,"density") == 0 || strcmp(type,"rho") == 0 ){
 		  vista_type = RHO ;
 	      }
@@ -353,9 +354,6 @@ vista(job)
 		if (!uv_loaded ){
 		    load_uv() ;
 		}
-		if (!redshift_loaded ){
-		    load_redshift() ;
-		}
 	    }
 	    else if(vista_type == JEANS){
 		if(!meanmwt_loaded){
@@ -373,9 +371,6 @@ vista(job)
 		}
 	    }
 	    else if(vista_type == LUMSTAR){
-		if (!redshift_loaded ){
-		    load_redshift() ;
-		}
 		if(strcmp(type,"lumi") == 0 || strcmp(type,"luminosityi") == 0){
 		    color_filter = IBAND ;
 		    wavelength = 8800./(1.+redshift) ;
@@ -477,7 +472,7 @@ vista(job)
 			    if(!uniform){
 				calc_uv(gp) ;
 			    }
-			    lycool(gp->temp, gp->rho,cool_vec);
+			    lycool(gp,cool_vec);
 			    vol = c1*gp->mass/gp->rho ;
 			    cool_tot = vol*(cool_vec[0]+cool_vec[1])/1.e40 ;
 			}
@@ -485,7 +480,7 @@ vista(job)
 			    if(!uniform){
 				calc_uv(gp) ;
 			    }
-			    lycool(gp->temp, gp->rho,cool_vec);
+			    lycool(gp,cool_vec);
 			    vol = c1*gp->mass/gp->rho ;
 			    cool_tot = vol*(cool_vec[0]+cool_vec[1] +
 				    cool_vec[2]+cool_vec[3] +
@@ -547,6 +542,9 @@ vista(job)
 				else if(vista_type == COOL ||vista_type == LYA){
 				    delta_d = cool_tot ;
 				}
+				else if(vista_type == FSTAR){
+				    delta_d = starform[i] ;
+				}
 				else if(vista_type == HNEUT){
 				    delta_d = c1*hneutral[gp-gas_particles]*
 					(gp->mass);
@@ -572,9 +570,6 @@ vista(job)
 				    c1_i = sqrt(meanmwt[i])*c1 ;
 				    delta_q = gp->mass * gp->hsmooth*c1_i*
 					sqrt(gp->rho / gp->temp);
-				}
-				else if(vista_type == FSTAR){
-				    delta_q = gp->mass * starform[i];
 				}
 				else if(vista_type == HNEUT){
 				    delta_q = c1*hneutral[gp-gas_particles]*
@@ -629,7 +624,6 @@ vista(job)
 					    if(vista_type == TEMP ||
 						vista_type == PRESS ||
 						vista_type == JEANS ||
-						vista_type == FSTAR ||
 						vista_type == HNEUT
 						|| vista_type == SZ){
 					    	quantity[kx][ky]
@@ -654,7 +648,6 @@ vista(job)
 					if(vista_type == TEMP ||
 					    vista_type == PRESS ||
 					    vista_type == JEANS ||
-					    vista_type == FSTAR ||
 					    vista_type == HNEUT
 					    || vista_type == SZ){
 					    quantity[kx][ky] += (float) delta_q ;
@@ -676,7 +669,7 @@ vista(job)
 			 vista_type != HNEUT && vista_type != HEI &&
 			 vista_type != HEII && vista_type != SZ &&
 		         vista_type != VALL && vista_type != COOL &&
-			 vista_type != LYA){
+			 vista_type != LYA  && vista_type != FSTAR){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
 			    if(density[kx][ky] != 0.){

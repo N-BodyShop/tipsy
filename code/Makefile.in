@@ -87,7 +87,7 @@ readvector.o xplot_mag.o yplot_mag.o zplot_mag.o view_mag.o magnitude_color.o \
 pcenter.o writebox_rot.o absorb.o markmass.o drift.o ruler.o \
 zspace.o dump_pixmap.o kd.o smooth.o catbox.o gasify.o neutralize.o uv.o \
 load_uv.o calc_uv.o starform_sub.o scale_sub.o write_iv.o write_gas.o \
-cooling_sub.o
+cooling_sub.o dudt.o
 
 HEADERS = comm.h defs.h fdefs.h main.h nsktrqxbm.h tipsy_icon.h kd.h \
 	xray.h smooth.h
@@ -134,7 +134,7 @@ readvector.c xplot_mag.c yplot_mag.c zplot_mag.c view_mag.c magnitude_color.c \
 pcenter.c writebox_rot.c absorb.c markmass.c drift.c alloca.c ruler.c \
 zspace.c dump_pixmap.c kd.c smooth.c catbox.c gasify.c neutralize.c uv.c \
 load_uv.c calc_uv.c starform_sub.c scale_sub.c write_iv.c write_gas.c \
-cooling_sub.c
+cooling_sub.c dudt.c
 
 $(OBJS): defs.h
 main.o:  main.h

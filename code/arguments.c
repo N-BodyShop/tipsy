@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.22  1999/08/25 22:05:23  nsk
+ * Revision 1.23  2000/01/12 22:55:00  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.22  1999/08/25  22:05:23  nsk
  * added center to boxstat, checks for periodic in smooth, prints out
  * cooling stuff, vista makes plots
  *
@@ -198,7 +202,7 @@ arguments(job)
     }
     else if ( strcmp(command,"coolconstants") == 0 ||
 	    strcmp(command,"cconst") == 0 ) {
-	printf("coolconstants kpcunit msolunit fhydrogen\n") ;
+	printf("coolconstants kpcunit msolunit fhydrogen (slowcool dtcool)\n") ;
     }
     else if ( strcmp(command,"coolout") == 0 ) {
 	printf("coolout box filename\n") ;

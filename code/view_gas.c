@@ -1,7 +1,11 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.4  1999/08/25 22:05:29  nsk
+ * Revision 1.5  2000/01/12 22:55:27  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.4  1999/08/25  22:05:29  nsk
  * added center to boxstat, checks for periodic in smooth, prints out
  * cooling stuff, vista makes plots
  *
@@ -514,16 +518,13 @@ view_gas(job)
 		if (!uv_loaded ){
 		    load_uv() ;
 		}
-		if (!redshift_loaded ){
-		    load_redshift() ;
-		}
 		c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
 		    if(!uniform){
 			calc_uv(gp) ;
 		    }
-		    lycool(gp->temp, gp->rho,cool_vec);
+		    lycool(gp,cool_vec);
 		    particle_color[i] = (int)(color_slope*c1*gp->mass/gp->rho*
 			    (cool_vec[0]+cool_vec[1]) + color_offset +0.5) ;
 		}
@@ -536,16 +537,13 @@ view_gas(job)
 		if (!uv_loaded ){
 		    load_uv() ;
 		}
-		if (!redshift_loaded ){
-		    load_redshift() ;
-		}
 		c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    gp = boxlist[active_box].gp[i] ;
 		    if(!uniform){
 			calc_uv(gp) ;
 		    }
-		    lycool(gp->temp, gp->rho,cool_vec);
+		    lycool(gp,cool_vec);
 		    if(cool_vec[0]+cool_vec[1] > 0.){
 			particle_color[i] = (int)(color_slope
 						  *log10(c1*gp->mass/gp->rho*
@@ -665,6 +663,14 @@ view_gas(job)
 		    else{
 			particle_color[i] = 2 ;
 		    }
+		}
+	    }
+	    else if ( strcmp(type,"mfrac") == 0 ){
+		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+		    gp = boxlist[active_box].gp[i] ;
+		    particle_color[i] = (int)(color_slope * gp->rho *
+			    gp->hsmooth*gp->hsmooth*gp->hsmooth/gp->mass+ 
+			    color_offset +0.5) ;
 		}
 	    }
 	    else {

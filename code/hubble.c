@@ -35,6 +35,9 @@ hubble(job)
 		sp->vel[1] += hubble_const * (sp->pos[1] - hubble_center[1]) ;
 		sp->vel[2] += hubble_const * (sp->pos[2] - hubble_center[2]) ;
 	    }
+	    divv_loaded = NO;
+	    starform_loaded = NO ;
+	    dudt_loaded = NO ;
 	}
 	else {
 	    printf("<sorry, box %d is not loaded, %s>\n",box,title) ;

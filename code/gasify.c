@@ -93,6 +93,8 @@ gasify(job)
 	hneutral_loaded = NO ;
 	meanmwt_loaded = NO ;
 	xray_loaded = NO ;
+	dudt_loaded = NO ;
+	starform_loaded = NO ;
       }
 	else if (sscanf(job,"%s %lf %lf %lf %lf %lf %lf %lf %s",command,
 			&gas_frac,&rhobar,&temp_y,&temp_slope,&rho_shock,
@@ -165,6 +167,8 @@ gasify(job)
 	hneutral_loaded = NO ;
 	meanmwt_loaded = NO ;
 	xray_loaded = NO ;
+	starform_loaded = NO ;
+	dudt_loaded = NO ;
       }
       else {
 	  input_error(command) ;

@@ -14,9 +14,6 @@ cool_func()
     if (!uv_loaded ){
 	load_uv() ;
     }
-    if (!redshift_loaded ){
-	load_redshift() ;
-    }
     if(cooling != NULL) free(cooling);
     if(boxlist[active_box].ngas != 0) {
 	cooling = (double *)malloc(boxlist[active_box].ngas *sizeof(*cooling));
@@ -33,7 +30,7 @@ cool_func()
 	if(!uniform){
 	    calc_uv(gp) ;
 	}
-	cooling[i] = heatcool(gp->temp, gp->rho);
+	cooling[i] = heatcool(gp);
     }
     cooling_loaded = YES ;
 }

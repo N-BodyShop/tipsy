@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.18  1999/08/25 22:05:26  nsk
+ * Revision 1.19  2000/01/12 22:55:04  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.18  1999/08/25  22:05:26  nsk
  * added center to boxstat, checks for periodic in smooth, prints out
  * cooling stuff, vista makes plots
  *
@@ -435,6 +439,7 @@ extern int ikernel_loaded ;
 extern int dkernel_loaded ;
 extern int xray_loaded ;
 extern int divv_loaded ;
+extern int dudt_loaded ;
 extern int cooling_loaded ;
 extern int hneutral_loaded ;
 extern int meanmwt_loaded ;
@@ -472,6 +477,8 @@ extern double window_pixels ;
 extern double kpcunit ;
 extern double msolunit ;
 extern double fhydrogen ;
+extern double dtcool ;
+extern double slowcool ;
 extern double jnu21 ;
 extern double alphaj ;
 extern double alpha ;
@@ -513,6 +520,7 @@ extern double deldr2i ;
 extern double *iwsmooth;
 extern double *dwsmooth;
 extern double *hsmdivv ;
+extern double *dudt ;
 extern double *cooling ;
 extern double *hneutral ;
 extern double *heneutral ;

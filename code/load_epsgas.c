@@ -13,4 +13,5 @@ load_epsgas()
 	printf("<sorry, inconsistent input, %s>\n",title) ;
     }
     epsgas_loaded = YES ;
+    starform_loaded = NO ;
 }

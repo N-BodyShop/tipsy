@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.13  1999/08/25 22:05:27  nsk
+ * Revision 1.14  2000/01/12 22:55:09  nsk
+ * Fixed bugs in cooling routines, added cooling damping,
+ * fixed bugs in starformation,  regularized dependencies.
+ *
+ * Revision 1.13  1999/08/25  22:05:27  nsk
  * added center to boxstat, checks for periodic in smooth, prints out
  * cooling stuff, vista makes plots
  *
@@ -78,6 +82,7 @@ PROTO(void, array_color, ());
 PROTO(int, boxlist_alloc, (int box, int ngas, int ndark, int nstar));
 PROTO(void, boxlist_realloc, (int box));
 PROTO(void, box_cumulate, (int box));
+PROTO(void, calc_dudt, ());
 PROTO(void, calc_hneutral, (double temp, double density, double *hneutral_p,
 			     double *heneutral_p, double *heII_p));
 PROTO(double, calc_meanmwt, (double temp, double density));
@@ -114,7 +119,7 @@ PROTO(void, fits_xray, (float **data, int xsize, int ysize,
 			double deltay, double zmin, double zmax, char
 			*outfile));
 PROTO(void, get_nsktrq, (char **bitP, int *widthP, int *heightP));
-PROTO(double, heatcool, (double temp, double density));
+PROTO(double, heatcool, (struct gas_particle *gp));
 PROTO(void, hneutral_func, ());
 PROTO(void, ikernel_load, ());
 PROTO(void, input_error, (char *command));
@@ -125,7 +130,7 @@ PROTO(void, loadall, ());
 PROTO(int, loadbinary, (FILE *infile, double time));
 PROTO(int, loadbin_box, (FILE *infile,double time, Real *xmin, Real *xmax));
 PROTO(void, loadbox, (int box));
-PROTO(void, load_redshift, ());
+PROTO(int, load_redshift, ());
 PROTO(void, loadsphere, (int box, Real *center, double radius));
 PROTO(int, loadstandard, (FILE *infile, double time));
 PROTO(int, loadstd_box, (FILE *infile,double time, Real *xmin, Real *xmax));
@@ -135,8 +140,7 @@ PROTO(void, load_eps, ());
 PROTO(void, load_epsgas, ());
 PROTO(void, load_form, () );
 PROTO(void, load_visc, ());
-PROTO(void, lycool, (double temp, double density,double cool_vex[COOLVECSIZE]));
-PROTO(double, heatcool, (double temp, double density));
+PROTO(void, lycool, (struct gas_particle *gp,double cool_vec[COOLVECSIZE]));
 
      
 PROTO(void, magnitude_color, ());

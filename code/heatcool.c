@@ -3,6 +3,7 @@
 
 /* xion tolerance */
 #define TOLERANCE 1e-14
+#define SMALLNUM 1.e-30
 
 static double n_h, g0, g1, g2, r;
 
@@ -351,14 +352,19 @@ void xion(t, x, x_1, x_2, x_3, p_ne)
 }
 
 
-double heatcool(temp, density)
-     double temp;
-     double density;
+double heatcool(gp)
+    struct gas_particle *gp;
 {
+    double temp;
+    double density;
     double crate, hrate, compcrate;
     double h0, h1, h2;
     double x, x_1, x_2, x_3, f_e, n_e;
     double y;
+    double totcool, rhoproper, acool, ethermal, coolfac, dudtmech;
+
+    density = gp->rho;
+    temp = gp->temp;
 
       n_h = (density/cosmof3)*MSOLG*msolunit* 
 	    fhydrogen / ((kpcunit*kpcunit*kpcunit) * MHYDR * 
@@ -419,21 +425,52 @@ double heatcool(temp, density)
 
 /* see Ikeuchi and Ostriker 1986, Ap. J. 301, 522. */
     compcrate = 5.41e-36*pow(1.0 + redshift, 4.0)*f_e*temp*n_h;
+    totcool = crate + compcrate - hrate ;
+    if(slowcool != 1.0){
+	/* limit cooling by fraction of thermal energy */
+	rhoproper = (density/cosmof3) * msolunit / (kpcunit*kpcunit*kpcunit)
+		 * MSOLG / (KPCCM*KPCCM*KPCCM);
+	totcool /= rhoproper;  /* cooling per s per g */
+	if (!meanmwt_loaded) {
+	  meanmwt_func();
+	}
+	ethermal = KBOLTZ / (GAMMA-1.) * temp / meanmwt[gp-gas_particles] /
+		   MHYDR; /* specific thermal energy */
+	if(!divv_loaded){
+	    divv() ;
+	}
+	if(!dudt_loaded){
+	    calc_dudt() ;
+	}
+	dudtmech = (kpcunit*KPCCM) / (time_unit*GYRSEC)
+		 * (kpcunit*KPCCM) / (time_unit*GYRSEC)
+		 * dudt[gp-gas_particles] / (time_unit*GYRSEC) ;
+	acool = (slowcool) * ethermal / (dtcool * time_unit * GYRSEC);
+	acool = acool + dudtmech;
+	if (acool < SMALLNUM) acool = SMALLNUM;
+	coolfac = acool / sqrt( acool*acool + totcool*totcool );
+	totcool *= coolfac;
+	totcool *= rhoproper; 
+    }
     
-    return hrate - (crate + compcrate);
+    return  -(totcool);
 }
 
-void lycool(temp, density, cool_vec)
-     double temp;
-     double density;
-     double cool_vec[COOLVECSIZE] ;
+void lycool(gp,cool_vec)
+    struct gas_particle *gp;
+    double cool_vec[COOLVECSIZE] ;
 {
-    double crate ;
-    double crate2 ;
+    double temp;
+    double density;
+    double crate, hrate, compcrate;
     double h0, h1, h2;
     double x, x_1, x_2, x_3, f_e, n_e;
+    double totcool, rhoproper, acool, ethermal, coolfac, dudtmech;
     double y;
     int i ;
+
+    density = gp->rho;
+    temp = gp->temp;
 
       n_h = (density/cosmof3)*MSOLG*msolunit* 
 	    fhydrogen / ((kpcunit*kpcunit*kpcunit) * MHYDR * 
@@ -480,6 +517,20 @@ void lycool(temp, density, cool_vec)
 
     xion(temp, &x, &x_1, &x_2, &x_3, &n_e);
     f_e = 1.0 - x + x_2*r + (x_3)*2.0*r;
+    if(slowcool != 1.0){
+	crate = f_e*rate_Hp(temp)*(1.0 - x);
+	crate += f_e*x_2*r*rate_Hep(temp);
+	crate += f_e*(x_3)*r*rate_Hepp(temp);
+	crate += f_e*x*rate_H(temp);
+	crate += f_e*x_1*r*rate_He(temp);
+	crate += f_e*(1.0 - x + x_2*r + (x_3)*4.0*r)*rate_br(temp);
+	crate *= n_h*n_h;
+	hrate = h0*x + h1*x_1*r + h2*x_2*r;
+	hrate *= n_h;
+	
+    /* see Ikeuchi and Ostriker 1986, Ap. J. 301, 522. */
+	compcrate = 5.41e-36*pow(1.0 + redshift, 4.0)*f_e*temp*n_h;
+    }
     cool_vec[0] = f_e*radrate_Hp(temp)*(1.0 - x);
     cool_vec[1] = f_e*x*rate_H_cex(temp);
     cool_vec[2] = f_e*x*rate_H(temp) - cool_vec[1];
@@ -491,6 +542,35 @@ void lycool(temp, density, cool_vec)
     for(i = 0; i < COOLVECSIZE; i++){
 	cool_vec[i] *= n_h*n_h;
     }
+    if(slowcool != 1.0){
+	/* limit cooling by fraction of thermal energy */
+	rhoproper = (density/cosmof3) * msolunit / (kpcunit*kpcunit*kpcunit)
+		 * MSOLG / (KPCCM*KPCCM*KPCCM);
+	totcool = crate + compcrate - hrate ;
+	totcool /= rhoproper;  /* cooling per s per g */
+	if (!meanmwt_loaded) {
+	  meanmwt_func();
+	}
+	ethermal = KBOLTZ / (GAMMA-1.) * temp / meanmwt[gp-gas_particles] /
+		   MHYDR; /* specific thermal energy */
+	if(!divv_loaded){
+	    divv() ;
+	}
+	if(!dudt_loaded){
+	    calc_dudt() ;
+	}
+	dudtmech = (kpcunit*KPCCM) / (time_unit*GYRSEC)
+		 * (kpcunit*KPCCM) / (time_unit*GYRSEC)
+		 * dudt[gp-gas_particles] / (time_unit*GYRSEC) ;
+	acool = (slowcool) * ethermal / (dtcool * time_unit * GYRSEC);
+	acool = acool + dudtmech;
+	if (acool < SMALLNUM) acool = SMALLNUM;
+	coolfac = acool / sqrt( acool*acool + totcool*totcool );
+	for(i = 0; i < COOLVECSIZE; i++){
+	    cool_vec[i] *= coolfac;
+	}
+    }
+
     return ;
 }
 void
@@ -538,6 +618,7 @@ double calc_meanmwt(temp, density)
     double x, x_1, x_2, x_3;
     double y;
     double n_e;
+    double f_e;
 
     n_h = (density/cosmof3)*MSOLG*msolunit* 
 	    fhydrogen / ((kpcunit*kpcunit*kpcunit) * MHYDR * 
@@ -575,7 +656,8 @@ double calc_meanmwt(temp, density)
     g2 = gp0_Hep ;
 
     xion(temp, &x, &x_1, &x_2, &x_3, &n_e);
-    return (1.0 - y/4.0)/(2.0 - x) + y/(3.0 - x_1 - x_2);
+    f_e = 1.0 - x + x_2*r + (x_3)*2.0*r;
+    return ((1. + 4.*r) / (1. + r + f_e));
 }
 
 #include "xray.h"
