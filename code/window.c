@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.3  1998/02/18 22:53:06  trq
+ * Revision 1.4  2001/07/20 23:10:29  trq
+ * Added check for maxwins in delete_window() to prevent core dump.
+ *
+ * Revision 1.3  1998/02/18  22:53:06  trq
  * Always call canvas_resize_proc() to get new window height and width.
  *
  * Revision 1.2  1996/02/16  17:19:25  trq
@@ -31,6 +34,7 @@
  */
 #include "defs.h"
 #include "fdefs.h"
+#include <malloc.h>
 #include <X11/Xatom.h>
 #include <X11/Intrinsic.h>
 #include <X11/Xaw/Simple.h>
@@ -54,16 +58,13 @@ static Widget *shells;
 static Widget *views;
 static Widget *canvases;
 static int *popped;
-
-void *malloc();
-void *realloc();
+static int maxwins = 0;
 
 void
 window(job)
     char job[MAXCOMM] ;
 {
     char command[MAXCOMM] ;
-    static int maxwins = 0;
     int winnum;
     int i;
     String params;
@@ -213,6 +214,12 @@ delete_window(job)
 	    printf("<try quit, %s>\n",title);
 	    return;
 	  }
+	if(winnum > maxwins || !popped[winnum-1])
+	    {
+		printf("<window is not open, %s>\n",title);
+		return;
+	    }
+	    
 	XtPopdown(shells[winnum-1]);
 	popped[winnum-1] = 0;
 	currentview_xid = XtWindow(canvas);
