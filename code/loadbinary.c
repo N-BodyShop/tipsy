@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
+#include <malloc.h>
 #include <stdlib.h>
 
 static double currtime = 0.0;
@@ -47,27 +48,35 @@ loadheader(FILE *binaryfile,
     
   } else {
     /* manifest file */
+    printf("Manifest has %d files\n", manifest_length);
+    fflush(stdout);
     i = 0; 
     while (1) {
       if (i == manifest_length) {
 	printf("<sorry time too large %s, using %f>\n",title,
 	       (float)manifest[i-1].time) ;
 	i--;
+	break;
       }
+      printf("File %s\n", manifest[i].name);
+      fflush(stdout);
       if ( (float)manifest[i].time >= (float)time ) break;
       i++;
     }
-
+    
     printf("<Using file %s, %s>\n", manifest[i].name, title);
+    fflush(stdout);
     *infile = fopen(manifest[i].name, "r");
     if (*infile == NULL) {
       printf("<Unable to open file %s, %s>\n", manifest[i].name, title);
+      fflush(stdout);
       return FALSE;
     }
     nread = fread((char *)&header, sizeof(header), 1, *infile) ;
     if (nread != 1) {
       printf("<Error reading header from file %s, %s>\n", 
 	     manifest[i].name, title);
+      fflush(stdout);
       return FALSE;
     }
     currpos = ftell(*infile) - sizeof(header);
@@ -76,6 +85,7 @@ loadheader(FILE *binaryfile,
 
   if(header.ndim < 2 || header.ndim > 3) {
     printf("<sorry, file has crazy dimension, %s>\n",title) ;
+    fflush(stdout);
     fseek(*infile,0L,0);
     currtime=0.0;
     currpos=0;
@@ -559,7 +569,7 @@ loadheader_std(FILE *binaryfile,
 	       double time,
 	       FILE **infile) {
 
-  int i, nread;
+  int i;
 
   if (!ismanifest) {
     /* regular binary */
@@ -621,6 +631,8 @@ loadheader_std(FILE *binaryfile,
     header.nstar = 0;
     return FALSE;
   }
+  return TRUE;
+
 }
 
 
