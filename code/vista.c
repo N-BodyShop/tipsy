@@ -1,7 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:28  trq
- * Initial revision
+ * Revision 1.2  1995/02/17 21:45:13  nsk
+ * changed what hneut does so that it outputs nuetral weighted hfrac and temp as
+ * well.
+ *
+ * Revision 1.1.1.1  1995/01/10  22:57:29  trq
+ * Import to CVS
  *
  * Revision 2.16  1994/12/02  02:39:50  nsk
  * added kludge factor to hneutral
@@ -59,6 +63,7 @@ vista(job)
     int ky_min,ky_max ;
     float **density;
     float **quantity;
+    float **quantity2;
     double radius2 ;
     double distance_dim2() ;
     double hsmooth ;
@@ -67,6 +72,7 @@ vista(job)
     double kernel ;
     int vista_type ;
     char name[50] ;
+    char name1[50] ;
     double pixel ;
     double low ;
     double high ;
@@ -82,7 +88,6 @@ vista(job)
     double lum_xray ;
     int vista_size ;
     double msys ;
-    double hfrac_max ;
 
 
     if(!ikernel_loaded){
@@ -154,8 +159,7 @@ vista(job)
 		  printf("<sorry, no memory for image, %s>\n",title) ;
 		  return ;
 		}
-	      if(vista_type != RHO && vista_type != XRAY &&
-		    vista_type != HNEUT){
+	      if(vista_type != RHO && vista_type != XRAY){
 		  quantity = (float **)malloc(vista_size*sizeof(*quantity));
 		  if(quantity == NULL)
 		    {
@@ -169,15 +173,13 @@ vista(job)
 	      if(*density == NULL)
 		{
 		  free(density);
-		  if(vista_type != RHO && vista_type != XRAY &&
-			vista_type != HNEUT){
+		  if(vista_type != RHO && vista_type != XRAY){
 		      free(quantity);
 		  }
 		  printf("<sorry, no memory for image, %s>\n",title) ;
 		  return ;
 		}
-	      if(vista_type != RHO && vista_type != XRAY &&
-		    vista_type != HNEUT){
+	      if(vista_type != RHO && vista_type != XRAY){
 		  *quantity = (float *)malloc(vista_size*
 			vista_size*sizeof(**quantity));
 		  if(*quantity == NULL)
@@ -189,12 +191,36 @@ vista(job)
 		      return ;
 		    }
 	      }
+	      if(vista_type == HNEUT){
+		  quantity2 = (float **)malloc(vista_size*sizeof(*quantity2));
+		      if(quantity2 == NULL)
+			{
+			  free(density);
+			  free(quantity);
+			  free(*density);
+			  printf("<sorry, no memory for image, %s>\n",title) ;
+			  return ;
+			}
+                  *quantity2 = (float *)malloc(vista_size*
+                        vista_size*sizeof(**quantity2));
+                  if(*quantity2 == NULL)
+                    {
+                      free(density);
+                      free(quantity);
+                      free(*density);
+                      free(*quantity);
+                      free(quantity2);
+                      printf("<sorry, no memory for image, %s>\n",title) ;
+                      return ;
+                    }
+	      }
 	      for(i = 1; i < vista_size; i++)
 		{
 		  density[i] = &density[0][i*vista_size];
-		  if(vista_type != RHO && vista_type != XRAY &&
-		     vista_type != HNEUT)
+		  if(vista_type != RHO && vista_type != XRAY)
 		      quantity[i] = &quantity[0][i*vista_size];
+		  if(vista_type == HNEUT)
+		      quantity2[i] = &quantity2[0][i*vista_size];
 		}
 	    for(kx = 0; kx < vista_size; kx++){
 		for(ky = 0; ky < vista_size; ky++){
@@ -290,8 +316,6 @@ vista(job)
 		}
 	    }
 	    else if(vista_type == HNEUT){
-		printf("<Enter the maximum neutral fraction, %s>\n",title) ;
-		scanf("%lf",&hfrac_max) ;
 		if(!hneutral_loaded){
 		    hneutral_func() ;
 		}
@@ -302,11 +326,17 @@ vista(job)
 		    vista_type == TCOOL || vista_type == JEANS || 
 		    vista_type == FSTAR || vista_type == XRAY ||
 		    vista_type == HNEUT){
-		if(vista_type != RHO && vista_type != XRAY &&
-			vista_type != HNEUT){
+		if(vista_type != RHO && vista_type != XRAY){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
 			quantity[kx][ky] = 0.0 ;
+			}
+		    }
+		}
+		if(vista_type == HNEUT){
+		    for(kx = 0; kx < vista_size; kx++){
+			for(ky = 0; ky < vista_size; ky++){
+			quantity2[kx][ky] = 0.0 ;
 			}
 		    }
 		}
@@ -322,11 +352,6 @@ vista(job)
 				printf(" big, %s>",title) ;
 				free(density);
 				free(*density);
-				if(vista_type != RHO && vista_type != XRAY &&
-					vista_type != HNEUT){
-				    free(quantity);
-				    free(*quantity);
-				}
 				return ;
 			    }
 			    drw = temp - (double)iwsm ;
@@ -338,11 +363,6 @@ vista(job)
 					title) ;
 				free(density);
 				free(*density);
-				if(vista_type != RHO && vista_type != XRAY &&
-					vista_type != HNEUT){
-				    free(quantity);
-				    free(*quantity);
-				}
 				return ;
 			    }
 			}
@@ -389,19 +409,10 @@ vista(job)
 						lum_xray) ;
 					}
 					else if(vista_type == HNEUT){
-					    if(hneutral[gp-gas_particles] <
-						    hfrac_max){
-						density[kx][ky] +=
-						    (float)(kernel*msys*
-						    fhydrogen*
+					    density[kx][ky] += (float)(kernel*
+						    msys*fhydrogen*
 						    hneutral[gp-gas_particles]*
 						    (gp->mass));
-					    }
-					    else{
-						density[kx][ky] +=
-						    (float)(kernel*msys*
-						    fhydrogen*(gp->mass));
-					    }
 					}
 					else {
 					    density[kx][ky] += (float)(kernel*
@@ -436,6 +447,17 @@ vista(job)
 					    quantity[kx][ky] +=(float)(kernel*
 					    gp->mass * starform[i]);
 					}
+					else if(vista_type == HNEUT){
+					    quantity[kx][ky] += (float)(kernel*
+						    msys*fhydrogen*
+						    hneutral[gp-gas_particles]*
+						    hneutral[gp-gas_particles]*
+						    (gp->mass));
+					    quantity2[kx][ky] += (float)(kernel*
+						    msys*fhydrogen*
+						    hneutral[gp-gas_particles]*
+						    (gp->mass)*(gp->temp));
+					}
 				    }
 				}
 			    }
@@ -449,16 +471,10 @@ vista(job)
 				    density[kx][ky] += (float)(lum_xray) ;
 				}
 				else if(vista_type == HNEUT){
-				    if(hneutral[gp-gas_particles] < hfrac_max){
 					density[kx][ky] += (float)(msys*
 					    fhydrogen*
 					    hneutral[gp-gas_particles]*
 					    (gp->mass));
-				    }
-				    else{
-					density[kx][ky] += (float)(msys*
-					    fhydrogen*(gp->mass));
-				    }
 				}
 				else {
 				    density[kx][ky] += (float)((gp->mass)) ;
@@ -491,12 +507,23 @@ vista(job)
 				    quantity[kx][ky] +=(float)(
 				    gp->mass * starform[i]);
 				}
+				else if(vista_type == HNEUT){
+					quantity[kx][ky] += (float)(msys*
+					    fhydrogen*
+					    hneutral[gp-gas_particles]*
+					    hneutral[gp-gas_particles]*
+					    (gp->mass));
+					quantity2[kx][ky] += (float)(msys*
+					    fhydrogen*
+					    hneutral[gp-gas_particles]*
+					    (gp->mass)*(gp->temp));
+				}
 			    }
 			}
 		    }
 		}
 		if(vista_type != RHO && vista_type != XRAY &&
-			vista_type != HNEUT){
+			 vista_type != HNEUT){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
 			    if(density[kx][ky] != 0.){
@@ -505,6 +532,22 @@ vista(job)
 			    }
 			    else{
 				density[kx][ky] = 0. ;
+			    }
+			}
+		    }
+		}
+		if(vista_type == HNEUT){
+		    for(kx = 0; kx < vista_size; kx++){
+			for(ky = 0; ky < vista_size; ky++){
+			    if(density[kx][ky] != 0.){
+				quantity[kx][ky] = quantity[kx][ky] /
+					density[kx][ky] ;
+				quantity2[kx][ky] = quantity2[kx][ky] /
+					density[kx][ky] ;
+			    }
+			    else{
+				quantity[kx][ky] = 0. ;
+				quantity2[kx][ky] = 0. ;
 			    }
 			}
 		    }
@@ -771,12 +814,53 @@ vista(job)
 	    }
 	    fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
 		    size_pixel,low,high,name) ;
+	    if(vista_type == HNEUT){
+                low = -20.0 ;
+                high = 0.0 ;
+		for(i = 0; i < vista_size; i++){
+		    for(j = 0; j < vista_size; j++){
+			if(quantity[i][j] > 0. ){
+			    pixel = log10((double)(density[i][j]));
+			}
+			else{
+			    pixel = low ;
+			}
+			if(pixel > high)pixel = high ;
+			if(pixel < low)pixel = low ;
+			quantity[i][j] = (float)pixel ;
+		    }
+		}
+                ssprintf(name1,"%s.frac",name) ;
+		fits(quantity,vista_size,vista_size,xmin,ymin,size_pixel,
+			size_pixel,low,high,name1) ;
+                ssprintf(name1,"%s.temp",name) ;
+                low = 0.0 ;
+                high = 1.e10 ;
+		for(i = 0; i < vista_size; i++){
+		    for(j = 0; j < vista_size; j++){
+			if(quantity2[i][j] > 0. ){
+			    pixel = log10((double)(density[i][j]));
+			}
+			else{
+			    pixel = low ;
+			}
+			if(pixel > high)pixel = high ;
+			if(pixel < low)pixel = low ;
+			quantity2[i][j] = (float)pixel ;
+		    }
+		}
+		fits(quantity2,vista_size,vista_size,xmin,ymin,size_pixel,
+			size_pixel,low,high,name1) ;
+            }
 	    free(density);
 	    free(*density);
-	    if(vista_type != RHO && vista_type != XRAY &&
-		    vista_type != HNEUT){
+	    if(vista_type != RHO && vista_type != XRAY){
 		free(quantity);
 		free(*quantity);
+	    }
+	    if(vista_type == HNEUT){
+		free(quantity2);
+		free(*quantity2);
 	    }
 	}
 	else {
