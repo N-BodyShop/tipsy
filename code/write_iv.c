@@ -66,7 +66,9 @@ writeiv(job)
 	  }
 	  j = particle_color[i] ;
 	  fprintf(hardfile.ptr,"0x%x", (unsigned int)(
-	      clist[j].red << 16 | clist[j].green << 8 | clist[j].blue | 0xff));
+	      (clist[j].red & 0xff00) << 16
+	      | (clist[j].green & 0xff00) << 8
+	      | (clist[j].blue & 0xff00) | 0xff));
 	  if(mark_dark[boxlist[active_box].dpi[i]])
 	    particle_color[i] = tmp_color;
 	  used_dark[i] = 1 ;
@@ -103,7 +105,9 @@ writeiv(job)
 	  }
 	  j = particle_color[i+offset] ;
 	  fprintf(hardfile.ptr,"0x%x", (unsigned int)(
-	      clist[j].red << 16 | clist[j].green << 8 | clist[j].blue | 0xff));
+	      (clist[j].red & 0xff00) << 16
+	      | (clist[j].green & 0xff00) << 8
+	      | (clist[j].blue & 0xff00) | 0xff));
 	  if(mark_gas[boxlist[active_box].gpi[i]])
 	    particle_color[i+offset] = tmp_color;
 	  used_gas[i] = 1 ;
@@ -140,7 +144,9 @@ writeiv(job)
 	  }
 	  j = particle_color[i+offset] ;
 	  fprintf(hardfile.ptr,"0x%x", (unsigned int)(
-	      clist[j].red << 16 | clist[j].green << 8 | clist[j].blue | 0xff));
+	      (clist[j].red & 0xff00) << 16
+	      | (clist[j].green & 0xff00) << 8
+	      | (clist[j].blue & 0xff00) | 0xff));
 	  if(mark_star[boxlist[active_box].spi[i]])
 	    particle_color[i+offset] = tmp_color;
 	  used_star[i] = 1 ;
