@@ -2,7 +2,87 @@
 .SH NAME
 viewgas \- plot particles according to gas values
 .SH SYNOPSIS
+.B viewgas
+.I plot_type
+.I min
+.I max
+.I [clip]
 .SH ALIASES
 .B vgas
 .SH DESCRIPTION
+.B viewgas
+plots the gas particles colored according to the gas property
+specified by
+.I plot_type.
+.I Plot_type
+is one of
+.I rho
+(gas density),
+.I logrho
+(log of gas density),
+.I temp
+(gas temperature),
+.I logtemp
+(log gas temperature),
+.I pressure
+(gas pressure),
+.I logpressure
+(log gas pressure),
+.I galaxies
+(gas density in galaxies, assuming galactic gas is below a minimum
+temperature),
+.I loggalaxies
+(log of the above),
+.I xraylum
+(x-ray luminosity),
+.I logxraylum
+(log x-ray luminosity),
+.I divv
+(divergence of velocity),
+.I bulkvisc
+(bulk viscosity),
+.I logbulkvisc
+(log bulk viscosity),
+.I jeans
+(Jeans' mass),
+.I logjeans
+(log Jeans' mass),
+.I smooth
+(smoothing length)
+.I logsmooth
+(log smoothing length),
+.I cooling
+(cooling rate),
+.I logcooling
+(log cooling rate),
+.I logheating
+(log heating rate),
+.I meanmwt
+(mean molecular weight),
+.I hneutral
+(neutral hydrogen density),
+.I loghneutral
+(log neutral hydrogen density),
+.I hfrac
+(neutral hydrogen fraction),
+.I loghfrac
+(log neutral hydrogen fraction),
+.I formstar
+(star formation rate),
+.I logformstar
+(log star formation rate).
+.I min
+and
+.I max
+determine the value of the minimum and maximum color, respectively.
+
+.PP
+.I clip
+can be either
+.I cliplo, clipup,
+or
+.I clipboth
+to suppress plotting particles either below the minimum, above the
+maximum, or both.
 .SH SEE ALSO
+.BR vista(1)
