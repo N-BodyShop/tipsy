@@ -5,6 +5,8 @@
 PROTO(void, smDivvSym, (SMX smx, int pi, int nSmooth, int *pList,
 			float *fList));
 
+static double hsys;
+
 void
 divv()
 {
@@ -13,6 +15,7 @@ divv()
     int n_smooth = 64;
     float period[MAXDIM];
     int i;
+    double rsys, vsys;
 
     if(!dkernel_loaded){
 	dkernel_load() ;
@@ -20,6 +23,14 @@ divv()
     if(!redshift_loaded){
 	load_redshift() ;
     }
+    if (!cool_loaded ){
+	load_cool() ;
+    }
+
+    rsys = cosmof*kpcunit/1.e3 ;
+    vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
+    hsys = rsys*hubble_constant/(1.0 + redshift)/vsys;
+
     if(boxlist[0].ngas != header.nsph) {
 	printf("<Warning, box 0 does not contain all particles, %s>\n", title);
 	printf("<Reloading box 0, %s>\n", title);
@@ -131,7 +142,7 @@ void smDivvSym(smx, pi, nSmooth, pList, fList)
  */
 		    if(comove == YES) {
 			for(j = 0; j < MAXDIM; j++)
-			    dv[j] += dr[j]*hubble_constant/(1.0 + redshift);
+			    dv[j] += dr[j]*hsys;
 		    }
 		    vdotdr = dot_product(dv,dr) ;
 		    smx->kd->p[pi].fDensity -=
