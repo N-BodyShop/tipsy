@@ -1,6 +1,10 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.6  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
  * Revision 1.5  2002/12/28 17:28:26  trq
  * Added "readbinvector" command for reading in binary vector file.
  *
@@ -26,7 +30,7 @@
  */
 #include "defs.h"
 #include "fdefs.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 void
 readvector(job)

@@ -1,6 +1,10 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.6  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
  * Revision 1.5  2002/12/23 19:44:05  trq
  * Added "readbinarray" command to read binary arrays.  Only native formats
  * are supported.
@@ -29,8 +33,8 @@
  */
 #include "defs.h"
 #include "fdefs.h"
-#include "math.h"
-#include <malloc.h>
+#include <math.h>
+#include <stdlib.h>
 
 void
 readarray(job)

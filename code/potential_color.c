@@ -1,6 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 void
 potential_color() 

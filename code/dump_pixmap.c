@@ -2,7 +2,7 @@
 #include "fdefs.h"
 
 #include <X11/XWDFile.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 extern Pixmap back_xid;
 extern Widget canvas;

@@ -1,5 +1,5 @@
 #include "defs.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 void
 magnitude_color() 

@@ -1,6 +1,10 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.6  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
  * Revision 1.5  1997/01/17 21:24:09  trq
  * Added more informative error messages.
  *
@@ -29,7 +33,7 @@
  * Added star formation plots
  * 
  */
-#include <malloc.h>
+#include <stdlib.h>
 #include "defs.h"
 #include "fdefs.h"
 #include "kd.h"

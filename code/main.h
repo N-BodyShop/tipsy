@@ -1,6 +1,10 @@
 /*
  * $Header$ 
  * $Log$
+ * Revision 1.15  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
  * Revision 1.14  2000/01/12 22:55:17  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
@@ -73,7 +77,7 @@
  * 
  */
 
-#include <values.h>
+#include <float.h>
 
 char title[MAXCOMM] ;
 Window currentview_xid ;
@@ -175,8 +179,8 @@ int divv_loaded = NO ;
 int dudt_loaded = NO ;
 int cooling_loaded = NO ;
 int hneutral_loaded = NO ;
-double max_temp_old = -MAXDOUBLE ;
-double min_rho_old = MAXDOUBLE ;
+double max_temp_old = -DBL_MAX ;
+double min_rho_old = DBL_MAX ;
 int meanmwt_loaded = NO ;
 int starform_loaded = NO ;
 int redshift_loaded = NO ;

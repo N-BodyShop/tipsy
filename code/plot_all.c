@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.6  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
  * Revision 1.5  2002/07/02 21:36:17  trq
  * plot_all.c: fixed bug in plotting marked gas particles.
  *
@@ -58,7 +62,7 @@
  * 
  */
 #include "defs.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 Pixmap back_xid = 0;
 extern Widget canvas;

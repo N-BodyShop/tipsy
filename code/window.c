@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.5  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
  * Revision 1.4  2001/07/20 23:10:29  trq
  * Added check for maxwins in delete_window() to prevent core dump.
  *
@@ -34,7 +38,7 @@
  */
 #include "defs.h"
 #include "fdefs.h"
-#include <malloc.h>
+#include <stdlib.h>
 #include <X11/Xatom.h>
 #include <X11/Intrinsic.h>
 #include <X11/Xaw/Simple.h>

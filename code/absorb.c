@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.20  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
  * Revision 1.19  2000/01/12 22:54:58  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
@@ -122,7 +126,7 @@
 
 #include "defs.h"
 #include "fdefs.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 #define SUBBIN 10
 #define SPECTRA 1

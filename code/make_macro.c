@@ -1,7 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:33  trq
- * Initial revision
+ * Revision 1.2  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
+ * Revision 1.1.1.1  1995/01/10 22:57:34  trq
+ * Import to CVS
  *
  * Revision 2.7  1994/10/12  21:26:39  trq
  * Cleaned up mallocs.
@@ -23,7 +27,6 @@
 #include "defs.h"
 #include "fdefs.h"
 #include <stdlib.h>
-#include <malloc.h>
 
 void
 make_macro(job)

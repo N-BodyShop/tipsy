@@ -1,6 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 PROTO(void, smDivvSym, (SMX smx, int pi, int nSmooth, int *pList,
 			float *fList));

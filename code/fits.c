@@ -2,7 +2,6 @@
 
 	cfg 7/89
 */
-#include <malloc.h>
 #include <stdlib.h>
 #include "defs.h"
 #include "fdefs.h"

@@ -1,7 +1,11 @@
 /* $Header$
  * $Log$
- * Revision 1.1  1995/01/10 22:57:35  trq
- * Initial revision
+ * Revision 1.2  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
+ * Revision 1.1.1.1  1995/01/10 22:57:36  trq
+ * Import to CVS
  *
  * Revision 1.3  94/04/20  08:45:47  trq
  * Added title variable.
@@ -11,7 +15,7 @@
  *
  */
 #include "defs.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 void
 old2binary(infile,outfile)

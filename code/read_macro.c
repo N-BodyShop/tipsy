@@ -1,7 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
 #include <stdlib.h>
-#include <malloc.h>
 
 void
 read_macro(job)

@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.4  2003/06/13 17:37:37  trq
+ * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
+ * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
+ *
  * Revision 1.3  1997/09/19 13:41:26  nsk
  * fixed memeory troubles.
  *
@@ -19,7 +23,7 @@
  * 
  */
 #include "defs.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 void input_error();
 static Real *array_select();
