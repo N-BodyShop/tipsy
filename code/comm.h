@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.14  1999/08/25 22:05:25  nsk
+ * Revision 1.15  2001/10/04 17:58:36  nsk
+ *
+ *             Added back in two continue lines that were accidently deleted
+ *
+ * Revision 1.14  1999/08/25  22:05:25  nsk
  * added center to boxstat, checks for periodic in smooth, prints out
  * cooling stuff, vista makes plots
  *
@@ -154,6 +158,7 @@ extern void reset_color() ;
 
 extern void rhomap() ;
 extern void rot_cur() ;
+extern void rot_cur_grp() ;
 extern void rotate_sub() ;
 extern void ruler() ;
 extern void run_macro() ;
@@ -344,6 +349,9 @@ struct comm c_list[] = {
      {"rotate",      rotate_sub,	0},
      {"rotationcurve",rot_cur,		0},
      {"rotcur",      rot_cur,		0},
+     {"grouprotationcurve",rot_cur_grp,	0},
+     {"rotcurgrp",     rot_cur_grp,	0},
+     {"grprotcur",     rot_cur_grp,	0},
      {"ruler",       ruler,		1},
 
      {"saxes",       showaxes_sub,	0},

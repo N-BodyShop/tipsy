@@ -18,6 +18,7 @@ void rot_cur(job)
     Real unit4[MAXDIM] ;
     int i,j ;
     static Real xaxis[MAXDIM] = {1,0,0} ;
+    static Real yaxis[MAXDIM] = {0,1,0} ;
     double dot_product() ;
     double norm ;
     double rot_vel_tot ;
@@ -98,7 +99,15 @@ void rot_cur(job)
 		setvec(center,boxes[center_box].total_com) ;
 		setvec(center_angular_mom,boxes[box].total_angular_mom) ;
 	    }
-	    cross_product(unit1,center_angular_mom,xaxis) ;
+	    for(i = 0; i < MAXDIM ; i++){
+		center_angular_mom[i] /= norm ;
+	    }
+	    if(fabs(dot_product(center_angular_mom,xaxis)) < 0.95){
+		cross_product(unit1,center_angular_mom,xaxis) ;
+	    }
+	    else{
+		cross_product(unit1,center_angular_mom,yaxis) ;
+	    }
 	    norm = sqrt(dot_product(unit1,unit1)) ;
 	    for(i = 0; i < MAXDIM ; i++){
 		unit1[i] /= norm ;
@@ -120,7 +129,7 @@ void rot_cur(job)
 		    radius = pow(10.,radius) ;
 		}
 		vec_add_const_mult_vec(test_particle,center,radius,unit1) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
 		acc_rad_bar = dot_product(acc_bar,unit1) ;
@@ -130,7 +139,7 @@ void rot_cur(job)
 		rot_vel_dark += sqrt(fabs(radius*acc_rad_dark)) ;
 		rot_vel_tot += sqrt(fabs(radius*acc_rad_tot)) ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit2) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
 		acc_rad_bar = dot_product(acc_bar,unit2) ;
@@ -140,7 +149,7 @@ void rot_cur(job)
 		rot_vel_dark += sqrt(fabs(radius*acc_rad_dark)) ;
 		rot_vel_tot += sqrt(fabs(radius*acc_rad_tot)) ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit3) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
 		acc_rad_bar = dot_product(acc_bar,unit3) ;
@@ -150,7 +159,7 @@ void rot_cur(job)
 		rot_vel_dark += sqrt(fabs(radius*acc_rad_dark)) ;
 		rot_vel_tot += sqrt(fabs(radius*acc_rad_tot)) ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit4) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
 		acc_rad_bar = dot_product(acc_bar,unit4) ;

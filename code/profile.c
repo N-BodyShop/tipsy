@@ -439,6 +439,7 @@ profile(job)
 			continue;
 		    if(strcmp(particle_type,"unmark") == 0 &&
 		       mark_star[boxlist[box].spi[i]] != 0)
+			continue;
 		    sp = boxlist[box].sp[i] ;
 		    if (strcmp(projection_type,"sphere") == 0 ||
 			    strcmp(projection_type,"sph") == 0) {
@@ -487,6 +488,7 @@ profile(job)
 			continue;
 		    if(strcmp(particle_type,"unmark") == 0 &&
 		       mark_gas[boxlist[box].gpi[i]] != 0)
+			continue;
 		    gp = boxlist[box].gp[i] ;
 		    if (strcmp(projection_type,"sphere") == 0 ||
 			    strcmp(projection_type,"sph") == 0) {

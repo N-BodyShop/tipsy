@@ -1,9 +1,10 @@
 #include "defs.h"
-void grav(pos,acc_gas,acc_star,acc_dark)
+void grav(pos,acc_gas,acc_star,acc_dark,box)
     Real pos[MAXDIM] ;
     Real acc_gas[MAXDIM] ;
     Real acc_star[MAXDIM] ;
     Real acc_dark[MAXDIM] ;
+    int box ;
 {
     struct gas_particle *gp ;
     struct star_particle *sp ;
@@ -36,8 +37,8 @@ void grav(pos,acc_gas,acc_star,acc_dark)
     if(!eps_loaded){
 	load_eps() ;
     }
-    for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
-	gp = boxlist[active_box].gp[i] ;
+    for (i = 0 ;i < boxlist[box].ngas ;i++) {
+	gp = boxlist[box].gp[i] ;
 	delta_x[0] = pos[0] - gp->pos[0] ;
 	delta_x[1] = pos[1] - gp->pos[1] ;
 	delta_x[2] = pos[2] - gp->pos[2] ;
@@ -57,8 +58,8 @@ void grav(pos,acc_gas,acc_star,acc_dark)
         acc_gas[1] -= delta_x[1] * acci ;
         acc_gas[2] -= delta_x[2] * acci ;
     }
-    for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
-	sp = boxlist[active_box].sp[i] ;
+    for (i = 0 ;i < boxlist[box].nstar ;i++) {
+	sp = boxlist[box].sp[i] ;
 	delta_x[0] = pos[0] - sp->pos[0] ;
 	delta_x[1] = pos[1] - sp->pos[1] ;
 	delta_x[2] = pos[2] - sp->pos[2] ;
@@ -78,8 +79,8 @@ void grav(pos,acc_gas,acc_star,acc_dark)
         acc_star[1] -= delta_x[1] * acci ;
         acc_star[2] -= delta_x[2] * acci ;
     }
-    for (i = 0 ;i < boxlist[active_box].ndark ;i++) {
-	dp = boxlist[active_box].dp[i] ;
+    for (i = 0 ;i < boxlist[box].ndark ;i++) {
+	dp = boxlist[box].dp[i] ;
 	delta_x[0] = pos[0] - dp->pos[0] ;
 	delta_x[1] = pos[1] - dp->pos[1] ;
 	delta_x[2] = pos[2] - dp->pos[2] ;

@@ -1,6 +1,10 @@
 /* $Header$
  * $Log$
- * Revision 1.24  2000/06/07 23:49:28  trq
+ * Revision 1.25  2001/10/04 17:58:35  nsk
+ *
+ *             Added back in two continue lines that were accidently deleted
+ *
+ * Revision 1.24  2000/06/07  23:49:28  trq
  * Added optional "mark" argument to the writebox command.
  *
  * Revision 1.23  2000/01/12  22:55:00  nsk
@@ -364,6 +368,12 @@ arguments(job)
 	printf("rotationcurve box-number center-box-number center-type") ;
 	printf(" particle-type binning bin_number filename minimum_radius") ;
 	printf(" maximum_radius\n") ; 
+    }
+    else if ( strcmp(command,"grouprotationcurve") == 0 ||
+	    strcmp(command,"grprotcur") == 0 ||
+	    strcmp(command,"rotcurgrp") == 0) {
+	printf("grouprotationcurve box-number center-box-number center_x") ;
+	printf(" center_y center_z bin_number filename minimum_radius\n") ;
     }
     else if ( strcmp(command,"ruler") ==0 ) {
 	printf("ruler\n") ;
