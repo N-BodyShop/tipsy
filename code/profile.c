@@ -92,6 +92,7 @@ profile(job)
 		    strcmp(particle_type,"gas") != 0 &&
 		    strcmp(particle_type,"star") != 0 &&
 		    strcmp(particle_type,"baryon") != 0 &&
+		    strcmp(particle_type,"mark") != 0 &&
 		    strcmp(particle_type,"all") !=0) {
 		printf("<sorry, %s is not a particle type, %s>\n",
 			particle_type,title) ;
@@ -149,8 +150,12 @@ profile(job)
 		printf("b/a = %g, c/a = %g\n",ba,ca) ;
 	    }
 	    if (strcmp(particle_type,"dark") == 0 ||
+		    strcmp(particle_type,"mark") == 0 ||
 		    strcmp(particle_type,"all") ==0) {
 		for (i = 0 ;i < boxlist[box].ndark ; i++) {
+		    if(strcmp(particle_type,"mark") == 0 &&
+		       mark_dark[boxlist[box].dpi[i]] == 0)
+			continue;
 		    dp = boxlist[box].dp[i] ;
 		    if (strcmp(projection_type,"sphere") == 0 ||
 			    strcmp(projection_type,"sph") == 0) {
@@ -197,8 +202,12 @@ profile(job)
 	    }
 	    if (strcmp(particle_type,"star") == 0 || 
 		    strcmp(particle_type,"baryon") ==0 ||
+		    strcmp(particle_type,"mark") == 0 ||
 		    strcmp(particle_type,"all") ==0) { 
 		for (i = 0 ;i < boxlist[box].nstar ; i++) {
+		    if(strcmp(particle_type,"mark") == 0 &&
+		       mark_star[boxlist[box].spi[i]] == 0)
+			continue;
 		    sp = boxlist[box].sp[i] ;
 		    if (strcmp(projection_type,"sphere") == 0 ||
 			    strcmp(projection_type,"sph") == 0) {
@@ -247,8 +256,12 @@ profile(job)
 	    }
 	    if (strcmp(particle_type,"gas") == 0 ||
 		    strcmp(particle_type,"baryon") ==0 ||
+		    strcmp(particle_type,"mark") == 0 ||
 		    strcmp(particle_type,"all") ==0) {
 		for (i = 0 ;i < boxlist[box].ngas ; i++) {
+		    if(strcmp(particle_type,"mark") == 0 &&
+		       mark_gas[boxlist[box].gpi[i]] == 0)
+			continue;
 		    gp = boxlist[box].gp[i] ;
 		    if (strcmp(projection_type,"sphere") == 0 ||
 			    strcmp(projection_type,"sph") == 0) {
@@ -303,6 +316,7 @@ profile(job)
 		    continue;
 		if (strcmp(particle_type,"gas") == 0 || 
 			strcmp(particle_type,"baryon") ==0 ||
+			strcmp(particle_type,"mark") == 0 ||
 			strcmp(particle_type,"all") == 0) {
 		    if(gas_mass[i] > 0.0) {
 			density[i] /= gas_mass[i] ;
@@ -328,8 +342,12 @@ profile(job)
 		}
 	    }
 	    if (strcmp(particle_type,"dark") == 0 ||
+		    strcmp(particle_type,"mark") == 0 ||
 		    strcmp(particle_type,"all") ==0) {
 		for (i = 0 ;i < boxlist[box].ndark ; i++) {
+		    if(strcmp(particle_type,"mark") == 0 &&
+		       mark_dark[boxlist[box].dpi[i]] == 0)
+			continue;
 		    dp = boxlist[box].dp[i] ;
 		    if (strcmp(projection_type,"sphere") == 0 ||
 			    strcmp(projection_type,"sph") == 0) {
@@ -369,8 +387,12 @@ profile(job)
 	    }
 	    if (strcmp(particle_type,"star") == 0 ||
 		    strcmp(particle_type,"baryon") ==0 ||
+		    strcmp(particle_type,"mark") == 0 ||
 		    strcmp(particle_type,"all") ==0) {
 		for (i = 0 ;i < boxlist[box].nstar ; i++) {
+		    if(strcmp(particle_type,"mark") == 0 &&
+		       mark_star[boxlist[box].spi[i]] == 0)
+			continue;
 		    sp = boxlist[box].sp[i] ;
 		    if (strcmp(projection_type,"sphere") == 0 ||
 			    strcmp(projection_type,"sph") == 0) {
@@ -410,8 +432,12 @@ profile(job)
 	    }
 	    if (strcmp(particle_type,"gas") == 0 ||
 		    strcmp(particle_type,"baryon") ==0 ||
+		    strcmp(particle_type,"mark") == 0 ||
 		    strcmp(particle_type,"all") ==0) {
 		for (i = 0 ;i < boxlist[box].ngas ; i++) {
+		    if(strcmp(particle_type,"mark") == 0 &&
+		       mark_gas[boxlist[box].gpi[i]] == 0)
+			continue;
 		    gp = boxlist[box].gp[i] ;
 		    if (strcmp(projection_type,"sphere") == 0 ||
 			    strcmp(projection_type,"sph") == 0) {
@@ -490,6 +516,7 @@ profile(job)
 		rho = mass[i] / volume ;
 		if (strcmp(particle_type,"star") == 0 ||
 			strcmp(particle_type,"baryon") ==0 ||
+			strcmp(particle_type,"mark") == 0 ||
 			strcmp(particle_type,"all") == 0) {
 		    lum_den = lum[i] / volume ;
 		}
@@ -507,6 +534,7 @@ profile(job)
 			ang,ang_theta,ang_phi) ;
 		if ((strcmp(particle_type,"gas") == 0 || 
 			strcmp(particle_type,"baryon") ==0 ||
+			strcmp(particle_type,"mark") == 0 ||
 			strcmp(particle_type,"all") == 0)
 			&& boxlist[box].ngas > 0) {
 		    fprintf(hardfile.ptr," %g %g %g",density[i],temp[i],
@@ -514,6 +542,7 @@ profile(job)
 		}
 		if ((strcmp(particle_type,"star") == 0 ||
 			strcmp(particle_type,"baryon") ==0 ||
+			strcmp(particle_type,"mark") == 0 ||
 			strcmp(particle_type,"all") == 0)
 			&& boxlist[box].nstar > 0) {
 		    fprintf(hardfile.ptr," %g",lum_den) ;
