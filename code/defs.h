@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.19  2000/01/12 22:55:04  nsk
+ * Revision 1.19.2.1  2000/06/22 21:18:04  nsk
+ * Added constants and variables for colormap and red temperature table. (maf)
+ *
+ * Revision 1.19  2000/01/12  22:55:04  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
  *
@@ -175,6 +178,12 @@
 #define VELOCITY 1
 #define VECTOR 2
 #define NINTERP 20000
+#define CM_NONE 0  /*don't change this value*/
+#define CM_DEFAULT 1
+#define CM_RAINBOW 2
+#define CM_REVRAIN 3
+#define CM_WRBB 4
+#define CM_TEMP 5
 /* vista types */
 #define RHO 1
 #define TEMP 2
@@ -538,6 +547,7 @@ extern double eps_H ;
 extern double eps_He ;
 extern double eps_Hep ;
 
+extern int cmap;
 extern unsigned char wrbb_red[256] ;
 extern unsigned char wrbb_green[256] ;
 extern unsigned char wrbb_blue[256] ;
@@ -550,6 +560,9 @@ extern unsigned char rainbow_blue[256] ;
 extern unsigned char colormap_red[256] ;
 extern unsigned char colormap_green[256] ;
 extern unsigned char colormap_blue[256] ;
+extern unsigned char temp_red[256] ;
+extern unsigned char temp_green[256] ;
+extern unsigned char temp_blue[256] ;
 extern unsigned char *arraymap_red;
 extern unsigned char *arraymap_green;
 extern unsigned char *arraymap_blue;
