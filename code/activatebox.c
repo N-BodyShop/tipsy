@@ -1,7 +1,10 @@
 /*
  * $Header$
  * $Log$
- * Revision 1.2  1996/04/11 21:27:50  trq
+ * Revision 1.2.6.1  2000/07/13 01:15:11  nsk
+ * Added call to expose_box.
+ *
+ * Revision 1.2  1996/04/11  21:27:50  trq
  * view_star.c: fixed bug in abox vs. density calculation.
  * activatebox.c: hsmdivv is independent of abox.
  * divv.c, smooth.c, smooth.h, view_gas.c: Use tree to calculate hsmdivv[].
@@ -39,6 +42,7 @@ activatebox(job)
 		starform_loaded = NO ;
 		current_project = NO;
 		current_color = NO;
+		if (exposed) expose_box();
 	    }
 	    else {
 		printf("<box %d not loaded, %s>\n",i,title) ;

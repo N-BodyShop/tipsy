@@ -1,6 +1,9 @@
 /* $Header$
  * $Log$
- * Revision 1.2  2000/01/12 22:55:22  nsk
+ * Revision 1.2.2.1  2000/07/13 01:15:28  nsk
+ * Added call to expose_box.
+ *
+ * Revision 1.2  2000/01/12  22:55:22  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
  *
@@ -108,6 +111,7 @@ setbox_sub(job)
 		loadbox(box) ;
 		if(box == 0){
 		    unload_all() ;
+		    if (exposed) expose_box();
 		}
 	    }
 	    else{
