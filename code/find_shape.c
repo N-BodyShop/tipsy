@@ -24,6 +24,7 @@ find_shape(particle_type,box,center)
     int nrot ;
     double ba_old, ca_old ;
     double phi_old,theta_old,psi_old ;
+    double VecProd[MAXDIM+1], ScalProd ;
     int niter ;
 
     mass_r = 0. ;
@@ -154,19 +155,45 @@ find_shape(particle_type,box,center)
 	    ic = 1 ;
 	}
     }
+
+    /* Check if Eigenvectors are righthanded in 3D :
+       ev[ib] x ev[ic] = ev[ia] */
+
+    VecProd[1] =  evectors[2][ib]*evectors[3][ic]
+	- evectors[3][ib]*evectors[2][ic];
+    VecProd[2] = -evectors[1][ib]*evectors[3][ic]
+	+ evectors[3][ib]*evectors[1][ic];
+    VecProd[3] =  evectors[1][ib]*evectors[2][ic]
+	- evectors[2][ib]*evectors[1][ic];
+    ScalProd   =  evectors[1][ia]*VecProd[1] + evectors[2][ia]*VecProd[2]
+	+ evectors[3][ia]*VecProd[3];
+    if (ScalProd < 0.0) {
+      for(i=0; i < header.ndim ; i++) evectors[i+1][ia] = -evectors[i+1][ia];
+    }
+
     ba = sqrt((double)(evalues[ib]/evalues[ia])) ;
     ca = sqrt((double)(evalues[ic]/evalues[ia])) ;
-    phi = 180. / PI * atan((double)(evectors[1][ib] /
-	    evectors[1][ia])) ;
-    theta = 180. / PI * atan((double)-evectors[1][ic] /
-	    sqrt((double)(evectors[2][ic] * evectors[2][ic] +
-	    evectors[3][ic] * evectors[3][ic]))) ;
-    psi = 180. / PI * atan((double)(evectors[2][ic] /
-	    evectors[3][ic])) ;
+
+    /* euler angles for a zyz rotation */
+    theta = 180. / PI * acos((double) evectors[3][ic]);
+    phi =   180. / PI * acos((double) evectors[1][ic]/sqrt(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic]));
+    psi =   180. / PI * acos((double) (-evectors[2][ic]*evectors[1][ib] + evectors[1][ic]*evectors[2][ib])/
+	                              sqrt(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic]));
+
+    /* inverse acos is only defined between 0 and pi therefore we must
+       deal with pi to 2*pi */
+    if(evectors[2][ic] < 0.0) phi = 360. - phi; /* phi always positive */
+    if(evectors[3][ib] < 0.0) psi = 360. - psi; /* psi always positive */ 
+
     for(i = 0 ;i < header.ndim ;i++){
 	center[i] = cm_r[i] / mass_r ;
     }
-    make_ell_matrix() ;
+    for(i=0;i<3;i++){
+      ell_matrix_inv[i][0] = evectors[i+1][ia];
+      ell_matrix_inv[i][1] = evectors[i+1][ib];
+      ell_matrix_inv[i][2] = evectors[i+1][ic];
+    }
+    transpose(ell_matrix_inv,ell_matrix);
     setvec(center_ell,center) ;
     ba_old = ba ;
     ca_old = ca ;
@@ -303,19 +330,40 @@ find_shape(particle_type,box,center)
 		ic = 1 ;
 	    }
 	}
-	ba = sqrt((double)(evalues[ib]/evalues[ia])) ;
-	ca = sqrt((double)(evalues[ic]/evalues[ia])) ;
-	phi = 180. / PI * atan((double)(evectors[1][ib] /
-		evectors[1][ia])) ;
-	theta = 180. / PI * atan((double)-evectors[1][ic] /
-		sqrt((double)(evectors[2][ic] * evectors[2][ic] +
-		evectors[3][ic] * evectors[3][ic]))) ;
-	psi = 180. / PI * atan((double)(evectors[2][ic] /
-		evectors[3][ic])) ;
-	for(i = 0 ;i < header.ndim ;i++){
-	    center[i] = cm_r[i] / mass_r ;
+
+	/* Check if Eigenvectors are righthanded in 3D : ev[ib] x ev[ic] = ev[ia] */
+	
+	VecProd[1] =  evectors[2][ib]*evectors[3][ic] - evectors[3][ib]*evectors[2][ic];
+	VecProd[2] = -evectors[1][ib]*evectors[3][ic] + evectors[3][ib]*evectors[1][ic];
+	VecProd[3] =  evectors[1][ib]*evectors[2][ic] - evectors[2][ib]*evectors[1][ic];
+	ScalProd   =  evectors[1][ia]*VecProd[1] + evectors[2][ia]*VecProd[2] + evectors[3][ia]*VecProd[3];
+	if (ScalProd < 0.0) {
+	  for(i=0 ; i < header.ndim ; i++) evectors[i+1][ia] = -evectors[i+1][ia];
 	}
-	make_ell_matrix() ;
+
+	ba = sqrt((double)(evalues[ib]/evalues[ia])) ;
+        ca = sqrt((double)(evalues[ic]/evalues[ia])) ;
+
+        /* euler angles for a zyz rotation */
+        theta = 180. / PI * acos((double) evectors[3][ic]);
+        phi =   180. / PI * acos((double) evectors[1][ic]/sqrt(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic]));
+        psi =   180. / PI * acos((double) (-evectors[2][ic]*evectors[1][ib] + evectors[1][ic]*evectors[2][ib])/
+	                              sqrt(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic]));
+
+        /* inverse acos is only defined between 0 and pi therefore we
+	   must deal with pi to 2*pi */
+        if(evectors[2][ic] < 0.0) phi = 360. - phi; /* phi always positive */
+        if(evectors[3][ib] < 0.0) psi = 360. - psi; /* psi always positive */
+    
+        for(i = 0 ;i < header.ndim ;i++){
+   	  center[i] = cm_r[i] / mass_r ;
+        }
+        for(i=0;i<3;i++){
+          ell_matrix_inv[i][0] = evectors[i+1][ia];
+          ell_matrix_inv[i][1] = evectors[i+1][ib];
+          ell_matrix_inv[i][2] = evectors[i+1][ic];
+        }
+        transpose(ell_matrix_inv,ell_matrix);
 	setvec(center_ell,center) ;
 	if((fabs(ba-ba_old)/ba_old <= 1.e-4 &&
 		fabs(ca-ca_old)/ca_old <= 1.e-4) || niter > 20){
