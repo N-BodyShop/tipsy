@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.7  2005/04/25 14:49:32  gwl
+ * Added command-line option '-macro filename' that runs the macro in the given file, then quits.
+ * You can use this to usefully run tipsy from another program.
+ *
  * Revision 1.6  1999/04/28 22:44:55  trq
  * Added limited support for truecolor visuals.
  *
@@ -241,6 +245,9 @@ int argc;
     Visual *visual;
     XVisualInfo vinfo, *vret;
     int nv;
+	
+	char macroFilename[MAXCOMM];
+	int runMacro = 0;
 
     sprintf(title,"master") ;
     for(i=1;i<argc;i++){
@@ -252,6 +259,10 @@ int argc;
 	else if( strcmp(command,"-add") == 0
 		 || strcmp(command,"-address") == 0 ) {
 	    sscanf(argv[++i],"%s",title) ;
+	}
+ 	else if( strcmp(command,"-macro") == 0) {
+		runMacro = 1;
+	    sscanf(argv[++i],"%s",macroFilename) ;
 	}
     }
     if(display){
@@ -528,10 +539,21 @@ int argc;
     }
     initialize_readline();
     sprintf(prompt, "<yes, %s>",name);
+	if(runMacro) {
+		char cmd[MAXCOMM];
+		sprintf(cmd, "readmacro %s", macroFilename);
+		command_interp(cmd);
+		if(macros != NULL) {
+			sprintf(cmd, "macro %s", macros->name);
+			command_interp(cmd);
+		}
+		goto QuitLabel;
+	}
     forever {
 	job = my_gets(prompt) ;
         if(job) sscanf(job,"%s",command) ;
 	if ( !job || strcmp(command,"quit") == 0 ) {
+		QuitLabel:
 	    if (asciiopen) {
 		fclose(bodfile.ptr) ;
 	    }
