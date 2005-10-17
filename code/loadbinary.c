@@ -1,10 +1,14 @@
+#define _LARGEFILE_SOURCE
+#define _FILE_OFFSET_BITS 64
 #include "defs.h"
 #include "fdefs.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 
 static double currtime = 0.0;
-static long currpos = 0L ;
-static long lastpos = 0L ;
+static off_t currpos = 0L ;
+static off_t lastpos = 0L ;
 
 int
 loadbinary(infile,time)
@@ -14,6 +18,9 @@ loadbinary(infile,time)
     int old_nstar;
     int i;
     int nread;
+    off_t tempn;
+    off_t temppos;
+    size_t tsize;
 
     if ((float)currtime > (float)time){
 	fseek(infile,0L,0);
@@ -32,11 +39,16 @@ loadbinary(infile,time)
 	currpos = ftell(infile) - sizeof(header);
 	if ( (float)header.time >= (float)time ) 
 	    break ;
-	fseek(infile,
-	    sizeof(gas_particles[0])*header.nsph +
-	    sizeof(dark_particles[0])*header.ndark +
-	    sizeof(star_particles[0])*header.nstar,
-	    1) ;
+	tempn = header.nsph;
+        tempn *= sizeof(gas_particles[0]);
+	temppos = tempn;
+	tempn = header.ndark;
+        tempn *= sizeof(dark_particles[0]);
+	temppos += tempn;
+	tempn = header.nstar;
+        tempn *= sizeof(star_particles[0]);
+	temppos += tempn;
+	fseek(infile,temppos,1);
     }	
     fseek(infile,currpos,0) ;
     lastpos = currpos ;
@@ -52,8 +64,9 @@ loadbinary(infile,time)
     }
     if(gas_particles != NULL) free(gas_particles);
     if(header.nsph != 0) {
-	gas_particles = (struct gas_particle *)
-			    malloc(header.nsph*sizeof(*gas_particles));
+      tsize = header.nsph;
+      tsize *= sizeof(*gas_particles);
+	gas_particles = (struct gas_particle *)malloc(tsize);
 	if(gas_particles == NULL) {
 	    printf("<sorry, no memory for gas particles, %s>\n",title) ;
 	    return FALSE;
@@ -64,8 +77,9 @@ loadbinary(infile,time)
 	    
     if(dark_particles != NULL) free(dark_particles);
     if(header.ndark != 0) {
-	dark_particles = (struct dark_particle *)
-			    malloc(header.ndark*sizeof(*dark_particles));
+      tsize = header.ndark;
+      tsize *= sizeof(*dark_particles);
+	dark_particles = (struct dark_particle *)malloc(tsize);
 	if(dark_particles == NULL) {
 	    printf("<sorry, no memory for dark particles, %s>\n",title) ;
 	    return FALSE;
@@ -76,8 +90,9 @@ loadbinary(infile,time)
 
     if(star_particles != NULL) free(star_particles);
     if(header.nstar != 0) {
-	star_particles = (struct star_particle *)
-			    malloc(header.nstar*sizeof(*star_particles));
+      tsize = header.nstar;
+      tsize *= sizeof(*star_particles);
+	star_particles = (struct star_particle *)malloc(tsize);
 	if(star_particles == NULL) {
 	    printf("<sorry, no memory for star particles, %s>\n",title) ;
 	    return FALSE;
@@ -101,8 +116,9 @@ loadbinary(infile,time)
     if(mark_star == NULL && header.nstar != 0)
     	mark_star = (short *)calloc(header.nstar, sizeof(*mark_star));
     else if(old_nstar < header.nstar) {
-	mark_star = (short *)realloc(mark_star,
-		header.nstar*sizeof(*mark_star));
+      tsize = header.nstar;
+      tsize *= sizeof(*mark_star);
+      mark_star = (short *)realloc(mark_star,tsize);
 	for (i = old_nstar; i < header.nstar; i++) mark_star[i] = 0;
     }
     if(mark_star == NULL && header.nstar != 0) {
@@ -168,6 +184,8 @@ loadbin_box(infile,time, xmin, xmax)
     struct dark_particle *dp;
     struct star_particle *sp;
     int ngas, ndark, nstar;
+    off_t tempn,temppos;
+    size_t tsize;
 
     if ((float)currtime > (float)time){
 	fseek(infile,0L,0);
@@ -186,11 +204,16 @@ loadbin_box(infile,time, xmin, xmax)
 	currpos = ftell(infile) - sizeof(header);
 	if ( (float)header.time >= (float)time ) 
 	    break ;
-	fseek(infile,
-	    sizeof(gas_particles[0])*header.nsph +
-	    sizeof(dark_particles[0])*header.ndark +
-	    sizeof(star_particles[0])*header.nstar,
-	    1) ;
+	tempn = header.nsph;
+        tempn *= sizeof(gas_particles[0]);
+	temppos = tempn;
+	tempn = header.ndark;
+        tempn *= sizeof(dark_particles[0]);
+	temppos += tempn;
+	tempn = header.nstar;
+        tempn *= sizeof(star_particles[0]);
+	temppos += tempn;
+	fseek(infile,temppos,1);
     }	
     fseek(infile,currpos,0) ;
     lastpos = currpos ;
@@ -203,8 +226,9 @@ loadbin_box(infile,time, xmin, xmax)
 
     if(gas_particles != NULL) free(gas_particles);
     if(header.nsph != 0) {
-	gas_particles = (struct gas_particle *)
-			    malloc(max_gas*sizeof(*gas_particles));
+      tsize = max_gas;
+      tsize *= sizeof(*gas_particles);
+	gas_particles = (struct gas_particle *)malloc(tsize);
 	if(gas_particles == NULL) {
 	    printf("<sorry, no memory for gas particles, %s>\n",title) ;
 	    return FALSE;
@@ -215,8 +239,9 @@ loadbin_box(infile,time, xmin, xmax)
 	    
     if(dark_particles != NULL) free(dark_particles);
     if(header.ndark != 0) {
-	dark_particles = (struct dark_particle *)
-			    malloc(max_dark*sizeof(*dark_particles));
+      tsize = max_dark;
+      tsize *= sizeof(*dark_particles);
+	dark_particles = (struct dark_particle *)malloc(tsize);
 	if(dark_particles == NULL) {
 	    printf("<sorry, no memory for dark particles, %s>\n",title) ;
 	    return FALSE;
@@ -227,8 +252,9 @@ loadbin_box(infile,time, xmin, xmax)
 
     if(star_particles != NULL) free(star_particles);
     if(header.nstar != 0) {
-	star_particles = (struct star_particle *)
-			    malloc(max_star*sizeof(*star_particles));
+      tsize = max_star;
+      tsize *= sizeof(*star_particles);
+	star_particles = (struct star_particle *)malloc(tsize);
 	if(star_particles == NULL) {
 	    printf("<sorry, no memory for star particles, %s>\n",title) ;
 	    return FALSE;
@@ -245,7 +271,9 @@ loadbin_box(infile,time, xmin, xmax)
     if(box0_pi) {
       free(box0_pi);
     }
-    box0_pi = (int *) malloc(max_part*sizeof(*box0_pi));
+    tsize = max_part;
+    tsize *= sizeof(*box0_pi);
+    box0_pi = (int *)malloc(tsize);
     if(box0_pi == NULL) {
 	    printf("<sorry, no memory for particle indices, %s>\n",title) ;
 	    return FALSE;
@@ -265,8 +293,9 @@ loadbin_box(infile,time, xmin, xmax)
 	    ngas++;
 	    if(ngas >= max_gas) {
 		max_gas *= 1.4;
-		gas_particles = realloc(gas_particles,
-					max_gas*sizeof(*gas_particles));
+		tsize = max_gas;
+		tsize *= sizeof(*gas_particles);		
+		gas_particles = realloc(gas_particles,tsize);
 		if(gas_particles == NULL) {
 		    printf("<sorry, no memory for gas particles, %s>\n",title);
 		    return FALSE;
@@ -274,7 +303,9 @@ loadbin_box(infile,time, xmin, xmax)
 	    }
 	    if(ngas >= max_part) {
 		max_part *= 1.4;
-		box0_pi = realloc(box0_pi, max_part*sizeof(*box0_pi));
+		tsize = max_part;
+		tsize *= sizeof(*box0_pi);
+		box0_pi = realloc(box0_pi,tsize);
 		if(box0_pi == NULL) {
 		    printf("<sorry, no memory for particle indices, %s>\n",title);
 		    return FALSE;
@@ -297,8 +328,9 @@ loadbin_box(infile,time, xmin, xmax)
 	    ++ndark;
 	    if(ndark >= max_dark) {
 		max_dark *= 1.4;
-		dark_particles = realloc(dark_particles,
-					 max_dark*sizeof(*dark_particles));
+		tsize = max_dark;
+		tsize *= sizeof(*dark_particles);
+		dark_particles = realloc(dark_particles,tsize);
 		if(dark_particles == NULL) {
 		    printf("<sorry, no memory for dark particles, %s>\n",title);
 		    return FALSE;
@@ -306,7 +338,9 @@ loadbin_box(infile,time, xmin, xmax)
 	    }
 	    if(ngas+ndark >= max_part) {
 		max_part *= 1.4;
-		box0_pi = realloc(box0_pi, max_part*sizeof(*box0_pi));
+		tsize = max_part;
+		tsize *= sizeof(*box0_pi);
+		box0_pi = realloc(box0_pi,tsize);
 		if(box0_pi == NULL) {
 		    printf("<sorry, no memory for particle indices, %s>\n",title);
 		    return FALSE;
@@ -329,8 +363,9 @@ loadbin_box(infile,time, xmin, xmax)
 	    ++nstar;
 	    if(nstar >= max_star) {
 		max_star *= 1.4;
-		star_particles = realloc(star_particles,
-					 max_star*sizeof(*star_particles));
+		tsize = max_star;
+		tsize *= sizeof(*star_particles);
+		star_particles = realloc(star_particles,tsize);
 		if(star_particles == NULL) {
 		    printf("<sorry, no memory for star particles, %s>\n",title);
 		    return FALSE;
@@ -338,7 +373,9 @@ loadbin_box(infile,time, xmin, xmax)
 	    }
 	    if(ngas+ndark+nstar >= max_part) {
 		max_part *= 1.4;
-		box0_pi = realloc(box0_pi, max_part*sizeof(*box0_pi));
+		tsize = max_part;
+		tsize *= sizeof(*box0_pi);		
+		box0_pi = realloc(box0_pi,tsize);
 		if(box0_pi == NULL) {
 		    printf("<sorry, no memory for particle indices, %s>\n",title);
 		    return FALSE;
@@ -367,8 +404,9 @@ loadbin_box(infile,time, xmin, xmax)
     if(mark_star == NULL && header.nstar != 0)
     	mark_star = (short *)calloc(header.nstar, sizeof(*mark_star));
     else if(old_nstar < header.nstar) {
-	mark_star = (short *)realloc(mark_star,
-		header.nstar*sizeof(*mark_star));
+      tsize = header.nstar;
+      tsize *= sizeof(*mark_star);
+      mark_star = (short *)realloc(mark_star,tsize);
 	for (i = old_nstar; i < header.nstar; i++) mark_star[i] = 0;
     }
     if(mark_star == NULL && header.nstar != 0) {
@@ -516,6 +554,8 @@ loadstandard(infile,time)
 {
     int old_nstar;
     int i;
+    off_t tempn,temppos;
+    size_t tsize;
 
     if ((float)currtime > (float)time){
 	fseek(infile,0L,0);
@@ -534,11 +574,16 @@ loadstandard(infile,time)
 	currpos = ftell(infile) - STD_HEADER_SIZE;
 	if ( (float)header.time >= (float)time ) 
 	    break ;
-	fseek(infile,
-	    STD_GAS_SIZE*header.nsph +
-	    STD_DARK_SIZE*header.ndark +
-	    STD_STAR_SIZE*header.nstar,
-	    1) ;
+	tempn = header.nsph;
+        tempn *= STD_GAS_SIZE;
+	temppos = tempn;
+	tempn = header.ndark;
+        tempn *= STD_DARK_SIZE;
+	temppos += tempn;
+	tempn = header.nstar;
+        tempn *= STD_STAR_SIZE;
+	temppos += tempn;
+	fseek(infile,temppos,1);
     }	
     fseek(infile,currpos,0) ;
     lastpos = currpos ;
@@ -550,9 +595,10 @@ loadstandard(infile,time)
 	    return FALSE;
     }
     if(gas_particles != NULL) free(gas_particles);
-    if(header.nsph != 0) {
-	gas_particles = (struct gas_particle *)
-			    malloc(header.nsph*sizeof(*gas_particles));
+    if(header.nsph != 0) {		
+      tsize = header.nsph;
+      tsize *= sizeof(*gas_particles);
+	gas_particles = (struct gas_particle *)malloc(tsize);
 	if(gas_particles == NULL) {
 	    printf("<sorry, no memory for gas particles, %s>\n",title) ;
 	    return FALSE;
@@ -563,8 +609,9 @@ loadstandard(infile,time)
 	    
     if(dark_particles != NULL) free(dark_particles);
     if(header.ndark != 0) {
-	dark_particles = (struct dark_particle *)
-			    malloc(header.ndark*sizeof(*dark_particles));
+      tsize = header.ndark;
+      tsize *= sizeof(*dark_particles);
+	dark_particles = (struct dark_particle *)malloc(tsize);
 	if(dark_particles == NULL) {
 	    printf("<sorry, no memory for dark particles, %s>\n",title) ;
 	    return FALSE;
@@ -575,8 +622,9 @@ loadstandard(infile,time)
 
     if(star_particles != NULL) free(star_particles);
     if(header.nstar != 0) {
-	star_particles = (struct star_particle *)
-			    malloc(header.nstar*sizeof(*star_particles));
+      tsize = header.nstar;
+      tsize *= sizeof(*star_particles);
+	star_particles = (struct star_particle *)malloc(tsize);
 	if(star_particles == NULL) {
 	    printf("<sorry, no memory for star particles, %s>\n",title) ;
 	    return FALSE;
@@ -600,9 +648,10 @@ loadstandard(infile,time)
     if(mark_star == NULL && header.nstar != 0)
     	mark_star = (short *)calloc(header.nstar, sizeof(*mark_star));
     else if(old_nstar < header.nstar) {
-	mark_star = (short *)realloc(mark_star,
-		header.nstar*sizeof(*mark_star));
-	for (i = old_nstar; i < header.nstar; i++) mark_star[i] = 0;
+      tsize = header.nstar;
+      tsize *= sizeof(*mark_star);
+      mark_star = (short *)realloc(mark_star,tsize);
+      for (i = old_nstar; i < header.nstar; i++) mark_star[i] = 0;
     }
     if(mark_star == NULL && header.nstar != 0) {
 	printf("<sorry, no memory for star particle markers, %s>\n",title) ;
@@ -673,6 +722,8 @@ loadstd_box(infile,time, xmin, xmax)
     struct dark_particle *dp;
     struct star_particle *sp;
     int ngas, ndark, nstar;
+    off_t tempn,temppos;
+    size_t tsize;
 
     if ((float)currtime > (float)time){
 	fseek(infile,0L,0);
@@ -691,11 +742,16 @@ loadstd_box(infile,time, xmin, xmax)
 	currpos = ftell(infile) - STD_HEADER_SIZE;
 	if ( (float)header.time >= (float)time ) 
 	    break ;
-	fseek(infile,
-	    STD_GAS_SIZE*header.nsph +
-	    STD_DARK_SIZE*header.ndark +
-	    STD_STAR_SIZE*header.nstar,
-	    1) ;
+	tempn = header.nsph;
+        tempn *= STD_GAS_SIZE;
+	temppos = tempn;
+	tempn = header.ndark;
+        tempn *= STD_DARK_SIZE;
+	temppos += tempn;
+	tempn = header.nstar;
+        tempn *= STD_STAR_SIZE;
+	temppos += tempn;
+	fseek(infile,temppos,1);
     }	
     fseek(infile,currpos,0) ;
     lastpos = currpos ;
@@ -708,8 +764,9 @@ loadstd_box(infile,time, xmin, xmax)
 
     if(gas_particles != NULL) free(gas_particles);
     if(header.nsph != 0) {
-	gas_particles = (struct gas_particle *)
-			    malloc(max_gas*sizeof(*gas_particles));
+      tsize = max_gas;
+      tsize *= sizeof(*gas_particles);
+	gas_particles = (struct gas_particle *)malloc(tsize);
 	if(gas_particles == NULL) {
 	    printf("<sorry, no memory for gas particles, %s>\n",title) ;
 	    return FALSE;
@@ -720,8 +777,9 @@ loadstd_box(infile,time, xmin, xmax)
 	    
     if(dark_particles != NULL) free(dark_particles);
     if(header.ndark != 0) {
-	dark_particles = (struct dark_particle *)
-			    malloc(max_dark*sizeof(*dark_particles));
+      tsize = max_dark;
+      tsize *= sizeof(*dark_particles);
+	dark_particles = (struct dark_particle *)malloc(tsize);
 	if(dark_particles == NULL) {
 	    printf("<sorry, no memory for dark particles, %s>\n",title) ;
 	    return FALSE;
@@ -732,8 +790,9 @@ loadstd_box(infile,time, xmin, xmax)
 
     if(star_particles != NULL) free(star_particles);
     if(header.nstar != 0) {
-	star_particles = (struct star_particle *)
-			    malloc(max_star*sizeof(*star_particles));
+      tsize = max_star;
+      tsize *= sizeof(*star_particles);
+	star_particles = (struct star_particle *)malloc(tsize);
 	if(star_particles == NULL) {
 	    printf("<sorry, no memory for star particles, %s>\n",title) ;
 	    return FALSE;
@@ -750,7 +809,9 @@ loadstd_box(infile,time, xmin, xmax)
     if(box0_pi) {
       free(box0_pi);
     }
-    box0_pi = (int *) malloc(max_part*sizeof(*box0_pi));
+    tsize = max_part;
+    tsize *= sizeof(*box0_pi);
+    box0_pi = (int *) malloc(tsize);
     if(box0_pi == NULL) {
 	    printf("<sorry, no memory for particle indices, %s>\n",title) ;
 	    return FALSE;
@@ -769,8 +830,9 @@ loadstd_box(infile,time, xmin, xmax)
 	    ngas++;
 	    if(ngas >= max_gas) {
 		max_gas *= 1.4;
-		gas_particles = realloc(gas_particles,
-					max_gas*sizeof(*gas_particles));
+		tsize = max_gas;
+		tsize *= sizeof(*gas_particles);
+		gas_particles = realloc(gas_particles,tsize);
 		if(gas_particles == NULL) {
 		    printf("<sorry, no memory for gas particles, %s>\n",title);
 		    return FALSE;
@@ -778,7 +840,9 @@ loadstd_box(infile,time, xmin, xmax)
 	    }
 	    if(ngas >= max_part) {
 		max_part *= 1.4;
-		box0_pi = realloc(box0_pi, max_part*sizeof(*box0_pi));
+		tsize = max_part;
+		tsize *= sizeof(*box0_pi);
+		box0_pi = realloc(box0_pi,tsize);
 		if(box0_pi == NULL) {
 		    printf("<sorry, no memory for particle indices, %s>\n",title);
 		    return FALSE;
@@ -800,8 +864,9 @@ loadstd_box(infile,time, xmin, xmax)
 	    ++ndark;
 	    if(ndark >= max_dark) {
 		max_dark *= 1.4;
-		dark_particles = realloc(dark_particles,
-					 max_dark*sizeof(*dark_particles));
+		tsize = max_dark;
+		tsize *= sizeof(*dark_particles);
+		dark_particles = realloc(dark_particles,tsize);
 		if(dark_particles == NULL) {
 		    printf("<sorry, no memory for dark particles, %s>\n",title);
 		    return FALSE;
@@ -809,7 +874,9 @@ loadstd_box(infile,time, xmin, xmax)
 	    }
 	    if(ngas+ndark >= max_part) {
 		max_part *= 1.4;
-		box0_pi = realloc(box0_pi, max_part*sizeof(*box0_pi));
+		tsize = max_part;
+		tsize *= sizeof(*box0_pi);
+		box0_pi = realloc(box0_pi,tsize);
 		if(box0_pi == NULL) {
 		    printf("<sorry, no memory for particle indices, %s>\n",title);
 		    return FALSE;
@@ -831,8 +898,9 @@ loadstd_box(infile,time, xmin, xmax)
 	    ++nstar;
 	    if(nstar >= max_star) {
 		max_star *= 1.4;
-		star_particles = realloc(star_particles,
-					 max_star*sizeof(*star_particles));
+		tsize = max_star;
+		tsize *= sizeof(*star_particles);
+		star_particles = realloc(star_particles,tsize);
 		if(star_particles == NULL) {
 		    printf("<sorry, no memory for star particles, %s>\n",title);
 		    return FALSE;
@@ -840,7 +908,9 @@ loadstd_box(infile,time, xmin, xmax)
 	    }
 	    if(ngas+ndark+nstar >= max_part) {
 		max_part *= 1.4;
-		box0_pi = realloc(box0_pi, max_part*sizeof(*box0_pi));
+		tsize = max_part;
+		tsize *= sizeof(*box0_pi);
+		box0_pi = realloc(box0_pi,tsize);
 		if(box0_pi == NULL) {
 		    printf("<sorry, no memory for particle indices, %s>\n",title);
 		    return FALSE;
@@ -869,8 +939,9 @@ loadstd_box(infile,time, xmin, xmax)
     if(mark_star == NULL && header.nstar != 0)
     	mark_star = (short *)calloc(header.nstar, sizeof(*mark_star));
     else if(old_nstar < header.nstar) {
-	mark_star = (short *)realloc(mark_star,
-		header.nstar*sizeof(*mark_star));
+      tsize = header.nstar;
+      tsize *= sizeof(*mark_star);
+      mark_star = (short *)realloc(mark_star,tsize);
 	for (i = old_nstar; i < header.nstar; i++) mark_star[i] = 0;
     }
     if(mark_star == NULL && header.nstar != 0) {
