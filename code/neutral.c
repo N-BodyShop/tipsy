@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.7  2005/12/17 00:25:00  trq
+ * Load redshift information if needed.
+ *
  * Revision 1.6  2000/01/12 22:55:19  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
@@ -39,6 +42,9 @@ hneutral_func()
     double heneutral_p ;
     double heII_p ;
 
+    if (!redshift_loaded){
+	load_redshift() ;
+    }
     if (!cool_loaded ){
 	load_cool() ;
     }
