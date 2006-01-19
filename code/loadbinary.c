@@ -35,6 +35,14 @@ loadbinary(infile,time)
 			     (float)currtime) ;
 	    break ;
 	}
+	if(header.ndim < 2 || header.ndim > 3) {
+		printf("<sorry, file has crazy dimension, %s>\n",title) ;
+		fseek(infile,0L,0);
+		currtime=0.0;
+		currpos=0;
+		header.nstar = 0;
+		return FALSE;
+	}
 	currtime = header.time ;
 	currpos = ftell(infile) - sizeof(header);
 	if ( (float)header.time >= (float)time ) 
@@ -199,6 +207,14 @@ loadbin_box(infile,time, xmin, xmax)
 	    printf("<sorry time too large %s, using %f>\n",title,
 			     (float)currtime) ;
 	    break ;
+	}
+	if(header.ndim < 2 || header.ndim > 3) {
+		printf("<sorry, file has crazy dimension, %s>\n",title) ;
+		fseek(infile,0L,0);
+		currtime=0.0;
+		currpos=0;
+		header.nstar = 0;
+		return FALSE;
 	}
 	currtime = header.time ;
 	currpos = ftell(infile) - sizeof(header);
@@ -570,6 +586,14 @@ loadstandard(infile,time)
 			     (float)currtime) ;
 	    break ;
 	}
+	if(header.ndim < 2 || header.ndim > 3) {
+		printf("<sorry, file has crazy dimension, %s>\n",title) ;
+		fseek(infile,0L,0);
+		currtime=0.0;
+		currpos=0;
+		header.nstar = 0;
+		return FALSE;
+	}
 	currtime = header.time ;
 	currpos = ftell(infile) - STD_HEADER_SIZE;
 	if ( (float)header.time >= (float)time ) 
@@ -592,6 +616,7 @@ loadstandard(infile,time)
     if(header.ndim < 2 || header.ndim > 3) {
 	    printf("<sorry, file has crazy dimension, %s>\n",title) ;
 	    header.nstar = 0;
+	    fseek(infile,0L,0);
 	    return FALSE;
     }
     if(gas_particles != NULL) free(gas_particles);
