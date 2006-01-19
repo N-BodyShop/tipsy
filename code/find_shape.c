@@ -109,6 +109,7 @@ find_shape(particle_type,box,center)
 	    }
 	}
     }
+    if(mass_r == 0.0) return;
     for (j = 0 ; j < header.ndim ;j++) {
 	for (k = 0 ; k < header.ndim ;k++) {
 	    if(k <= j){
@@ -122,6 +123,29 @@ find_shape(particle_type,box,center)
 	evalues[j+1] = inertia_cm[j+1][j+1] ;
     }
     jacobi(inertia_cm,MAXDIM,evalues,evectors,&nrot) ;
+
+    if(evalues[1] < 0.0) {
+	fprintf(stderr, "Warning %s, negative eigenvalues in find_shape()\n", 
+		title);
+	evalues[1] = 0.0;
+    }
+    if(evalues[2] < 0.0) {
+	fprintf(stderr, "Warning %s, negative eigenvalues in find_shape()\n", 
+		title);
+	evalues[2] = 0.0;
+    }
+    if(evalues[3] < 0.0) {
+	fprintf(stderr, "Warning %s, negative eigenvalues in find_shape()\n", 
+		title);
+	evalues[3] = 0.0;
+    }
+    if(evalues[1] == 0.0 && evalues[2] == 0.0 && evalues[3] == 0.0) {
+	fprintf(stderr, "Warning %s, all eigenvalues 0 in find_shape()\n", 
+		title);
+	fprintf(stderr, "Giving up in find_shape()\n");
+	return;
+    }
+    
     if(evalues[1] >= evalues[2] && evalues[1] >= evalues[3]){
 	ia = 1 ;
 	if(evalues[2] >= evalues[3]){
@@ -176,9 +200,20 @@ find_shape(particle_type,box,center)
 
     /* euler angles for a zyz rotation */
     theta = 180. / PI * acos((double) evectors[3][ic]);
-    phi =   180. / PI * acos((double) evectors[1][ic]/sqrt(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic]));
-    psi =   180. / PI * acos((double) (-evectors[2][ic]*evectors[1][ib] + evectors[1][ic]*evectors[2][ib])/
-	                              sqrt(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic]));
+    if(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic] > 0.0)
+    	phi = 180. / PI
+	    * acos(evectors[1][ic]/sqrt(evectors[1][ic]*evectors[1][ic]
+					+ evectors[2][ic]*evectors[2][ic]));
+    else
+	phi = 0.0;
+    if(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic] > 0.0)
+	psi =   180. / PI
+	    * acos((-evectors[2][ic]*evectors[1][ib]
+		    + evectors[1][ic]*evectors[2][ib])
+		   /sqrt(evectors[1][ic]*evectors[1][ic]
+			 + evectors[2][ic]*evectors[2][ic]));
+    else
+	psi = 0.0;
 
     /* inverse acos is only defined between 0 and pi therefore we must
        deal with pi to 2*pi */
@@ -195,6 +230,8 @@ find_shape(particle_type,box,center)
     }
     transpose(ell_matrix_inv,ell_matrix);
     setvec(center_ell,center) ;
+    if(ca == 0.0 || ba == 0.0) /* give up */
+	return;
     ba_old = ba ;
     ca_old = ca ;
     phi_old = phi ;
@@ -284,6 +321,7 @@ find_shape(particle_type,box,center)
 		}
 	    }
 	}
+	if(mass_r == 0.0) break;
 	for (j = 0 ; j < header.ndim ;j++) {
 	    for (k = 0 ; k < header.ndim ;k++) {
 		if(k <= j){
@@ -297,6 +335,29 @@ find_shape(particle_type,box,center)
 	    evalues[j+1] = inertia_cm[j+1][j+1] ;
 	}
 	jacobi(inertia_cm,MAXDIM,evalues,evectors,&nrot) ;
+
+	if(evalues[1] < 0.0) {
+	    fprintf(stderr, "Warning %s, negative eigenvalues in find_shape()\n", 
+		    title);
+	    evalues[1] = 0.0;
+	}
+	if(evalues[2] < 0.0) {
+	    fprintf(stderr, "Warning %s, negative eigenvalues in find_shape()\n", 
+		    title);
+	    evalues[2] = 0.0;
+	}
+	if(evalues[3] < 0.0) {
+	    fprintf(stderr, "Warning %s, negative eigenvalues in find_shape()\n", 
+		    title);
+	    evalues[3] = 0.0;
+	}
+	if(evalues[1] == 0.0 && evalues[2] == 0.0 && evalues[3] == 0.0) {
+	    fprintf(stderr, "Warning %s, all eigenvalues 0 in find_shape()\n", 
+		    title);
+	    fprintf(stderr, "Giving up in find_shape()\n");
+	    return;
+	}
+    
 	if(evalues[1] >= evalues[2] && evalues[1] >= evalues[3]){
 	    ia = 1 ;
 	    if(evalues[2] >= evalues[3]){
@@ -346,9 +407,20 @@ find_shape(particle_type,box,center)
 
         /* euler angles for a zyz rotation */
         theta = 180. / PI * acos((double) evectors[3][ic]);
-        phi =   180. / PI * acos((double) evectors[1][ic]/sqrt(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic]));
-        psi =   180. / PI * acos((double) (-evectors[2][ic]*evectors[1][ib] + evectors[1][ic]*evectors[2][ib])/
-	                              sqrt(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic]));
+	if(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic] > 0.0)
+            phi =   180. / PI
+		* acos(evectors[1][ic]/sqrt(evectors[1][ic]*evectors[1][ic]
+					    + evectors[2][ic]*evectors[2][ic]));
+	else
+	    phi = 0.0;
+	if(evectors[1][ic]*evectors[1][ic] + evectors[2][ic]*evectors[2][ic] > 0.0)
+	    psi =   180. / PI
+		* acos((-evectors[2][ic]*evectors[1][ib]
+			+ evectors[1][ic]*evectors[2][ib])/
+		       sqrt(evectors[1][ic]*evectors[1][ic]
+			    + evectors[2][ic]*evectors[2][ic]));
+	else
+	    psi = 0.0;
 
         /* inverse acos is only defined between 0 and pi therefore we
 	   must deal with pi to 2*pi */
@@ -382,5 +454,7 @@ find_shape(particle_type,box,center)
 	theta_old = theta ;
 	psi_old = psi ;
 	niter++ ;
+	if(ca == 0.0 || ba == 0.0) /* give up */
+	    return;
     }
 }
