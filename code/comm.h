@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.18  2006/01/19 17:19:45  trq
+ * Added "readpackedvector" command to get vectors ordered x1 y1 z1 ...
+ *
  * Revision 1.17  2002/12/28 17:28:25  trq
  * Added "readbinvector" command for reading in binary vector file.
  *
@@ -159,6 +162,7 @@ extern void readarray() ;
 extern void readbinarray() ;
 extern void readvector() ;
 extern void readbinvector() ;
+extern void readpackedvector() ;
 extern void readascii() ;
 extern void readoldbin() ;
 extern void readmark();
@@ -349,6 +353,7 @@ struct comm c_list[] = {
      {"readbinarray", readbinarray,	0},
      {"readvector",  readvector,	0},
      {"readbinvector",  readbinvector,	0},
+     {"readpackedvector",  readpackedvector,	0},
      {"readascii",   readascii,		0},
      {"readoldbin",  readoldbin,	0},
      {"readmacro",   read_macro,	0},

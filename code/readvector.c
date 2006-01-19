@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.7  2006/01/19 17:19:45  trq
+ * Added "readpackedvector" command to get vectors ordered x1 y1 z1 ...
+ *
  * Revision 1.6  2003/06/13 17:37:37  trq
  * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
  * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
@@ -67,6 +70,73 @@ readvector(job)
       }
 	for(j = 0; j < MAXDIM; j++){
 	    for(i = 0, count = 0; i < nbodies; i++){
+				/* skip line if a partial box was
+				   loaded and this particle is not in
+				   it */
+		if(box0_pi && box0_pi[count] != i) {
+		  fscanf(infile, "%*f");
+		  continue;
+		}
+		else {
+		  if(count >= header.nbodies) {
+			printf("<Sorry %s, file format is wrong>\n",title);
+			vector_size = 0 ;
+			free(vector) ;
+			vector = NULL;
+			break;
+		  }
+		}
+		if(fscanf(infile, "%f", &(vector[count].v[j])) == EOF){
+		    printf("<Sorry %s, file format is wrong>\n",title);
+		    vector_size = 0 ;
+		    free(vector);
+		    vector = NULL;
+		    break;
+		}
+		count++;
+	    }
+	}
+    }
+    else {
+	input_error(command) ;
+    }
+}
+
+void
+readpackedvector(job)
+     char *job;
+     
+{
+  char command[MAXCOMM] ;
+  char filename[MAXCOMM] ;
+  FILE *infile;
+  int j;
+  int i;
+  int count;
+  int nbodies;
+
+  if (sscanf(job,"%s %s",command,filename) == 2) {
+    infile = fopen(filename, "r");
+    if(infile == NULL)
+      {
+        printf("<Sorry %s, file does not exist>\n",title);
+	return;
+      }
+	count=fscanf(infile, "%d%*[, \t]%*d%*[, \t]%*d",&nbodies) ;
+	if ( (count == EOF) || (count==0) ){
+	    printf("<Sorry %s, file format is wrong>\n",title);
+	    return;
+	}
+    if(vector != NULL) free(vector);
+    vector = (struct vec *)malloc(nbodies*sizeof(*vector));
+    vector_size = nbodies;
+    if(vector == NULL) 
+      {
+	printf("<Sorry %s, no room for array>\n",title);
+	return;
+      }
+	for(i = 0, count = 0; i < nbodies; i++){
+	    for(j = 0; j < MAXDIM; j++){
 				/* skip line if a partial box was
 				   loaded and this particle is not in
 				   it */

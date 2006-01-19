@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.28  2006/01/19 17:19:45  trq
+ * Added "readpackedvector" command to get vectors ordered x1 y1 z1 ...
+ *
  * Revision 1.27  2002/12/28 17:28:25  trq
  * Added "readbinvector" command for reading in binary vector file.
  *
@@ -351,6 +354,9 @@ arguments(job)
     }
     else if ( strcmp(command,"readbinvector") == 0) {
 	printf("readbinvector filename type\n") ;
+    }
+    else if ( strcmp(command,"readpackedvector") == 0) {
+	printf("readbinvector filename\n") ;
     }
     else if ( strcmp(command,"readascii") == 0 ) {
 	printf("readascii filename\n") ;
