@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.5  2006/03/09 17:25:54  trq
+ * Avoid divisions by 0.
+ *
  * Revision 1.4  2003/08/04 23:51:03  trq
  * Reset current_plot if we have reloaded an active box.
  *
@@ -283,28 +286,30 @@ box_cumulate(box)
 	boxes[box].total_angular_mom[i] = boxes[box].gas_angular_mom[i] +
 		boxes[box].dark_angular_mom[i] +
 		boxes[box].star_angular_mom[i] ;
-	if(boxlist[box].ngas)
+	if(boxlist[box].ngas && boxes[box].gas_mass != 0.0)
 	  boxes[box].gas_com[i] /= boxes[box].gas_mass ;
 
-	if(boxlist[box].ndark)
+	if(boxlist[box].ndark && boxes[box].dark_mass != 0.0)
 	  boxes[box].dark_com[i] /= boxes[box].dark_mass ;
 
-	if(boxlist[box].nstar)
+	if(boxlist[box].nstar && boxes[box].star_mass != 0.0)
 	  boxes[box].star_com[i] /= boxes[box].star_mass ;
 
-	if(boxlist[box].ngas || boxlist[box].ndark || boxlist[box].nstar)
+	if((boxlist[box].ngas || boxlist[box].ndark || boxlist[box].nstar)
+	   && boxes[box].total_mass != 0.0)
 	  boxes[box].total_com[i] /= boxes[box].total_mass ;
 
-	if(boxlist[box].ngas)
+	if(boxlist[box].ngas && boxes[box].gas_mass != 0.0)
 	  boxes[box].gas_com_vel[i] /= boxes[box].gas_mass ;
 
-	if(boxlist[box].ndark)
+	if(boxlist[box].ndark && boxes[box].dark_mass != 0.0)
 	  boxes[box].dark_com_vel[i] /= boxes[box].dark_mass ;
 
-	if(boxlist[box].nstar)
+	if(boxlist[box].nstar && boxes[box].star_mass != 0.0)
 	  boxes[box].star_com_vel[i] /= boxes[box].star_mass ;
 
-	if(boxlist[box].ngas || boxlist[box].ndark || boxlist[box].nstar)
+	if((boxlist[box].ngas || boxlist[box].ndark || boxlist[box].nstar)
+	   && boxes[box].total_mass != 0.0)
 	  boxes[box].total_com_vel[i] /= boxes[box].total_mass ;
     }
     cross_product(ang_mom, boxes[box].gas_com, boxes[box].gas_com_vel) ;
@@ -320,16 +325,17 @@ box_cumulate(box)
     add_const_mult_vec(boxes[box].total_angular_mom,
 	    -boxes[box].total_mass, ang_mom) ;
     for (i = 0 ; i < header.ndim ; i++) {
-	if(boxlist[box].ngas)
+	if(boxlist[box].ngas && boxes[box].gas_mass != 0.0)
 	  boxes[box].gas_angular_mom[i] /= boxes[box].gas_mass ;
 
-	if(boxlist[box].ndark)
+	if(boxlist[box].ndark && boxes[box].dark_mass != 0.0)
 	  boxes[box].dark_angular_mom[i] /= boxes[box].dark_mass ;
 
-	if(boxlist[box].nstar)
+	if(boxlist[box].nstar && boxes[box].star_mass != 0.0)
 	  boxes[box].star_angular_mom[i] /= boxes[box].star_mass ;
 
-	if(boxlist[box].ngas || boxlist[box].ndark || boxlist[box].nstar)
+	if((boxlist[box].ngas || boxlist[box].ndark || boxlist[box].nstar)
+	   && boxes[box].total_mass != 0.0)
 	  boxes[box].total_angular_mom[i] /= boxes[box].total_mass ;
     }
 }
