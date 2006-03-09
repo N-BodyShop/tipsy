@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.3  2006/03/09 02:09:23  trq
+ * Fix error message to be more informative.
+ *
  * Revision 1.2  2000/01/12 22:55:22  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
@@ -111,7 +114,7 @@ setbox_sub(job)
 		}
 	    }
 	    else{
-		printf("<sorry, min is greater than max, %s>\n",title) ;
+		printf("<sorry, I need a positive box size, %s>\n",title) ;
 	    }
 	}
 	else{
