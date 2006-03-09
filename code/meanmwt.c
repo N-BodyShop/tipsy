@@ -8,6 +8,9 @@ meanmwt_func()
     struct gas_particle *gp ;
     int i ;
 
+    if (!redshift_loaded){
+	load_redshift() ;
+    }
     if (!cool_loaded ){
 	load_cool() ;
     }
