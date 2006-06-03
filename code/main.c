@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.8  2006/06/03 22:18:34  trq
+ * Fixed scroll bar lengths.
+ *
  * Revision 1.7  2005/04/25 14:49:32  gwl
  * Added command-line option '-macro filename' that runs the macro in the given file, then quits.
  * You can use this to usefully run tipsy from another program.
@@ -119,7 +122,8 @@ static String fallback_resources[] = {
     "*viewport*background:    black",
     "*hardview*background:    black",
     "*scrollbar*orientation:  horizontal",
-    "*scrollbar*length:       180",
+    "*scrollbar*length:       80",
+    "*scrollbar*width:        80",
     "*scrollbar*background:   white",
     "*scrollbar*foreground:   black",
     "*color_label*background: white",
