@@ -1,4 +1,4 @@
-.TH ABSORB  1 "22 MARCH 1994"  "KQ Release 2.0" "TIPSY COMMANDS"
+.TH ABSORB  1 "20 JULY 2006"  "KQ Release 2.2.3a" "TIPSY COMMANDS"
 .SH NAME
 absorb \- calculate spectra
 .SH SYNOPSIS
@@ -12,4 +12,97 @@ absorb \- calculate spectra
 .I x 
 .I y 
 .SH DESCRIPTION
+.B absorb
+calculates absorption properties along a sight line specified by
+.I x
+and
+.I y.
+If
+.I x
+is the string "auto", then the sight line is determined by a mouse click.
+The properties calculated depend on the
+.I type
+parameter which can be either "spectra", "column", "velocity", "dark",
+or "star".
+
+If
+.I type
+is "dark" or "star" then
+.I filename
+will contain
+.I spatial_bin_number
+lines corresponding to spatial bins along the line of sight equally
+spaced across the active box.  Each
+line contains the line of sight distance to the center of the bin,
+the mean mass density of "star" or "dark" (in gm/cc), the mean
+velocity of the material in that bin (in physical km/s, that is with Hubble
+flow included for cosmological simulations), and the effective spatial
+resolution used in determining the density.  The density is determined
+in the following way.  For each particle, it is determined whether the
+line of sight intersects the smoothing kernel (as set by the
+.B smooth
+command), and if it does the contribution of the spline
+kernel to the column density of each bin which overlaps the kernel is
+integrated along the line of sight.  The mass density for each bin is
+then the column density divided by the bin length, the velocity is the
+mass weighted velocities (shifted by a Hubble term for cosmological
+simulations) of the particles that contribute to the
+column density, and the resolution is the mass weighted smoothing
+lengths ("h" of the spline kernel).
+
+If
+.I type
+is "column" then
+.I filename.col
+will contain
+.I spatial_bin_number
+lines as above with each line containing the line of sight distance to
+the bin, the total gas mass density, the mass weighted velocity, the
+mass weighted temperature, the mass density in HI, the velocity of the HI, the
+temperature of the HI, the mass density, velocity and temperature of
+the HeI, the mass density, velocity and temperature of the HeII, the
+effective resolution, and an estimate of the divergence of the
+velocity.
+
+If
+.I type
+is "velocity" then
+.I filename.vel
+will contain
+.I vel_bin_number
+lines corresponding to equally spaced velocity intervals between
+.I vel_min
+and
+.I vel_max.
+Each line contains the central velocity of the bin, the column density
+per velocity interval of HI (in gm/cm2 per km/s), the total column
+density of gas (in atoms/cm2/(km/s)), the neutral fraction of the gas
+that contributes to the HI column density(??), the mean temperature of the
+HI gas, the density of the HI gas (in atoms/cc), the effective
+resolution of the HI, the mean temperature of the total gas, the mean
+temperature squared of the gas, and the divergence of the velocity of
+the gas.  The column densities are determined in the following way.
+Each spatial bin along the line of sight is divided into 10 (a compile
+time constant "SUBBIN") sub-bins.  The velocity and temperature of
+these sub-bins are linearly interpolated from the adjacent bins.  A
+velocity profile is determined for the gas in this sub-bin based on
+thermal broadening and damping wings.  This profile is then integrated
+over each velocity bin to determine its contribution to the bin.
+
+If
+.I type
+is "spectra", "column", or "velocity" then
+.I filename
+will contain
+.I vel_bin_number
+lines corresponding to equally spaced velocity intervals between
+.I vel_min
+and
+.I vel_max.
+Each line contains the central velocity of the bin, the optical depth
+to HI absorption,  the
+optical depth to HeI absorption, the optical depth to HeII absorption,
+the total optical depth to HI within the velocity interval (no line
+broadening), and the optical depth to deuterium absorption,
+
 .SH SEE ALSO
