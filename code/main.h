@@ -1,6 +1,10 @@
 /*
  * $Header$ 
  * $Log$
+ * Revision 1.16  2006/08/16 20:23:02  trq
+ * New command from Ryan William Maas: arraymoments: finds shapes of shells
+ * based on array values.
+ *
  * Revision 1.15  2003/06/13 17:37:37  trq
  * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
  * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
@@ -262,6 +266,7 @@ Real center_ell[MAXDIM] ;
 Real center_fit[MAXDIM] ;
 double fit_r1,fit_r2 ;
 double fit_radius ;
+double raverage ;
 double deldrg ;
 double *acsmooth = NULL;
 double deldr2 ;

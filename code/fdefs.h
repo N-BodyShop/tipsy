@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.15  2006/08/16 20:23:02  trq
+ * New command from Ryan William Maas: arraymoments: finds shapes of shells
+ * based on array values.
+ *
  * Revision 1.14  2000/01/12 22:55:09  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
@@ -108,6 +112,9 @@ PROTO(void, draw_color_label,());
 PROTO(void, dump_pixmap, (char *name));
 PROTO(double, ell_distance, (Real *x1));
 PROTO(void, find_shape, (char *particle_type, int box, Real *center));
+PROTO(void, find_shape_array, (char *particle_type, int box, Real *center,
+		 	int *aindex, int particlemax, int particlemin,
+			int rbinsize));
 PROTO(void, find_vel, (char *particle_type, int box, Real *center_vel,
 		       Real *center_angular_mom));
 PROTO(void, fits, (float **data, int xsize, int ysize,
@@ -174,6 +181,7 @@ PROTO(void, setival, (int *a, int b));
 PROTO(void, setsize, (int box, Real *xmax, Real *xmin));
 PROTO(void, setvec, (Real *a, Real *b));
 PROTO(void, sift, (double constant[5], int box));
+PROTO(void, sortarray, (int *a, int left, int right, int box, int p_type));
 PROTO(int, splinit, (float *x,float *y,float *k,int n,double q2b,double q2e));
 PROTO(void, starform_func, ());
 PROTO(void, star_history, (char *job));

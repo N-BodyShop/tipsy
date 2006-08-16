@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.21  2006/08/16 20:23:02  trq
+ * New command from Ryan William Maas: arraymoments: finds shapes of shells
+ * based on array values.
+ *
  * Revision 1.20  2001/07/11 19:45:44  nsk
  *       Fixed bugs with array sizes for meanmwt, cooling, and starformation.
  *       Used to be only for active box now for all of box zero.
@@ -518,6 +522,8 @@ extern Real center_ell[MAXDIM] ;
 extern Real center_fit[MAXDIM] ;
 extern double fit_r1,fit_r2 ;
 extern double fit_radius ;
+
+extern double raverage ;
 extern double deldrg ;
 extern double *acsmooth;
 extern double deldr2 ;

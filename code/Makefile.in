@@ -58,7 +58,7 @@ load_eps.o load_epsgas.o load_form.o load_redshift.o loadall.o loadbinary.o \
 loadbinary_sub.o loadbox.o make_ell_matrix.o mass_add_vec.o \
 matrix_matrix_mult.o matrix_vector_mult.o maxpos.o moments.o norm.o openascii.o\
 openbinary.o packfit.o perp_distance.o plane.o \
-profile.o \
+find_shape_array.o arraymoments.o sortarray.o profile.o \
 readascii.o redshift_sub.o rot_cur.o rotate.o \
 rotate_sub.o setsize.o setbox_sub.o setvec.o showboxes_sub.o \
 showdark_sub.o showgas_sub.o showstar_sub.o showvel_sub.o sift.o spline.o \
@@ -105,7 +105,7 @@ load_eps.c load_epsgas.c load_form.c load_redshift.c loadall.c loadbinary.c \
 loadbinary_sub.c loadbox.c make_ell_matrix.c mass_add_vec.c \
 matrix_matrix_mult.c matrix_vector_mult.c maxpos.c moments.c norm.c openascii.c\
 openbinary.c packfit.c perp_distance.c plane.c \
-profile.c \
+find_shape_array.c arraymoments.c sortarray.c profile.c \
 readascii.c redshift_sub.c rot_cur.c rotate.c \
 rotate_sub.c setsize.c setbox_sub.c setvec.c showboxes_sub.c \
 showdark_sub.c showgas_sub.c showstar_sub.c showvel_sub.c sift.c spline.c \

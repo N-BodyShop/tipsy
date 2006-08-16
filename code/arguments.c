@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.29  2006/08/16 20:23:02  trq
+ * New command from Ryan William Maas: arraymoments: finds shapes of shells
+ * based on array values.
+ *
  * Revision 1.28  2006/01/19 17:19:45  trq
  * Added "readpackedvector" command to get vectors ordered x1 y1 z1 ...
  *
@@ -310,6 +314,10 @@ arguments(job)
     else if ( strcmp(command,"moments") == 0 ) {
 	printf("moments box-number center-box-number particle binning") ;
 	printf(" bin_number filename minimum_radius\n") ; 
+    }
+    else if ( strcmp(command,"arraymoments") == 0 ) {
+	printf("arraymoments box-number center-box-number particle binning") ;
+	printf(" bin_number filename bin_count increment radius_bin\n") ;	
     }
     else if ( strcmp(command,"neutral") == 0 ||
 	     strcmp(command,"neutralize") == 0) {

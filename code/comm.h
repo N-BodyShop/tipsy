@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.19  2006/08/16 20:23:02  trq
+ * New command from Ryan William Maas: arraymoments: finds shapes of shells
+ * based on array values.
+ *
  * Revision 1.18  2006/01/19 17:19:45  trq
  * Added "readpackedvector" command to get vectors ordered x1 y1 z1 ...
  *
@@ -104,6 +108,7 @@ extern void absorb() ;
 extern void activatebox() ;
 extern void angleup() ;
 extern void arguments() ;
+extern void arraymoments() ;
 extern void arraystat() ;
 extern void axesscale() ;
 extern void boxstat_sub() ;
@@ -266,6 +271,7 @@ struct comm c_list[] = {
      {"activatebox", activatebox,	0},
      {"angleup",     angleup,		0},
      {"arguments",   arguments,		0},
+     {"arraymoments",arraymoments,	0},
      {"arraystat",   arraystat,		0},
      {"ascale",      axesscale,		0},
 
