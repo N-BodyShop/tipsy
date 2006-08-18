@@ -1,0 +1,120 @@
+.TH ARRAYMOMENTS  1 "17 AUGUST 2006"  "" "TIPSY COMMANDS"
+.SH NAME
+arraymoments \- write the shape as computed in shells sorted by array values 
+.SH SYNOPSIS
+.B arraymoments
+.I box-number
+.I center-box-number
+.I particle
+.I binning
+.I bin-number
+.I filename
+.I bin-count
+.I increment
+.I radius-bin-count
+.SH DESCRIPTION
+.B arraymoments
+is a command that produces a file of name,
+.I filename,
+that contains various physical parameters that relate to the shape and
+orientation of the density distribution for particles of type
+.I particle
+in box, 
+.I box-number.
+If the boxes
+.I box-number
+or
+.I center-box-number
+are not loaded an error is generated. An array must be loaded using the
+.B readarray
+command for particle grouping. 
+The shapes are calculated by finding the principle moments of inertia 
+for each bin of particles. Particles are grouped in bins based on
+their array values in decreasing order.
+The initial guess for the center of the density distribution is taken
+to be the center of mass of box
+.I center-box-number.
+The 
+.I binning
+argument refers to how the particles are binned, either in one large
+bin that expands its number of particles or in shells of equal
+particle number.  There are
+.I bin-count
+particles in a shell and each successive bin
+includes an additional number of particles equal to    
+.I increment.
+The number of particles used to calculate the radius of the bin is given by
+.I radius-bin-count
+and should generally be greater than 600 and must be less than or equal to 
+.I bin-count.
+
+The output file has the following columns: radius, b/a, c/a, phi, theta, psi,
+center-x,center-y,center-z, S1, S2 and particlemax where b/a refers to the
+ratio between the intermediate axis and the long axis and c/a refers to
+the ratio between the short and long axes.  Phi, theta and psi refer to the
+Euler angles that describe the orientation of the density distribution.
+S1 and S2 are measures of prolateness and sphericity defined in
+Babel and Starkman (Ap.J. 401:28, 1992).
+Particlemax is the maximum rank of the particles in each bin. 
+.SH OPTIONS
+.SS Particle
+.LP
+The possible choices for
+.I particle
+are:
+.RS
+.TP 3
+.B all
+Use the all the particles in box
+.I box-number
+.TP 3
+.B dark
+Use only the dark matter particles in box
+.I box-number
+.TP 3
+.B gas
+Use only the gas particles in box
+.I box-number
+.TP 3
+.B star
+Use only the star particles in box
+.I box-number
+.RE
+.SS Binning
+.LP
+The possible choices for
+.I binning
+are:
+.RS
+.TP 3
+.B bin
+Make 
+.I bin-number
+bins starting with 
+.I bin-count 
+particles and increasing the number of particles included by
+.I increment
+for each successive bin.
+.TP 3
+.B shell 
+Make 
+.I bin-number
+shells containing 
+.I bin-count
+particles each and incrementing the maximum and minimum
+particle ranking by 
+.I increment
+for each shell. 
+.RE
+.SH SEE ALSO
+.BR profile (1),
+.BR rotationcurve (1),
+.SH BUGS
+While any array could be read in for use with arraymoments,
+the command was designed to be used with density arrays and so 
+particles are selected from high to low array values. Thus when 
+using array types that increase with radius the outer-most particles
+will be binned first, and so the 
+.I bin
+option would not behave as desired. If necessary the array could
+be raised to the -1 power before loading for sorting purposes.  
