@@ -2,6 +2,34 @@
 .SH NAME
 xray \- make xray maps in different energy bands and write to FITS files
 .SH SYNOPSIS
-.SH ALIASES
+.B xray
+.I min
+.I max
+.I filename
+.I size
 .SH DESCRIPTION
+.B xray
+creates xray luminosity images and an x-ray emmission weighted
+temperature image of
+.I size
+pixels on a side of the current projection.  The total xray luminosity
+is written
+to
+.I filenametot.fits,
+and the temperature image is written to
+.I filenametemp.fits.
+Luminosities in indivdual band are written to
+.I filename_band_number.fits.
+Images are are logarithmically scaled, and the minimum and maximum
+pixel values are limited by
+.I min
+and
+.I max
+respectively.
+Xray emmisivities for each band as a function of temperature are taken
+from spline interpolations of tables which can be loaded with the
+.B xrayload
+command.
 .SH SEE ALSO
+.BR vista (1)
+.BR xrayload

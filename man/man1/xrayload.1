@@ -2,6 +2,36 @@
 .SH NAME
 xrayload \- read xray data
 .SH SYNOPSIS
-.SH ALIASES
+.B xrayload
+.I splinefile
 .SH DESCRIPTION
+.B xrayload
+reads in the spline coeffients for interpolating X-ray luminosity as a
+function of temperature.  The temperatures are given in log(Kelvin),
+and the emissivity is in log(10^{-23} ergs/s/n_e/n_h/cc).
+
+The format of the file is:
+.LP
+.RS
+.TP 3
+comment line
+.TP 3
+redshift
+.TP 3
+number_of_spline_points min_temperature delta_temperature
+.TP 3
+number_of_bands
+.TP 3
+y spline coefficients for band 1
+.TP 3
+y'' spline coefficients for band 1
+.TP 3
+y spline coefficients for band 2
+.TP 3
+y'' spline coefficients for band 2
+.TP 3
+...
+.RE
+
 .SH SEE ALSO
+.BR xray
