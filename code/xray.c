@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.5  2007/01/14 19:43:22  trq
+ * 1) load redshift information if needed.
+ * 2) add warning about floating point overflow of temp_array.
+ *
  * Revision 1.4  2000/01/12 22:55:29  nsk
  * Fixed bugs in cooling routines, added cooling damping,
  * fixed bugs in starformation,  regularized dependencies.
@@ -30,6 +34,7 @@
 #include "defs.h"
 #include "fdefs.h"
 #include <stdlib.h>
+#include <values.h>
 #include <assert.h>
 #include "xray.h"
 
@@ -79,6 +84,9 @@ xray(job)
 	if(!ikernel_loaded){
 	    ikernel_load() ;
 	}
+	if (!redshift_loaded ){
+	    load_redshift();
+	    }
 	if (current_project){
 	    if(!xray_loaded){
 		if(xray_lum_load() != 0){
@@ -184,7 +192,7 @@ xray(job)
 	    }
 	    for (i = 0 ;i < boxlist[active_box].ngas;i++) {
 		gp = boxlist[active_box].gp[i] ;
-		if(log10(gp->temp) > xray_min_temp){
+		if(log10((double) gp->temp) > xray_min_temp){
 		    for(band = 0,lum_xray = band_lum; band < number_bands;
 			    band++,lum_xray++){
 			 *lum_xray = gp->mass*calc_xemiss((double) gp->temp,
@@ -237,10 +245,18 @@ xray(job)
 				kernel *= size_pixel_2 ;
 				if(kernel != 0.){
 				    for(band = 0; band < number_bands; band++){
+					double tTemp
+					    = kernel*band_lum[band]*gp->temp;
+					if(tTemp > FLT_MAX) {
+					    fprintf(stderr,
+						    "Warning: %g overflows temperature array\n",
+						    tTemp);
+					    tTemp = FLT_MAX/10.0;
+					    }
+					
 					density[band][kx][ky] += (kernel*
 					    band_lum[band]) ;
-					temp_image[kx][ky]
-						+= kernel*band_lum[band]*gp->temp;
+					temp_image[kx][ky] += tTemp;
 				    }
 				}
 			    }
@@ -252,9 +268,15 @@ xray(job)
 			if(kx >= 0 && kx < xray_size && ky >= 0 && ky
 			   < xray_size){
 			    for(band = 0; band < number_bands; band++){
+				double tTemp = band_lum[band]*gp->temp;
+				if(tTemp > FLT_MAX) {
+				    fprintf(stderr, "Warning: %g overflows temperature array\n",
+					    tTemp);
+				    tTemp = FLT_MAX/10.0;
+				    }
 				density[band][kx][ky] += band_lum[band];
 				temp_image[kx][ky]
-					+= band_lum[band]*gp->temp;
+					+= tTemp;
 			    }
 			}
 		    }
