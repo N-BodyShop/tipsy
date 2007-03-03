@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.3  2007/03/03 22:00:09  trq
+ * Try to avoid divide by zero.
+ *
  * Revision 1.2  2003/08/28 15:57:40  trq
  * Use floating point to avoid descretization problems with large zooms.
  * (Descreteness problems still exist: the zoom coordinates are only good
@@ -165,7 +168,9 @@ zoom_scroll(scroll, ignore, top_ptr)
   double factor;
   
   factor = pow(2.0, 2.0*((*(float *) top_ptr)) - 1.0);
-  view_size = INTMAX/(zoom_factor*factor);
-  zoom_window(can_width/2, can_height/2);
-  plot_sub(NULL);
+  if(factor != 0.0) {
+	view_size = INTMAX/(zoom_factor*factor);
+	zoom_window(can_width/2, can_height/2);
+	plot_sub(NULL);
+  }
 }
