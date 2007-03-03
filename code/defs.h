@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.22  2007/03/03 21:57:36  trq
+ * Use MAXFLOAT if HUGE isn't available.
+ *
  * Revision 1.21  2006/08/16 20:23:02  trq
  * New command from Ryan William Maas: arraymoments: finds shapes of shells
  * based on array values.
@@ -133,6 +136,10 @@
 #include <X11/StringDefs.h>
 #include <stdio.h>
 #include <math.h>
+
+#if !defined(HUGE) && defined(MAXFLOAT)
+#define HUGE MAXFLOAT
+#endif
 
 #ifdef HAVE_STRING_H
 #include <string.h>
