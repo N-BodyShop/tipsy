@@ -1,6 +1,10 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.7  2007/04/03 00:08:52  trq
+ * Added appropriate fclose()s.
+ * readpackedvector(): fixed bug in count increment.
+ *
  * Revision 1.6  2003/06/13 17:37:37  trq
  * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
  * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
@@ -60,6 +64,7 @@ readarray(job)
 	count=fscanf(infile, "%d%*[, \t]%*d%*[, \t]%*d",&nbodies) ;
 	if ( (count == EOF) || (count==0) ){
 	    printf("<Sorry %s, file format is wrong>\n",title);
+	    fclose(infile);
 	    return;
 	}
     if(array != NULL) free(array);
@@ -68,6 +73,7 @@ readarray(job)
     if(array == NULL) 
       {
 	printf("<Sorry %s, no room for array>\n",title);
+	fclose(infile);
 	return;
       }
 	for(i = 0, count = 0; i < nbodies; i++)
@@ -97,6 +103,7 @@ readarray(job)
 	    }
 	    count++;
 	  }
+	fclose(infile);
       }
   else if (sscanf(job,"%s %s %lf",command,filename,&power) == 3) {
     infile = fopen(filename, "r");
@@ -108,6 +115,7 @@ readarray(job)
 	count=fscanf(infile, "%d%*[, \t]%*d%*[, \t]%*d",&nbodies) ;
 	if ( (count == EOF) || (count==0) ){
 	    printf("<Sorry %s, file format is wrong>\n",title);
+	    fclose(infile);
 	    return;
 	}
     if(array == NULL) {
@@ -116,6 +124,7 @@ readarray(job)
       if(array == NULL) 
 	{
 	  printf("<Sorry %s, no room for array>\n",title);
+	  fclose(infile);
 	  return;
 	}
       for(i = 0, count = 0; i < nbodies; i++) array[i]=1;
@@ -147,6 +156,7 @@ readarray(job)
 	    }
 	    array[count++] *= pow(tmp,power);
 	  }
+	fclose(infile);
       }
     else {
 	input_error(command) ;
@@ -194,6 +204,7 @@ readbinarray(job)
 	count=fread(&nbodies, sizeof(int), 1, infile) ;
 	if ( (count == EOF) || (count==0) ){
 	    printf("<Sorry %s, file format is wrong>\n",title);
+	    fclose(infile);
 	    return;
 	}
     if(array != NULL) free(array);
@@ -202,6 +213,7 @@ readbinarray(job)
     if(array == NULL) 
       {
 	printf("<Sorry %s, no room for array>\n",title);
+	fclose(infile);
 	return;
       }
 	for(i = 0, count = 0; i < nbodies; i++)
@@ -260,6 +272,7 @@ readbinarray(job)
 	    }
 	    count++;
 	  }
+	fclose(infile);
       }
     else {
 	input_error(command) ;

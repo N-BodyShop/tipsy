@@ -1,6 +1,10 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.8  2007/04/03 00:08:52  trq
+ * Added appropriate fclose()s.
+ * readpackedvector(): fixed bug in count increment.
+ *
  * Revision 1.7  2006/01/19 17:19:45  trq
  * Added "readpackedvector" command to get vectors ordered x1 y1 z1 ...
  *
@@ -58,6 +62,7 @@ readvector(job)
 	count=fscanf(infile, "%d%*[, \t]%*d%*[, \t]%*d",&nbodies) ;
 	if ( (count == EOF) || (count==0) ){
 	    printf("<Sorry %s, file format is wrong>\n",title);
+	    fclose(infile);
 	    return;
 	}
     if(vector != NULL) free(vector);
@@ -66,6 +71,7 @@ readvector(job)
     if(vector == NULL) 
       {
 	printf("<Sorry %s, no room for array>\n",title);
+	fclose(infile);
 	return;
       }
 	for(j = 0; j < MAXDIM; j++){
@@ -96,6 +102,7 @@ readvector(job)
 		count++;
 	    }
 	}
+	fclose(infile);
     }
     else {
 	input_error(command) ;
@@ -125,6 +132,7 @@ readpackedvector(job)
 	count=fscanf(infile, "%d%*[, \t]%*d%*[, \t]%*d",&nbodies) ;
 	if ( (count == EOF) || (count==0) ){
 	    printf("<Sorry %s, file format is wrong>\n",title);
+	    fclose(infile);
 	    return;
 	}
     if(vector != NULL) free(vector);
@@ -133,6 +141,7 @@ readpackedvector(job)
     if(vector == NULL) 
       {
 	printf("<Sorry %s, no room for array>\n",title);
+	fclose(infile);
 	return;
       }
 	for(i = 0, count = 0; i < nbodies; i++){
@@ -160,9 +169,10 @@ readpackedvector(job)
 		    vector = NULL;
 		    break;
 		}
-		count++;
 	    }
+	    count++;
 	}
+	fclose(infile);
     }
     else {
 	input_error(command) ;
@@ -211,6 +221,7 @@ readbinvector(job)
 	count=fread(&nbodies, sizeof(int), 1, infile) ;
 	if ( (count == EOF) || (count==0) ){
 	    printf("<Sorry %s, file format is wrong>\n",title);
+	    fclose(infile);
 	    return;
 	}
     if(vector != NULL) free(vector);
@@ -219,6 +230,7 @@ readbinvector(job)
     if(vector == NULL) 
       {
 	printf("<Sorry %s, no room for array>\n",title);
+	fclose(infile);
 	return;
       }
 	for(j = 0; j < MAXDIM; j++){
@@ -287,6 +299,7 @@ readbinvector(job)
 	    if(btype < 0)
 		break;
 	}
+	fclose(infile);
     }
     else {
 	input_error(command) ;
