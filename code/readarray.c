@@ -1,6 +1,10 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.8  2007/06/09 00:11:25  stinson
+ * Added support for standard formatted binary arrays.  Guesses based on
+ * if first read of nbodies is <= 0 or > 10 million.
+ *
  * Revision 1.7  2007/04/03 00:08:52  trq
  * Added appropriate fclose()s.
  * readpackedvector(): fixed bug in count increment.
@@ -39,6 +43,9 @@
 #include "fdefs.h"
 #include <math.h>
 #include <stdlib.h>
+#include <rpc/types.h>
+#include <rpc/xdr.h>
+
 
 void
 readarray(job)
@@ -174,11 +181,12 @@ readbinarray(job)
   double power;
   Real tmp;
   FILE *infile;
+  XDR xdrs;
   int i;
   int count;
   int nbodies;
   int btype;
-  int check;
+  int check, bStandard;
 
   if (sscanf(job,"%s %s %s",command,filename, type) == 3) {
       if(!strcmp(type, "int")) {
@@ -206,7 +214,17 @@ readbinarray(job)
 	    printf("<Sorry %s, file format is wrong>\n",title);
 	    fclose(infile);
 	    return;
-	}
+	} else if(nbodies <= 0 || nbodies > 10000000){
+           fseek(infile,0,SEEK_SET);
+           xdrstdio_create(&xdrs,infile,XDR_DECODE);
+           xdr_int(&xdrs,&nbodies);
+           if (nbodies <= 0 || nbodies > 10000000) {
+             printf("<Sorry %s, file doesn't appear standard or binary or nbodies > 10 mil.>\n",title);
+             xdr_destroy(&xdrs);
+             fclose(infile);
+             return;
+             } else bStandard = 1;
+           }
     if(array != NULL) free(array);
     array = (Real *)malloc(nbodies*sizeof(*array));
     array_size = nbodies;
@@ -227,13 +245,16 @@ readbinarray(job)
 		float fdummy;
 		double ddummy;
 		case 0:
-		    fread(&idummy, sizeof(int), 1, infile) ;
+		    if (bStandard) xdr_int(&xdrs,&idummy);
+                    else fread(&idummy, sizeof(int), 1, infile) ;
 		    break;
 		case 1:
-		    fread(&fdummy, sizeof(float), 1, infile) ;
+		    if (bStandard) xdr_float(&xdrs,&fdummy);
+		    else fread(&fdummy, sizeof(float), 1, infile) ;
 		    break;
 		case 2:
-		    fread(&ddummy, sizeof(double), 1, infile) ;
+		    if (bStandard) xdr_double(&xdrs,&ddummy);
+		    else fread(&ddummy, sizeof(double), 1, infile) ;
 		}
 		
 	      continue;
@@ -252,15 +273,18 @@ readbinarray(job)
 		float fdummy;
 		double ddummy;
 		case 0:
-		    check = fread(&idummy, sizeof(int), 1, infile) ;
+		    if (bStandard) check = xdr_int(&xdrs,&idummy);
+		    else check = fread(&idummy, sizeof(int), 1, infile) ;
 		    array[count] = idummy;
 		    break;
 		case 1:
-		    check = fread(&fdummy, sizeof(float), 1, infile) ;
+		    if (bStandard) check = xdr_float(&xdrs,&fdummy);
+		    else check = fread(&fdummy, sizeof(float), 1, infile) ;
 		    array[count] = fdummy;
 		    break;
 		case 2:
-		    check = fread(&ddummy, sizeof(double), 1, infile) ;
+		     if (bStandard) check = xdr_double(&xdrs,&ddummy);
+		    else check = fread(&ddummy, sizeof(double), 1, infile) ;
 		    array[count] = ddummy;
 		}
 	    if(check == EOF) {
