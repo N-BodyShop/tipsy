@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.23  2007/08/02 22:55:11  trq
+ * Added v^2 map to HNEUT_VEL.
+ *
  * Revision 1.22  2007/08/02 19:31:28  trq
  * Added a "hneutralvel" plot to vista.  It produces the 1st moment of the
  * HI velocity field.
@@ -135,8 +138,9 @@ vista(job)
     int kx,ky ;
     int kx_min,kx_max ;
     int ky_min,ky_max ;
-    float **density;
-    float **quantity;
+    float **density;		/* array of pixels, also used to
+				   normalize other arrays */
+    float **quantity;		/* auxillary arrays */
     float **quantity2;
     double radius2 ;
     double distance_dim2() ;
@@ -186,6 +190,9 @@ vista(job)
     double cool_tot ;
     double vol ;
     int aoffset;
+    double hneut_velmin;
+    double hneut_velmax;
+    double hneut_vel2max;
 
     if(!ikernel_loaded){
 	ikernel_load() ;
@@ -199,6 +206,9 @@ vista(job)
 	zoom_factor = 1.0;
 	scaling = 2. * (double)INTMAX / boxes[active_box].size ;
     }
+    /*
+     * Parse command arguments
+     */
 	if ((num_read = sscanf(job,"%s %s %lf %lf %s %d %lf %lf",command,type,
 		&low, &high,name, &vista_size, &vel_min, &vel_max)) >= 6) {
 	      if (!redshift_loaded ){
@@ -213,6 +223,9 @@ vista(job)
 	      if (!cool_loaded ){
 		  load_cool() ;
 	      }
+	      /*
+	       * discover plot type
+	       */
 	      if (strcmp(type,"density") == 0 || strcmp(type,"rho") == 0 ){
 		  vista_type = RHO ;
 	      }
@@ -289,6 +302,9 @@ vista(job)
 		  printf("<sorry, %s is not a proper type, %s>\n",type,title) ;
 		  return ;
 	      }
+	      /*
+	       * Allocate memory
+	       */
 	      density = (float **)malloc(vista_size*sizeof(*density));
 	      if(density == NULL)
 		{
@@ -303,8 +319,14 @@ vista(job)
 		  printf("<sorry, no memory for image, %s>\n",title) ;
 		  return ;
 		}
+	      /*
+	       * Set up row pointers
+	       */
 	      for(i = 1; i < vista_size; i++)
 		  density[i] = &density[0][i*vista_size];
+	      /*
+	       * allocate auxillary arrays
+	       */
 	      if(vista_type != RHO && vista_type != XRAY && vista_type
 		 != VDARK && vista_type != VSTAR && vista_type != VALL
 		 && vista_type != LUMSTAR && vista_type != COOL &&
@@ -335,7 +357,10 @@ vista(job)
 		  }
 		  
 	      }
-	      if(vista_type == HNEUT){
+	      /*
+	       * some require a second auxilary array
+	       */
+	      if(vista_type == HNEUT || vista_type == HNEUT_VEL){
 		  quantity2 = (float **)malloc(vista_size*sizeof(*quantity2));
 		      if(quantity2 == NULL)
 			{
@@ -366,6 +391,7 @@ vista(job)
 			}
 		  }
 	      }
+	      /* initialize */
 	    for(kx = 0; kx < vista_size; kx++){
 		for(ky = 0; ky < vista_size; ky++){
 		density[kx][ky] = 0.0 ;
@@ -447,11 +473,15 @@ vista(job)
                 t_lower = e_lower*(1 + redshift)*1.6e-9/KBOLTZ ;
                 t_upper = e_upper*(1 + redshift)*1.6e-9/KBOLTZ ;
 	    }
+	    /*
+	     * select velocity channels if requested.
+	     */
 	    else if(vista_type == HNEUT || vista_type == HEI || 
 		    vista_type == HEII || vista_type == SZ ||
 		    vista_type == HNEUT_VEL){
 		autolim = NO ;
 		if(num_read != 8){
+		    /* get all velocities by default */
 		    vel_min = -HUGE ;
 		    vel_max = HUGE ;
 		    autolim = YES ;
@@ -459,10 +489,12 @@ vista(job)
 		if(!hneutral_loaded){
 		    hneutral_func() ;
 		}
+		/* convert to real units */
 		msys = msolunit/(cosmof*kpcunit*cosmof*kpcunit)*
 			(MSOLG/(KPCCM*KPCCM*MHYDR)) ;
 		rsys = cosmof*kpcunit/1.e3 ;
 		vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
+		/* determine constants */
 		if(vista_type == HNEUT || vista_type == HNEUT_VEL){
 		    c1 = msys*fhydrogen ;
 		}
@@ -491,10 +523,12 @@ vista(job)
 		if(vista_type == LYA || vista_type == COOL){
 		    c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
 		}
+		/* calculate smoothing length if needed */
 		if(balls_loaded != GAS) {
 		    calc_balls(&box0_smx, 0, 1 , 0);
 		    balls_loaded = GAS;
 		}
+		/* loop over particles */
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
 		    int gpi;
 		    
@@ -527,6 +561,9 @@ vista(job)
 				    cool_vec[4]+cool_vec[5] +
 				    cool_vec[6])/1.e40 ;
 			}
+			/*
+			 * handle periodic boundary conditions
+			 */
 			for(irep[0] = -1; irep[0] <= 1; irep[0]++) {
 			  for(irep[1] = -1; irep[1] <= 1; irep[1]++) {
 			    for(irep[2] = -1; irep[2] <= 1; irep[2]++) {
@@ -581,6 +618,10 @@ vista(job)
 					&& autolim == NO
 					&& vz + v_hubble >= vel_min &&
 					vz + v_hubble <= vel_max)) {
+				/*
+				 * determine quantities to be
+				 * added to density array.
+				 */
 				if(vista_type == XRAY){
 				    delta_d = lum_xray ;
 				}
@@ -591,6 +632,7 @@ vista(job)
 				    delta_d = starform[gp-gas_particles] ;
 				}
 				else if(vista_type == HNEUT){
+				    /* weight by HI mass */
 				    delta_d = c1*hneutral[gp-gas_particles]*
 					(gp->mass);
 				}
@@ -613,6 +655,9 @@ vista(job)
 				else {
 				    delta_d = (gp->mass) ;
 				}
+				/* determine quantities for auxillary
+				 *  arrays
+				 */
 				if(vista_type == TEMP){
 				    delta_q = (gp->mass)*(gp->temp) ;
 				}
@@ -633,6 +678,9 @@ vista(job)
 				else if(vista_type == HNEUT_VEL){
 				    delta_q = c1*hneutral[gp-gas_particles]*
 					vz*(gp->mass);
+				    /* velocity^2 */
+				    delta_q2 = c1*hneutral[gp-gas_particles]*
+					vz*vz*(gp->mass);
 				}
 				else if(vista_type == SZ){
 				    electron = (1. - 
@@ -644,6 +692,9 @@ vista(job)
 				    delta_q = c2*electron*(gp->mass)*vz ;
 				}
 				if(hsmooth > size_pixel){
+				    /* need to loop over surrounding
+				       pixels
+				    */
 				  thsmooth = 2. * hsmooth ;
 				  distnorm = 1. / (hsmooth * hsmooth) ;
 				  hsmth2pi = distnorm / PI ;
@@ -687,7 +738,8 @@ vista(job)
 					    	quantity[kx][ky]
 						    += (float)(kernel*delta_q) ;
 					    }
-					    if(vista_type == HNEUT){
+					    if(vista_type == HNEUT
+					       || vista_type == HNEUT_VEL){
 						quantity2[kx][ky] +=
 						    (float)(kernel*delta_q2) ;
 					    }
@@ -696,6 +748,9 @@ vista(job)
 				    }
 				}
 				else{
+				    /*
+				     * particle fits in a single pixel
+				     */
 				    kx = (int)((part_pos[0]-xmin)/size_pixel+
 					    0.499999) ;
 				    ky = (int)((part_pos[1]-ymin)/size_pixel+
@@ -711,7 +766,8 @@ vista(job)
 					    || vista_type == SZ){
 					    quantity[kx][ky] += (float) delta_q ;
 					}
-					if(vista_type == HNEUT){
+					if(vista_type == HNEUT
+					    || vista_type == HNEUT_VEL){
 					    quantity2[kx][ky] +=
 						(float) delta_q2 ;
 					}
@@ -729,7 +785,7 @@ vista(job)
 			 vista_type != HEII && vista_type != SZ &&
 		         vista_type != VALL && vista_type != COOL &&
 			 vista_type != LYA  && vista_type != FSTAR &&
-			 vista_type != ARRAY){
+			 vista_type != HNEUT_VEL && vista_type != ARRAY){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
 			    if(density[kx][ky] != 0.){
@@ -742,6 +798,9 @@ vista(job)
 			}
 		    }
 		}
+		/*
+		 * Normalize
+		 */
 		if(vista_type == HNEUT){
 		    for(kx = 0; kx < vista_size; kx++){
 			for(ky = 0; ky < vista_size; ky++){
@@ -750,6 +809,25 @@ vista(job)
 					density[kx][ky] ;
 				quantity2[kx][ky] = quantity2[kx][ky] /
 					density[kx][ky] ;
+			    }
+			    else{
+				quantity[kx][ky] = 0. ;
+				quantity2[kx][ky] = 0. ;
+			    }
+			}
+		    }
+		}
+		if(vista_type == HNEUT_VEL){
+		    for(kx = 0; kx < vista_size; kx++){
+			for(ky = 0; ky < vista_size; ky++){
+			    if(density[kx][ky] != 0.){
+				/* 1st moment */
+				quantity[kx][ky] = quantity[kx][ky] /
+					density[kx][ky] ;
+				/* dispersion */
+				quantity2[kx][ky] = sqrt(quantity2[kx][ky] /
+					density[kx][ky] 
+				    - quantity[kx][ky]*quantity[kx][ky]);
 			    }
 			    else{
 				quantity[kx][ky] = 0. ;
@@ -956,21 +1034,18 @@ vista(job)
 	    }
 	    pixmax = -HUGE;
 	    pixmin = HUGE;
+	    hneut_velmin = HUGE;
+	    hneut_velmax = -HUGE;
+	    hneut_vel2max = 0.0;
+	    
 	    for(i = 0; i < vista_size; i++){
 		for(j = 0; j < vista_size; j++){
 		    if(density[i][j] > 0. || vista_type == HNEUT_VEL){
 			if(vista_type != TEMP && vista_type != PRESS &&
-			   vista_type != HNEUT_VEL &&
 				vista_type != COOL && vista_type != JEANS &&
 				vista_type != TDRHO && vista_type != FSTAR &&
 				vista_type != XRAY && vista_type != LYA) {
 			    pixel = log10((double)(density[i][j])/size_pixel_2);
-			}
-			/* first moment of velocity could be positive
-			 * or negative => don't take the log().
-			 */
-			else if(vista_type == HNEUT_VEL) {
-			    pixel = (double)(density[i][j]);
 			}
 			else{
 			    pixel = log10((double)(density[i][j]));
@@ -983,6 +1058,19 @@ vista(job)
 		    else{
 			pixel = low ;
 		    }
+		    /*
+		     * calculate limits on velocity.
+		     * N.B. this overrides the command arguments and
+		     * could cause problems.
+		    */
+		    if(vista_type == HNEUT_VEL) {
+			if(quantity[i][j] < hneut_velmin) hneut_velmin = quantity[i][j];
+			if(quantity[i][j] > hneut_velmax) hneut_velmax = quantity[i][j];
+			if(quantity2[i][j] > hneut_vel2max)
+			    hneut_vel2max = quantity[i][j];
+			}
+		    
+		    /* determine extremes and perform clipping */
 		    if(pixel > pixmax) pixmax = pixel;
 		    if(pixel < pixmin) pixmin = pixel;
 		    if(pixel > high)pixel = high ;
@@ -1038,6 +1126,15 @@ vista(job)
 		fits(quantity2,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name1) ;
             }
+	    if(vista_type == HNEUT_VEL){
+                sprintf(name1,"%s.v1",name) ;
+		fits(quantity,vista_size,vista_size,xmin,ymin,size_pixel,
+			size_pixel,hneut_velmin,hneut_velmax,name1) ;
+                low = 0.0 ;
+                sprintf(name1,"%s.v2",name) ;
+		fits(quantity2,vista_size,vista_size,xmin,ymin,size_pixel,
+			size_pixel,low,hneut_vel2max,name1) ;
+            }
 	    if(vista_type == SZ){
 		for(i = 0; i < vista_size; i++){
 		    for(j = 0; j < vista_size; j++){
@@ -1078,7 +1175,7 @@ vista(job)
 		free(*quantity);
 		free(quantity);
 	    }
-	    if(vista_type == HNEUT){
+	    if(vista_type == HNEUT || vista_type ==  HNEUT_VEL){
 		free(*quantity2);
 		free(quantity2);
 	    }
