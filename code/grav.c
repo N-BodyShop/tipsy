@@ -44,6 +44,8 @@ void grav(pos,acc_gas,acc_star,acc_dark,box)
 	delta_x[2] = pos[2] - gp->pos[2] ;
 	dxdotdx = delta_x[0]*delta_x[0] + delta_x[1]*delta_x[1] +
 		delta_x[2]*delta_x[2] ;
+	if(dxdotdx == 0.0)	/* Avoid divide by zero */
+	    continue;
         sdxdotdx = sqrt(dxdotdx) ;
         r3inveff = 1./sdxdotdx / dxdotdx ;
 	if(epsgas_grav != 0.){
@@ -65,6 +67,8 @@ void grav(pos,acc_gas,acc_star,acc_dark,box)
 	delta_x[2] = pos[2] - sp->pos[2] ;
 	dxdotdx = delta_x[0]*delta_x[0] + delta_x[1]*delta_x[1] +
 		delta_x[2]*delta_x[2] ;
+	if(dxdotdx == 0.0)	/* Avoid divide by zero */
+	    continue;
         sdxdotdx = sqrt(dxdotdx) ;
         r3inveff = 1./sdxdotdx / dxdotdx ;
 	if(epsgas_grav != 0.){
@@ -86,6 +90,8 @@ void grav(pos,acc_gas,acc_star,acc_dark,box)
 	delta_x[2] = pos[2] - dp->pos[2] ;
 	dxdotdx = delta_x[0]*delta_x[0] + delta_x[1]*delta_x[1] +
 		delta_x[2]*delta_x[2] ;
+	if(dxdotdx == 0.0)	/* Avoid divide by zero */
+	    continue;
         sdxdotdx = sqrt(dxdotdx) ;
         r3inveff = 1./sdxdotdx / dxdotdx ;
 	if(eps_grav != 0.){
