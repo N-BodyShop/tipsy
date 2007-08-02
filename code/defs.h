@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.23  2007/08/02 19:31:28  trq
+ * Added a "hneutralvel" plot to vista.  It produces the 1st moment of the
+ * HI velocity field.
+ *
  * Revision 1.22  2007/03/03 21:57:36  trq
  * Use MAXFLOAT if HUGE isn't available.
  *
@@ -209,6 +213,7 @@
 #define VALL 16
 #define LYA 17
 #define ARRAY 18
+#define HNEUT_VEL 19
 #define NOSPH 0
 #define SPH 1
 #define PREC_JACOBI 1.e-8 ;

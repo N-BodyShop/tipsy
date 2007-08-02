@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.22  2007/08/02 19:31:28  trq
+ * Added a "hneutralvel" plot to vista.  It produces the 1st moment of the
+ * HI velocity field.
+ *
  * Revision 1.21  2005/03/18 13:03:21  trq
  * Load redshift info if needed.
  *
@@ -146,6 +150,8 @@ vista(job)
     double pixel ;
     double low ;
     double high ;
+    double pixmax;
+    double pixmin;
     double c1 ;
     double c2 ;
     double rsz ;
@@ -184,9 +190,6 @@ vista(job)
     if(!ikernel_loaded){
 	ikernel_load() ;
     }
-    if (!redshift_loaded ){
-	load_redshift();
-    }
     if (!current_project){
 	dv1_x = -INTMAX ;
 	dv1_y = -INTMAX ;
@@ -198,6 +201,9 @@ vista(job)
     }
 	if ((num_read = sscanf(job,"%s %s %lf %lf %s %d %lf %lf",command,type,
 		&low, &high,name, &vista_size, &vel_min, &vel_max)) >= 6) {
+	      if (!redshift_loaded ){
+		  load_redshift();
+	      }
 	      size_pixel = (dv2_x - dv1_x) / scaling / (double)vista_size ;
 	      size_pixel_2 = size_pixel*size_pixel ;
 	      xmin = dv1_x / scaling ;
@@ -262,6 +268,10 @@ vista(job)
 	      else if(strcmp(type,"hneutral") == 0 ||
 		    strcmp(type,"hneut") == 0){
 		  vista_type = HNEUT ;
+	      }
+	      else if(strcmp(type,"hneutralvel") == 0 ||
+		    strcmp(type,"hneutv") == 0){
+		  vista_type = HNEUT_VEL ;
 	      }
 	      else if(strcmp(type,"heI") == 0){
 		  vista_type = HEI ;
@@ -438,7 +448,8 @@ vista(job)
                 t_upper = e_upper*(1 + redshift)*1.6e-9/KBOLTZ ;
 	    }
 	    else if(vista_type == HNEUT || vista_type == HEI || 
-		    vista_type == HEII || vista_type == SZ){
+		    vista_type == HEII || vista_type == SZ ||
+		    vista_type == HNEUT_VEL){
 		autolim = NO ;
 		if(num_read != 8){
 		    vel_min = -HUGE ;
@@ -452,7 +463,7 @@ vista(job)
 			(MSOLG/(KPCCM*KPCCM*MHYDR)) ;
 		rsys = cosmof*kpcunit/1.e3 ;
 		vsys = cosmof*sqrt(msolunit/kpcunit*(GCGS*MSOLG/KPCCM))/1.e5 ;
-		if(vista_type == HNEUT){
+		if(vista_type == HNEUT || vista_type == HNEUT_VEL){
 		    c1 = msys*fhydrogen ;
 		}
 		else if(vista_type == HEI || vista_type == HEII){
@@ -476,12 +487,20 @@ vista(job)
 		    vista_type == HNEUT || vista_type == HEI ||
 		    vista_type == HEII || vista_type == SZ ||
 		    vista_type == VALL || vista_type == LYA ||
-		    vista_type == ARRAY){
+		    vista_type == ARRAY || vista_type == HNEUT_VEL){
 		if(vista_type == LYA || vista_type == COOL){
 		    c1 = cosmof3*kpcunit*kpcunit*kpcunit*KPCCM*KPCCM*KPCCM ;
 		}
+		if(balls_loaded != GAS) {
+		    calc_balls(&box0_smx, 0, 1 , 0);
+		    balls_loaded = GAS;
+		}
 		for (i = 0 ;i < boxlist[active_box].ngas ;i++) {
+		    int gpi;
+		    
 		    gp = boxlist[active_box].gp[i] ;
+		    gpi = boxlist[active_box].gpi[i] ;
+		    hsmooth = sqrt(box0_smx->kd->p[gpi].fBall2)/2.0;
 		    if(vista_type != XRAY || (gp->temp) > 30000.){
 			if(vista_type == XRAY){
 			    lum_xray = xray_const*sqrt(gp->temp)*
@@ -522,17 +541,18 @@ vista(job)
 					   - boxes[active_box].center[j]) ;
 				    }
 				}
-				if(part_pos[0]-2.*(gp->hsmooth) > xmax)
+				if(part_pos[0]-2.*(hsmooth) > xmax)
 				    continue ;
-				if(part_pos[0]+2.*(gp->hsmooth) < xmin)
+				if(part_pos[0]+2.*(hsmooth) < xmin)
 				    continue ;
-				if(part_pos[1]-2.*(gp->hsmooth) > ymax)
+				if(part_pos[1]-2.*(hsmooth) > ymax)
 				    continue ;
-				if(part_pos[1]+2.*(gp->hsmooth) < ymin)
+				if(part_pos[1]+2.*(hsmooth) < ymin)
 				    continue ;
 				if(((vista_type == HNEUT || vista_type == HEI ||
-					vista_type == HEII) && autolim == NO) ||
-					vista_type == SZ){
+				     vista_type == HEII) && autolim == NO)
+				   || vista_type == HNEUT_VEL
+				   || vista_type == SZ){
 				    for (vz = 0.0,j = 0;j < header.ndim ;j++) {
 					vz += rot_matrix[2][j] * (gp->vel[j]) ;
 				    }
@@ -544,19 +564,23 @@ vista(job)
 				}
 				if((!periodic && ((vista_type != HNEUT &&
 					vista_type != HEI && vista_type != HEII
-					&& vista_type != SZ) || autolim == YES))
+					&& vista_type != SZ
+				        && vista_type != HNEUT_VEL)
+					|| autolim == YES))
 					|| (periodic && ((vista_type != HNEUT &&
 					vista_type != HEI && vista_type != HEII
-					&& vista_type != SZ)
+					&& vista_type != SZ
+					&& vista_type != HNEUT_VEL)
 					|| autolim == YES) &&
 					(part_pos[2]< period_size/2.&&
 					part_pos[2] >= -period_size/2.))
 					|| ((vista_type == HNEUT ||
 					vista_type == HEI || vista_type == HEII
-					|| vista_type == SZ) && autolim == NO
+					|| vista_type == SZ
+					|| vista_type == HNEUT_VEL)
+					&& autolim == NO
 					&& vz + v_hubble >= vel_min &&
 					vz + v_hubble <= vel_max)) {
-				hsmooth = gp->hsmooth ;
 				if(vista_type == XRAY){
 				    delta_d = lum_xray ;
 				}
@@ -567,6 +591,10 @@ vista(job)
 				    delta_d = starform[gp-gas_particles] ;
 				}
 				else if(vista_type == HNEUT){
+				    delta_d = c1*hneutral[gp-gas_particles]*
+					(gp->mass);
+				}
+				else if(vista_type == HNEUT_VEL){
 				    delta_d = c1*hneutral[gp-gas_particles]*
 					(gp->mass);
 				}
@@ -593,7 +621,7 @@ vista(job)
 				}
 				else if(vista_type == JEANS){
 				    c1_i = sqrt(meanmwt[gp-gas_particles])*c1 ;
-				    delta_q = gp->mass * gp->hsmooth*c1_i*
+				    delta_q = gp->mass * hsmooth*c1_i*
 					sqrt(gp->rho / gp->temp);
 				}
 				else if(vista_type == HNEUT){
@@ -601,6 +629,10 @@ vista(job)
 					hneutral[gp-gas_particles]*(gp->mass);
 				    delta_q2 = c1*hneutral[gp-gas_particles]*
 					(gp->mass)*(gp->temp);
+				}
+				else if(vista_type == HNEUT_VEL){
+				    delta_q = c1*hneutral[gp-gas_particles]*
+					vz*(gp->mass);
 				}
 				else if(vista_type == SZ){
 				    electron = (1. - 
@@ -650,6 +682,7 @@ vista(job)
 						vista_type == PRESS ||
 						vista_type == JEANS ||
 						vista_type == HNEUT
+					       || vista_type == HNEUT_VEL
 						|| vista_type == SZ){
 					    	quantity[kx][ky]
 						    += (float)(kernel*delta_q) ;
@@ -674,6 +707,7 @@ vista(job)
 					    vista_type == PRESS ||
 					    vista_type == JEANS ||
 					    vista_type == HNEUT
+					    || vista_type == HNEUT_VEL
 					    || vista_type == SZ){
 					    quantity[kx][ky] += (float) delta_q ;
 					}
@@ -691,7 +725,7 @@ vista(job)
 		    }
 		}
 		if(vista_type != RHO && vista_type != XRAY &&
-			 vista_type != HNEUT && vista_type != HEI &&
+		         vista_type != HNEUT && vista_type != HEI &&
 			 vista_type != HEII && vista_type != SZ &&
 		         vista_type != VALL && vista_type != COOL &&
 			 vista_type != LYA  && vista_type != FSTAR &&
@@ -920,14 +954,23 @@ vista(job)
 		    }
 		}
 	    }
+	    pixmax = -HUGE;
+	    pixmin = HUGE;
 	    for(i = 0; i < vista_size; i++){
 		for(j = 0; j < vista_size; j++){
-		    if(density[i][j] > 0. ){
+		    if(density[i][j] > 0. || vista_type == HNEUT_VEL){
 			if(vista_type != TEMP && vista_type != PRESS &&
+			   vista_type != HNEUT_VEL &&
 				vista_type != COOL && vista_type != JEANS &&
 				vista_type != TDRHO && vista_type != FSTAR &&
 				vista_type != XRAY && vista_type != LYA) {
 			    pixel = log10((double)(density[i][j])/size_pixel_2);
+			}
+			/* first moment of velocity could be positive
+			 * or negative => don't take the log().
+			 */
+			else if(vista_type == HNEUT_VEL) {
+			    pixel = (double)(density[i][j]);
 			}
 			else{
 			    pixel = log10((double)(density[i][j]));
@@ -940,11 +983,14 @@ vista(job)
 		    else{
 			pixel = low ;
 		    }
+		    if(pixel > pixmax) pixmax = pixel;
+		    if(pixel < pixmin) pixmin = pixel;
 		    if(pixel > high)pixel = high ;
 		    if(pixel < low)pixel = low ;
 		    density[i][j] = (float)pixel ;
 		}
 	    }
+	    printf("Pixel extremes: %g %g\n", pixmin, pixmax);
 	    if(vista_type != SZ){
 		fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name) ;
