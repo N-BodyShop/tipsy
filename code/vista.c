@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.24  2007/08/03 18:08:11  trq
+ * Fixed bug in 2nd moment calculation; added diagnostic prints.
+ *
  * Revision 1.23  2007/08/02 22:55:11  trq
  * Added v^2 map to HNEUT_VEL.
  *
@@ -1040,7 +1043,7 @@ vista(job)
 	    
 	    for(i = 0; i < vista_size; i++){
 		for(j = 0; j < vista_size; j++){
-		    if(density[i][j] > 0. || vista_type == HNEUT_VEL){
+		    if(density[i][j] > 0. && vista_type == HNEUT_VEL){
 			if(vista_type != TEMP && vista_type != PRESS &&
 				vista_type != COOL && vista_type != JEANS &&
 				vista_type != TDRHO && vista_type != FSTAR &&
@@ -1067,7 +1070,7 @@ vista(job)
 			if(quantity[i][j] < hneut_velmin) hneut_velmin = quantity[i][j];
 			if(quantity[i][j] > hneut_velmax) hneut_velmax = quantity[i][j];
 			if(quantity2[i][j] > hneut_vel2max)
-			    hneut_vel2max = quantity[i][j];
+			    hneut_vel2max = quantity2[i][j];
 			}
 		    
 		    /* determine extremes and perform clipping */
@@ -1127,6 +1130,8 @@ vista(job)
 			size_pixel,low,high,name1) ;
             }
 	    if(vista_type == HNEUT_VEL){
+	      printf("velmin: %g, velmax: %g, vel2max: %g \n", 
+		     hneut_velmin, hneut_velmax, hneut_vel2max);
                 sprintf(name1,"%s.v1",name) ;
 		fits(quantity,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,hneut_velmin,hneut_velmax,name1) ;
