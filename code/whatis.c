@@ -15,9 +15,9 @@ whatis(job)
     }
     else{
 #ifdef ultrix
-	sprintf(sys_command,"man -P $TIPSYHELPDIR -f %s",command) ;
+	sprintf(sys_command,"man -P \"$TIPSYHELPDIR\" -f %s",command) ;
 #else
-	sprintf(sys_command,"man -M $TIPSYHELPDIR -f %s",command) ;
+	sprintf(sys_command,"man -M \"$TIPSYHELPDIR\" -f %s",command) ;
 #endif
     }
     system(sys_command) ;

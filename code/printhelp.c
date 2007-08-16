@@ -9,14 +9,14 @@ printhelp(job)
 
     number = (sscanf(job,"%s %s",arg,command)) ;
     if(number == 1){
-	sprintf(sys_command,"lpr $TIPSYHELPDIR/fmt1/tipsy.ps") ;
+	sprintf(sys_command,"lpr \"$TIPSYHELPDIR\"/fmt1/tipsy.ps") ;
     }
     else{
       if(strcmp(command, "all") == 0) {
-	sprintf(sys_command,"lpr $TIPSYHELPDIR/fmt1/*.ps") ;
+	sprintf(sys_command,"lpr \"$TIPSYHELPDIR\"/fmt1/*.ps") ;
       }
       else {
-	sprintf(sys_command,"lpr $TIPSYHELPDIR/fmt1/%s.ps", command) ;
+	sprintf(sys_command,"lpr \"$TIPSYHELPDIR\"/fmt1/%s.ps", command) ;
       }
     }
     system(sys_command) ;
