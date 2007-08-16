@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.9  2007/08/16 16:56:26  trq
+ * Tristen's update to use the mouse scroll wheel for zooming.
+ *
  * Revision 1.8  2006/06/03 22:18:34  trq
  * Fixed scroll bar lengths.
  *
@@ -144,6 +147,8 @@ static String fallback_resources[] = {
 };
 
 static void RedrawViewport();
+static void WheelZoomIn();
+static void WheelZoomOut();
 static void ZoomIn();
 static void ZoomOut();
 static void Pan();
@@ -165,6 +170,8 @@ static char vpTranslations[] =
    None <Btn1Down>:	ZoomIn() \n\
    None <Btn2Down>:	ZoomOut() \n\
    None <Btn3Down>:	Pan() \n\
+   None <Btn4Down>:	WheelZoomIn() \n\
+   None <Btn5Down>:	WheelZoomOut() \n\
    ! Shift <Btn1Down>:	SetBox() \n\
    <MotionNotify>:	DrawBox()";
 
@@ -182,6 +189,8 @@ static XtActionsRec actionTable[] =
   {"canvas_resize_proc", canvas_resize_proc},
   {"ZoomIn", ZoomIn},
   {"ZoomOut", ZoomOut},
+  {"WheelZoomIn", WheelZoomIn},
+  {"WheelZoomOut", WheelZoomOut},
   {"Pan", Pan},
   {"SetBox", SetBox},
   {"DrawBox", DrawBox},
@@ -715,6 +724,101 @@ static void ExtractPosition( event, x, y )
                 *x = 0; *y = 0;
     }
 }
+
+
+
+static void WheelZoomIn(viewport, event, params, n_params)
+     Widget viewport;
+     XEvent *event;
+     String *params;
+     Cardinal *n_params;
+{
+  Position x, y;
+  
+  if(XtWindow(viewport) != currentview_xid) return;
+  
+  if(!current_project || !current_color) 
+    {
+      printf("<plot does not represent the present internal state") ;
+      printf(", %s>\n",title) ;
+      return;
+    }
+
+  /* 
+     currently, the ZoomIn function is linked to the left mouse button.
+     When the ruler function is invoked, this context changes the function
+     of the left click. Here ZoomIn handles the left click for ruler, and 
+     sets ruler_flag = 0 to break the event loop. There should be a 
+     better way to do this. same goes for make_box. -TJH
+     
+  */
+
+   if(ruler_flag == 1 || ruler_flag == 2) {
+      ExtractPosition(event, &x, &y);
+      ruler_x = x;
+      ruler_y = y;
+      ruler_flag = 0;
+      return;
+   }
+
+    if(make_box_flag != 2 && make_box_flag != 3 &&
+	    make_box_flag != 6 && make_box_flag != 7){
+      // ExtractPosition(event, &x, &y);
+
+	if (view_size == INTMAX ) {
+	    view_size = (view_size + 1) / ZOOMSCALE ;
+	}
+	else {
+	    view_size /= ZOOMSCALE ;
+	}
+        zoom_factor = (double) INTMAX / (double) view_size;
+        reset_zoom_scroll();
+	// zoom_window((int)x,(int)y) ;
+        zoom_window(can_width/2, can_height/2);
+	plot_sub(NULL) ;
+        draw_label();
+	if(make_box_flag == 5){
+	    make_box_flag = 4 ;
+	}
+   }
+  
+}
+
+static void WheelZoomOut(viewport, event, params, n_params)
+     Widget viewport;
+     XEvent *event;
+     String *params;
+     Cardinal *n_params;
+{
+  Position x, y;
+
+  if(XtWindow(viewport) != currentview_xid) return;
+
+  if(!current_project || !current_color) 
+    {
+      printf("<plot does not represent the present internal state") ;
+      printf(", %s>\n",title) ;
+      return;
+    }
+   if(ruler_flag == 1 || ruler_flag == 2)
+       return;
+    if (view_size < INTMAX && make_box_flag != 2 &&
+	    make_box_flag != 3 && make_box_flag != 6 &&
+	    make_box_flag != 7) {
+      // ExtractPosition(event, &x, &y);
+	view_size = min((ZOOMSCALE * view_size),INTMAX) ;
+        zoom_factor = (double) INTMAX / (double) view_size;
+        reset_zoom_scroll();
+	// zoom_window((int) x,(int) y) ;
+        zoom_window(can_width/2, can_height/2);
+	plot_sub(NULL) ;
+        draw_label();
+	if(make_box_flag == 5){
+	    make_box_flag = 4 ;
+	}
+    }
+}
+
 
 static void
 ZoomIn(viewport, event, params, n_params)
