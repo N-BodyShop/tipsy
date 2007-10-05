@@ -1,5 +1,18 @@
 /* $Header$
  * $Log$
+ * Revision 1.25  2007/10/05 19:11:08  trq
+ * Adrienne Stilp:
+ *
+ * Added "cube" command to produce velocity cubes for HI. (cube.c, comm.h,
+ * arguments.c, Makefile.in)
+ *
+ * fits.c:  added comments and fits3d subroutine.
+ *
+ * neutral.c: added option to read in ionization fractions from gasoline
+ * outputs.
+ *
+ * vista.c: automatically add "fits" to file names if not present.
+ *
  * Revision 1.24  2007/08/03 18:08:11  trq
  * Fixed bug in 2nd moment calculation; added diagnostic prints.
  *
@@ -154,6 +167,8 @@ vista(job)
     int vista_type ;
     char name[100] ;
     char name1[100] ;
+    char base[100];              /* Holds filename (without .fits) */
+    int nameLength;
     double pixel ;
     double low ;
     double high ;
@@ -217,6 +232,29 @@ vista(job)
 	      if (!redshift_loaded ){
 		  load_redshift();
 	      }
+
+
+
+	      /* 
+	       * Remove ".fits" if given.. will be appended later.
+	       */
+	      nameLength = strlen(name);
+	      if (nameLength > 5) {
+		if (name[nameLength-5] == '.' && name[nameLength-4] == 'f' && 
+		    name[nameLength-3] == 'i' && name[nameLength-2] == 't' &&
+		    name[nameLength-1] == 's') {
+		  strncpy(base,name,nameLength-6);
+		  base[nameLength-5] = '\0';
+		}
+		else {
+		  strcpy(base, name);
+		}
+	      }
+	      else {
+		strcpy(base, name);
+	      }
+	      printf("%s\n", base);
+
 	      size_pixel = (dv2_x - dv1_x) / scaling / (double)vista_size ;
 	      size_pixel_2 = size_pixel*size_pixel ;
 	      xmin = dv1_x / scaling ;
@@ -1041,9 +1079,11 @@ vista(job)
 	    hneut_velmax = -HUGE;
 	    hneut_vel2max = 0.0;
 	    
+
+
 	    for(i = 0; i < vista_size; i++){
 		for(j = 0; j < vista_size; j++){
-		    if(density[i][j] > 0. && vista_type == HNEUT_VEL){
+		  if(density[i][j] > 0. && vista_type == HNEUT_VEL){
 			if(vista_type != TEMP && vista_type != PRESS &&
 				vista_type != COOL && vista_type != JEANS &&
 				vista_type != TDRHO && vista_type != FSTAR &&
@@ -1079,15 +1119,18 @@ vista(job)
 		    if(pixel > high)pixel = high ;
 		    if(pixel < low)pixel = low ;
 		    density[i][j] = (float)pixel ;
+
 		}
 	    }
 	    printf("Pixel extremes: %g %g\n", pixmin, pixmax);
 	    if(vista_type != SZ){
+	      strcpy(name,base);
+	      strcat(name,".fits");
 		fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name) ;
 	    }
 	    else{
-                sprintf(name1,"%s.th",name) ;
+                sprintf(name1,"%s.th.fits",base) ;
 		fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name1) ;
 	    }
@@ -1107,10 +1150,10 @@ vista(job)
 			quantity[i][j] = (float)pixel ;
 		    }
 		}
-                sprintf(name1,"%s.frac",name) ;
+                sprintf(name1,"%s.frac.fits",base) ;
 		fits(quantity,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name1) ;
-                sprintf(name1,"%s.temp",name) ;
+                sprintf(name1,"%s.temp.fits",base) ;
                 low = 0.0 ;
                 high = 10.0 ;
 		for(i = 0; i < vista_size; i++){
@@ -1132,13 +1175,13 @@ vista(job)
 	    if(vista_type == HNEUT_VEL){
 	      printf("velmin: %g, velmax: %g, vel2max: %g \n", 
 		     hneut_velmin, hneut_velmax, hneut_vel2max);
-                sprintf(name1,"%s.v1",name) ;
+                sprintf(name1,"%s.mom1.fits",base) ;
 		fits(quantity,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,hneut_velmin,hneut_velmax,name1) ;
                 low = 0.0 ;
-                sprintf(name1,"%s.v2",name) ;
+                sprintf(name1,"%s.mom2.fits",base) ;
 		fits(quantity2,vista_size,vista_size,xmin,ymin,size_pixel,
-			size_pixel,low,hneut_vel2max,name1) ;
+		     size_pixel,low,hneut_vel2max,name1) ;
             }
 	    if(vista_type == SZ){
 		for(i = 0; i < vista_size; i++){
@@ -1162,12 +1205,12 @@ vista(job)
 			quantity[i][j] = (float)pixel ;
 		    }
 		}
-                sprintf(name1,"%s.kin",name) ;
+                sprintf(name1,"%s.kin.fits",base) ;
 		fits(quantity,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name1) ;
                 low = -2.0 ;
                 high = 2.0 ;
-                sprintf(name1,"%s.sgn",name) ;
+                sprintf(name1,"%s.sgn.fits",base) ;
 		fits(density,vista_size,vista_size,xmin,ymin,size_pixel,
 			size_pixel,low,high,name1) ;
 	    }

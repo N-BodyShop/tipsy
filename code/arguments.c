@@ -1,5 +1,18 @@
 /* $Header$
  * $Log$
+ * Revision 1.30  2007/10/05 19:11:08  trq
+ * Adrienne Stilp:
+ *
+ * Added "cube" command to produce velocity cubes for HI. (cube.c, comm.h,
+ * arguments.c, Makefile.in)
+ *
+ * fits.c:  added comments and fits3d subroutine.
+ *
+ * neutral.c: added option to read in ionization fractions from gasoline
+ * outputs.
+ *
+ * vista.c: automatically add "fits" to file names if not present.
+ *
  * Revision 1.29  2006/08/16 20:23:02  trq
  * New command from Ryan William Maas: arraymoments: finds shapes of shells
  * based on array values.
@@ -227,6 +240,9 @@ arguments(job)
     }
     else if ( strcmp(command,"coolout") == 0 ) {
 	printf("coolout box filename\n") ;
+    }
+    else if (strcmp(command, "cube") == 0 ){
+      printf("cube type filename size velmin velmax deltavel\n");
     }
     else if ( strcmp(command,"deletemacro") == 0 ||
 	    strcmp(command,"dmac") == 0 ) {
