@@ -1,6 +1,12 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.9  2007/10/22 20:06:02  stinson
+ * Added "standard" option to readbinarray since the automatic xdr format
+ * detection doesn't always work.
+ *
+ * s, std, or standard are the possible options.
+ *
  * Revision 1.8  2007/06/09 00:11:25  stinson
  * Added support for standard formatted binary arrays.  Guesses based on
  * if first read of nbodies is <= 0 or > 10 million.
@@ -178,17 +184,20 @@ readbinarray(job)
   char command[MAXCOMM] ;
   char filename[MAXCOMM] ;
   char type[MAXCOMM] ;
+  char achStandard[MAXCOMM] ;
   double power;
   Real tmp;
   FILE *infile;
   XDR xdrs;
   int i;
-  int count;
+  int count, num_read;
   int nbodies;
   int btype;
-  int check, bStandard;
+  int check, bStandard=0;
 
-  if (sscanf(job,"%s %s %s",command,filename, type) == 3) {
+  if ((num_read = sscanf(job,"%s %s %s %s",command,filename, 
+			 type,achStandard)) >= 3) 
+    {
       if(!strcmp(type, "int")) {
 	  btype = 0;
       }
@@ -201,7 +210,12 @@ readbinarray(job)
       else {
 	  input_error(command) ;
       }
-      
+      if (num_read == 4) {
+	if(!strcmp(achStandard, "standard") || 
+	   !strcmp(achStandard, "std") || 
+	   !strcmp(achStandard, "s")) 
+	  bStandard = 1;
+      }
 	  
     infile = fopen(filename, "r");
     if(infile == NULL)
@@ -214,7 +228,7 @@ readbinarray(job)
 	    printf("<Sorry %s, file format is wrong>\n",title);
 	    fclose(infile);
 	    return;
-	} else if(nbodies <= 0 || nbodies > 10000000){
+	} else if(nbodies <= 0 || nbodies > 10000000 || bStandard == 1){
            fseek(infile,0,SEEK_SET);
            xdrstdio_create(&xdrs,infile,XDR_DECODE);
            xdr_int(&xdrs,&nbodies);
