@@ -88,16 +88,30 @@ cube(job)
 			 &xy_size, &vel_min, &vel_max, &dvel)
                          >=7)){
 
-    printf("%s\n", type);
     /* make sure input is okay */
-    if (strcmp(type, "star") == 0 || strcmp(type, "s") == 0) {
-      cube_type = STAR;
+    if (strncmp(type, "star", 4) == 0) {
+      if (strlen(type) == 5) {
+	if (type[4] == 'u') {
+	  color_filter = UBAND;
+	}
+	if (type[4] == 'b') {
+	  color_filter = BBAND;
+	}
+	if (type[4] == 'v') {
+	  color_filter = VBAND;
+	}
+	cube_type = STAR;
+      }
+      else {
+	  printf("<incorrect star type: staru, starb, starv, or gas>\n");
+	  return;
+	}
     }
     else if (strcmp(type, "gas") == 0 || strcmp(type, "g") == 0) {
       cube_type = GAS;
     }
     else {
-      printf("<type must be star or gas>\n");
+      printf("<type must be staru, starb, starv, or gas>\n");
       return;
     }
 
@@ -224,6 +238,7 @@ cube(job)
       }
       
       /* loop over particles */
+      printf("<Placing particles, %s>\n", title);
       for (i = 0; i < boxlist[active_box].ngas; i++) {
 	int gpi;
 	
@@ -356,7 +371,7 @@ cube(job)
       /* loop over particles */
       for (i = 0; i < boxlist[active_box].nstar; i++) {
 	int spi;
-	
+
 	sp = boxlist[active_box].sp[i];
 	spi = boxlist[active_box].spi[i] ;
 	hsmooth = sqrt(box0_smx->kd->p[spi].fBall2)/2.0;
@@ -405,7 +420,7 @@ cube(job)
 		
 		/* put it in its pixel(s). */
 		if (vindex >= 0 && vindex < nChannels) {
-		  delta_d = c1 * (sp->mass);
+		  delta_d = star_lum(sp->mass, sp->tform);
 		  
 		  if (hsmooth > size_pixel){
 		    /* need to loop over surrounding
@@ -472,9 +487,8 @@ cube(job)
     for (i = 0; i < nChannels; i++) {
       for (j = 0; j < xy_size; j++) {
 	for (k = 0; k < xy_size; k++) {
-	  if (density[i][j][k] > 0) {
-	    /*	    pixel = log10((double)(density[i][j][k]));*/
-	    pixel = density[i][j][k];
+	  if (density[i][j][k] > 0.0) {
+	    pixel = log10((double)(density[i][j][k]));
 	    if (pixel < 0) {
 	      pixel = 0.0;
 	    }
@@ -494,8 +508,9 @@ cube(job)
     }
 
     printf("Max: %lf\nMin: %lf\n", pixmax, pixmin);
-    fits3d(density, xy_size, xy_size, nChannels, xmin, ymin, vmin, size_pixel,
-	   size_pixel, dvel, pixmin, pixmax, name);
+    fits3d(density, xy_size, xy_size, nChannels, xmin * kpcunit, 
+	   ymin * kpcunit, vmin, size_pixel * kpcunit,
+	   size_pixel * kpcunit, dvel, pixmin, pixmax, name);
 
     /* write to fits file */
 
@@ -513,34 +528,66 @@ cube(job)
 }
 
 /*
+ * This is the OLD linear searcher.
+ *
+ * Searches through the velocity reference array to find what channel a
+ * given pixel belongs to.
+ *
+ * Returns -1 if the particle is outside the given velocity range.
+ */
+/*
+int getVelocityChannel(double velocity, double *vel_ref, double dvel, int nChannels) {
+  int found;
+  int i;
+
+
+  if ((velocity < vel_ref[0]) || (velocity > vel_ref[nChannels-1] + dvel/2.0)){
+    return -1;
+  }
+
+
+  found = 0;
+  i = 0; 
+  while (!found || i < nChannels) {
+     
+    if (velocity < (vel_ref[i] + dvel / 2.0)) { 
+      return i; 
+    } 
+    i++;
+  }
+
+}
+*/
+
+
+/*
+ * Here's a new binary searcher!
+ *
  * Searches through the velocity reference array to find what channel a
  * given pixel belongs to.
  *
  * Returns -1 if the particle is outside the given velocity range.
  */
 int getVelocityChannel(double velocity, double *vel_ref, double dvel, int nChannels) {
-  int found;
-  int i;
 
-  /* make sure it isn't out of bounds. */
-  if ((velocity < vel_ref[0]) || (velocity > vel_ref[nChannels-1] + dvel/2.0)){
-    /*    printf("out of bounds: %f\n", velocity); */
+  double dv = dvel / 2.0;
+
+  int low = 0;
+  int high = nChannels - 1;
+
+  int mid = 0;
+
+  if ((velocity < vel_ref[0]) || (velocity > vel_ref[high]))
     return -1;
-  }
 
-  /* otherwise search. */
-  found = 0;
-  i = 0;
-  while (!found || i < nChannels) {
-    
-    if (velocity < (vel_ref[i] + dvel / 2.0)) {
-      /*
-      printf("channel %f: %f < %f < %f\n", vel_ref[i], vel_ref[i] - dvel / 2.0, velocity,
-	     vel_ref[i] + dvel / 2.0);
-      */
-      return i;
-    }
-    i++;
-  }
+  while (low <= high) {
+    mid = (low + high) / 2;
 
+    if ((velocity > vel_ref[mid] - dv) && (velocity < vel_ref[mid] + dv))
+      return mid;
+    else if (vel_ref[mid] < velocity)
+      low = mid + 1;
+    else if (vel_ref[mid] > velocity)
+      high = mid - 1;
+  }
 }
