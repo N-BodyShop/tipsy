@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.10  2007/11/08 17:59:43  adrienne
+ * Removed a debugging print statement I'd accidentally left in.
+ *
  * Revision 1.9  2007/10/22 20:06:02  stinson
  * Added "standard" option to readbinarray since the automatic xdr format
  * detection doesn't always work.
@@ -224,6 +227,8 @@ readbinarray(job)
 	return;
       }
 	count=fread(&nbodies, sizeof(int), 1, infile) ;
+	printf,(nbodies);
+
 	if ( (count == EOF) || (count==0) ){
 	    printf("<Sorry %s, file format is wrong>\n",title);
 	    fclose(infile);
@@ -315,4 +320,5 @@ readbinarray(job)
     else {
 	input_error(command) ;
     }
+
 }
