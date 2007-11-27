@@ -224,17 +224,18 @@ fits3d(data,xsize,ysize,vsize,xmin,ymin,vmin,deltax,deltay,deltav,zmin,zmax,
 	 * if the data value = bzero. Added +1 in parentheses because
 	 * max value was getting set to "blank". This fixes it.
 	 */
-	bzero = (zmax + zmin + 1)/2.0 ;
-	bscale = (zmax - zmin + 1)/65535.0;
-
+	
+ 	bzero = (zmax + zmin + 1)/2.0 ;
+ 	bscale = (zmax - zmin + 1)/65535.0;
+	
 	for(i=0;i<xsize*ysize*vsize;i++) page[i] = BLANK ;
 
 	for (i=0; i < vsize; i++) {
 	  for (j=0; j < xsize; j++) {
 	    for (k=0; k < ysize; k++) {
 	      page[j + k * xsize + i * xsize * ysize] =
-		(short)max(floor(0.5 + ((double)data[i][j][k] - bzero) /
-				 bscale),BLANK);
+		(short)max(floor(((double)data[i][j][k] - bzero) /
+			       bscale),BLANK);
 
 	    }
 	  }
@@ -270,6 +271,7 @@ fits3d(data,xsize,ysize,vsize,xmin,ymin,vmin,deltax,deltay,deltav,zmin,zmax,
 	
 
 }
+
 
 
 void hdrwrite3d(fp,datamax,datamin,bscale,bzero,xsize,ysize,vsize,xmin,ymin,vmin,deltax,deltay,deltav)
@@ -320,14 +322,14 @@ int xsize,ysize,vsize ;
 	cardwrite(fp,"CRPIX3",dum) ; /*velocity*/
 
 
-	cardwrite(fp,"BLANK","BLANK") ;
-
+	cardwrite(fp,"BLANK", "-32768" ) ;
+	
 	sprintf(dum,"%lf",bscale) ;
 	cardwrite(fp,"BSCALE",dum) ;
-
+	
 	sprintf(dum,"%lf",bzero) ;
 	cardwrite(fp,"BZERO",dum) ;
-
+	
 	cardwrite(fp,"BUNIT","'solMass'");
 
 	sprintf(dum,"%lf",datamax) ;
@@ -339,7 +341,7 @@ int xsize,ysize,vsize ;
 	cardwrite(fp,"END","") ;
 
 	/* fill out header block with blanks */
-	for(i=0;i<8;i++) cardwrite(fp,"DUMMY",dum) ;
+	for(i=0;i<8 ;i++) cardwrite(fp,"DUMMY",dum) ;
 
 
 }
