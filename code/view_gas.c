@@ -1,6 +1,10 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.8  2007/11/27 22:46:58  adrienne
+ * Added a metals option to display gas particle metallicity, e.g. viewgas
+ * metals 0 0.01.
+ *
  * Revision 1.7  2001/07/11 19:45:53  nsk
  *       Fixed bugs with array sizes for meanmwt, cooling, and starformation.
  *       Used to be only for active box now for all of box zero.
@@ -695,6 +699,17 @@ view_gas(job)
 		    particle_color[i] = (int)(color_slope *
 				tcool + color_offset +0.5) ;
 		}
+	    }
+	    else if ( strcmp(type, "metals") == 0) {
+	      
+	      for (i = 0; i < boxlist[active_box].ngas; i++) {
+		double z;
+		gp = boxlist[active_box].gp[i];
+		z = gp->metals;
+		
+		particle_color[i] = (int)(color_slope *
+					  z + color_offset + 0.5);
+	      }
 	    }
 	    
 	    else if ( strcmp(type,"mfrac") == 0 ){
