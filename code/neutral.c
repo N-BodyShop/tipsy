@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.9  2007/11/27 22:58:34  adrienne
+ * Changed some syntax when tipsy prompts you for finding the neutral
+ * fraction.
+ *
  * Revision 1.8  2007/10/05 19:11:08  trq
  * Adrienne Stilp:
  *
@@ -72,9 +76,9 @@ hneutral_func()
       */
       printf("<enter \"binary <filename> <type>\" without .HI extension ");
       printf("for binary arrays>\n") ;
-      printf("<   or \"ascii <filename>\" without .HI extension ");
+      printf("<or \"ascii <filename>\" without .HI extension ");
       printf("for ascii arrays>\n");
-      printf("<   or enter \"calc\" to calculate neutral fraction ");
+      printf("<or enter \"calc\" to calculate neutral fraction ");
       printf("from uv field>\n") ;
 
       input = my_gets(" ");
