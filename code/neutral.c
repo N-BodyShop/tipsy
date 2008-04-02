@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.10  2008/04/02 22:10:52  adrienne
+ * Can now give the .HI file as filename.HI or just filename when reading in
+ * the gasoline output file.
+ *
  * Revision 1.9  2007/11/27 22:58:34  adrienne
  * Changed some syntax when tipsy prompts you for finding the neutral
  * fraction.
@@ -68,18 +72,16 @@ hneutral_func()
     char ion[MAXCOMM];
     char ionFile[MAXCOMM] = "junk ";
     double *dummyptr;
+    char *extension;
 
     forever {
       /*
        * get either a filename (for .HI, .HeI, .HeII output from gasoline)
        * or calculate from uv field.
       */
-      printf("<enter \"binary <filename> <type>\" without .HI extension ");
-      printf("for binary arrays>\n") ;
-      printf("<or \"ascii <filename>\" without .HI extension ");
-      printf("for ascii arrays>\n");
-      printf("<or enter \"calc\" to calculate neutral fraction ");
-      printf("from uv field>\n") ;
+      printf("<enter \"binary <filename> <type>\" for binary arrays>\n");
+      printf("<   or \"ascii <filename>\" for ascii arrays>\n");
+      printf("<   or enter \"calc\" to calculate from uv field>\n ");
 
       input = my_gets(" ");
 
@@ -143,10 +145,21 @@ hneutral_func()
 	heII = NULL;
       }
 
+      /* remove .HI extension of person included it */
+      extension = strstr(file, ".HI");
+      if (extension != NULL) {
+	strncpy(extension, "", 1);
+      }
+
 
       for (i = 0; i < 3; i++) {
 
-	char ionFile[MAXCOMM] = "junk ";
+	/* 
+	   must pass something of the format "%s %s %s" to readbinarray,
+	   where the second %s is the filename and the third is the type
+	   (ie binary or float) 
+	*/
+	char ionFile[MAXCOMM] = "readarrayNeedsMe ";
 	strcat(ionFile, file);
 
 	/* figure out which file it is.. */
