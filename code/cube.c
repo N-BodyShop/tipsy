@@ -228,7 +228,10 @@ cube(job)
       }
 
       /* determine constants */
-      c1 = msys * fhydrogen;
+      /* The commented line is making all masses off
+	 by 0.75 percent.. I think. */
+      /* c1 = msys * fhydrogen; */
+      c1 = msys;
 
 
       /* calculate smoothing length */
