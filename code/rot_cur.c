@@ -99,6 +99,7 @@ void rot_cur(job)
 		setvec(center,boxes[center_box].total_com) ;
 		setvec(center_angular_mom,boxes[box].total_angular_mom) ;
 	    }
+	    norm = sqrt(dot_product(center_angular_mom,center_angular_mom)) ;
 	    for(i = 0; i < MAXDIM ; i++){
 		center_angular_mom[i] /= norm ;
 	    }
