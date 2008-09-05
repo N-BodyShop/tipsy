@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.6  2008/09/05 00:05:06  trq
+ * Changed "values.h" to "float.h" so that it will compile on a MAC.
+ *
  * Revision 1.5  2007/01/14 19:43:22  trq
  * 1) load redshift information if needed.
  * 2) add warning about floating point overflow of temp_array.
@@ -34,7 +37,7 @@
 #include "defs.h"
 #include "fdefs.h"
 #include <stdlib.h>
-#include <values.h>
+#include <float.h>
 #include <assert.h>
 #include "xray.h"
 
