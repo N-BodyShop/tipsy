@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.11  2008/09/12 20:25:11  trq
+ * Get rid of strange printf.
+ *
  * Revision 1.10  2007/11/08 17:59:43  adrienne
  * Removed a debugging print statement I'd accidentally left in.
  *
@@ -227,7 +230,6 @@ readbinarray(job)
 	return;
       }
 	count=fread(&nbodies, sizeof(int), 1, infile) ;
-	printf,(nbodies);
 
 	if ( (count == EOF) || (count==0) ){
 	    printf("<Sorry %s, file format is wrong>\n",title);
