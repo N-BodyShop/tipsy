@@ -1,5 +1,8 @@
 /* $Header$
  * $Log$
+ * Revision 1.24  2010/09/14 22:06:33  trq
+ * Added potential to rotation curve command.
+ *
  * Revision 1.23  2007/08/02 19:31:28  trq
  * Added a "hneutralvel" plot to vista.  It produces the 1st moment of the
  * HI velocity field.
@@ -538,6 +541,7 @@ extern double fit_radius ;
 extern double raverage ;
 extern double deldrg ;
 extern double *acsmooth;
+extern double *potsmooth;
 extern double deldr2 ;
 extern double deldr2i ;
 extern double *iwsmooth;

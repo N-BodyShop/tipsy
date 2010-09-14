@@ -32,6 +32,11 @@ void rot_cur(job)
     Real acc_star[MAXDIM] ;
     Real acc_dark[MAXDIM] ;
     Real acc_bar[MAXDIM] ;
+    Real pot_tot ;
+    Real pot_gas ;
+    Real pot_star ;
+    Real pot_dark ;
+    Real pot_bar ;
     double acc_rad_bar ;
     double acc_rad_dark ;
     double acc_rad_tot ;
@@ -122,6 +127,7 @@ void rot_cur(job)
 	    }
 	    hardfile.ptr = fopen(hardfile.name,"w") ;
 	    for(i = 0 ;i <= number_bins ; i++){
+		Real pot_dark_tmp;
 		rot_vel_bar = 0. ;
 		rot_vel_dark = 0. ;
 		rot_vel_tot = 0. ;
@@ -130,9 +136,12 @@ void rot_cur(job)
 		    radius = pow(10.,radius) ;
 		}
 		vec_add_const_mult_vec(test_particle,center,radius,unit1) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box,
+		     &pot_gas, &pot_star, &pot_dark) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
+		pot_bar = pot_gas + pot_star;
+		pot_tot = pot_bar + pot_dark;
 		acc_rad_bar = dot_product(acc_bar,unit1) ;
 		acc_rad_dark = dot_product(acc_dark,unit1) ;
 		acc_rad_tot = dot_product(acc_tot,unit1) ;
@@ -140,9 +149,13 @@ void rot_cur(job)
 		rot_vel_dark += sqrt(fabs(radius*acc_rad_dark)) ;
 		rot_vel_tot += sqrt(fabs(radius*acc_rad_tot)) ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit2) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box,
+		     &pot_gas, &pot_star, &pot_dark_tmp) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
+		pot_bar += pot_gas + pot_star;
+		pot_tot += pot_gas + pot_star + pot_dark_tmp;
+		pot_dark += pot_dark_tmp;
 		acc_rad_bar = dot_product(acc_bar,unit2) ;
 		acc_rad_dark = dot_product(acc_dark,unit2) ;
 		acc_rad_tot = dot_product(acc_tot,unit2) ;
@@ -150,9 +163,13 @@ void rot_cur(job)
 		rot_vel_dark += sqrt(fabs(radius*acc_rad_dark)) ;
 		rot_vel_tot += sqrt(fabs(radius*acc_rad_tot)) ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit3) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box,
+		     &pot_gas, &pot_star, &pot_dark_tmp) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
+		pot_bar += pot_gas + pot_star;
+		pot_tot += pot_gas + pot_star + pot_dark_tmp;
+		pot_dark += pot_dark_tmp;
 		acc_rad_bar = dot_product(acc_bar,unit3) ;
 		acc_rad_dark = dot_product(acc_dark,unit3) ;
 		acc_rad_tot = dot_product(acc_tot,unit3) ;
@@ -160,9 +177,13 @@ void rot_cur(job)
 		rot_vel_dark += sqrt(fabs(radius*acc_rad_dark)) ;
 		rot_vel_tot += sqrt(fabs(radius*acc_rad_tot)) ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit4) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box,
+		     &pot_gas, &pot_star, &pot_dark_tmp) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
+		pot_bar += pot_gas + pot_star;
+		pot_tot += pot_gas + pot_star + pot_dark_tmp;
+		pot_dark += pot_dark_tmp;
 		acc_rad_bar = dot_product(acc_bar,unit4) ;
 		acc_rad_dark = dot_product(acc_dark,unit4) ;
 		acc_rad_tot = dot_product(acc_tot,unit4) ;
@@ -172,8 +193,13 @@ void rot_cur(job)
 		rot_vel_bar /= 4. ;
 		rot_vel_dark /= 4. ;
 		rot_vel_tot /= 4. ;
-		fprintf(hardfile.ptr,"%g %g %g %g\n",radius,rot_vel_tot,
-			rot_vel_dark,rot_vel_bar) ;
+		pot_bar /= 4.;
+		pot_dark /= 4.;
+		pot_tot /= 4.;
+		
+		fprintf(hardfile.ptr,"%g %g %g %g %g %g %g\n",radius,
+			rot_vel_tot, rot_vel_dark,rot_vel_bar, pot_tot,
+			pot_dark, pot_bar) ;
 	    }
 	    fclose(hardfile.ptr) ;
 	}

@@ -1,6 +1,9 @@
 /*
  * $Header$ 
  * $Log$
+ * Revision 1.17  2010/09/14 22:06:33  trq
+ * Added potential to rotation curve command.
+ *
  * Revision 1.16  2006/08/16 20:23:02  trq
  * New command from Ryan William Maas: arraymoments: finds shapes of shells
  * based on array values.
@@ -269,6 +272,7 @@ double fit_radius ;
 double raverage ;
 double deldrg ;
 double *acsmooth = NULL;
+double *potsmooth = NULL;
 double deldr2 ;
 double deldr2i ;
 double *iwsmooth = NULL;

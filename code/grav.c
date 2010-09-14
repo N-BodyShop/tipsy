@@ -1,10 +1,13 @@
 #include "defs.h"
-void grav(pos,acc_gas,acc_star,acc_dark,box)
+void grav(pos,acc_gas,acc_star,acc_dark,box,pot_gas, pot_star, pot_dark)
     Real pos[MAXDIM] ;
     Real acc_gas[MAXDIM] ;
     Real acc_star[MAXDIM] ;
     Real acc_dark[MAXDIM] ;
     int box ;
+    Real *pot_gas;
+    Real *pot_star;
+    Real *pot_dark;
 {
     struct gas_particle *gp ;
     struct star_particle *sp ;
@@ -18,6 +21,7 @@ void grav(pos,acc_gas,acc_star,acc_dark,box)
     double dxdeldxg ;
     double drsm ;
     double accsm ;
+    double potsm ;
     double acci ;
     int smindex ;
     char dummy[MAXCOMM] ;
@@ -31,6 +35,10 @@ void grav(pos,acc_gas,acc_star,acc_dark,box)
 	acc_star[i] = 0. ;
 	acc_dark[i] = 0. ;
     }
+    *pot_gas = 0.;
+    *pot_star = 0.;
+    *pot_dark = 0.;
+    
     if(!epsgas_loaded){
 	load_epsgas() ;
     }
@@ -53,12 +61,14 @@ void grav(pos,acc_gas,acc_star,acc_dark,box)
 	    smindex = min(NINTERP,(int)dxdeldxg) ;
 	    drsm = min(1.,dxdeldxg-(double)smindex) ;
 	    accsm=(1.-drsm)*acsmooth[smindex]+drsm*acsmooth[1+smindex] ;
+	    potsm=(1.-drsm)*potsmooth[smindex]+drsm*potsmooth[1+smindex] ;
 	    r3inveff = accsm * r3inveff ;
 	}
         acci = gp->mass * r3inveff ;
         acc_gas[0] -= delta_x[0] * acci ;
         acc_gas[1] -= delta_x[1] * acci ;
         acc_gas[2] -= delta_x[2] * acci ;
+	*pot_gas -= gp->mass*potsm/sdxdotdx;
     }
     for (i = 0 ;i < boxlist[box].nstar ;i++) {
 	sp = boxlist[box].sp[i] ;
@@ -76,12 +86,14 @@ void grav(pos,acc_gas,acc_star,acc_dark,box)
 	    smindex = min(NINTERP,(int)dxdeldxg) ;
 	    drsm = min(1.,dxdeldxg-smindex) ;
 	    accsm=(1.-drsm)*acsmooth[smindex]+drsm*acsmooth[1+smindex] ;
+	    potsm=(1.-drsm)*potsmooth[smindex]+drsm*potsmooth[1+smindex] ;
 	    r3inveff = accsm * r3inveff ;
 	}
         acci = sp->mass * r3inveff ;
         acc_star[0] -= delta_x[0] * acci ;
         acc_star[1] -= delta_x[1] * acci ;
         acc_star[2] -= delta_x[2] * acci ;
+	*pot_star -= sp->mass*potsm/sdxdotdx;
     }
     for (i = 0 ;i < boxlist[box].ndark ;i++) {
 	dp = boxlist[box].dp[i] ;
@@ -99,11 +111,13 @@ void grav(pos,acc_gas,acc_star,acc_dark,box)
 	    smindex = min(NINTERP,(int)dxdeldxg) ;
 	    drsm = min(1.,dxdeldxg-smindex) ;
 	    accsm=(1.-drsm)*acsmooth[smindex]+drsm*acsmooth[1+smindex] ;
+	    potsm=(1.-drsm)*potsmooth[smindex]+drsm*potsmooth[1+smindex] ;
 	    r3inveff = accsm * r3inveff ;
 	}
         acci = dp->mass * r3inveff ;
         acc_dark[0] -= delta_x[0] * acci ;
         acc_dark[1] -= delta_x[1] * acci ;
         acc_dark[2] -= delta_x[2] * acci ;
+	*pot_dark -= dp->mass*potsm/sdxdotdx;
     }
 }
