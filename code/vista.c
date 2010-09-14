@@ -1,5 +1,10 @@
 /* $Header$
  * $Log$
+ * Revision 1.26  2010/09/14 22:04:25  trq
+ * Fixed ".fits" append bug.
+ *
+ * Fixed H_NEUT bug.
+ *
  * Revision 1.25  2007/10/05 19:11:08  trq
  * Adrienne Stilp:
  *
@@ -243,7 +248,7 @@ vista(job)
 		if (name[nameLength-5] == '.' && name[nameLength-4] == 'f' && 
 		    name[nameLength-3] == 'i' && name[nameLength-2] == 't' &&
 		    name[nameLength-1] == 's') {
-		  strncpy(base,name,nameLength-6);
+		  strncpy(base,name,nameLength-5);
 		  base[nameLength-5] = '\0';
 		}
 		else {
@@ -1083,11 +1088,12 @@ vista(job)
 
 	    for(i = 0; i < vista_size; i++){
 		for(j = 0; j < vista_size; j++){
-		  if(density[i][j] > 0. && vista_type == HNEUT_VEL){
+		  if(density[i][j] > 0.){
 			if(vista_type != TEMP && vista_type != PRESS &&
 				vista_type != COOL && vista_type != JEANS &&
 				vista_type != TDRHO && vista_type != FSTAR &&
-				vista_type != XRAY && vista_type != LYA) {
+				vista_type != XRAY && vista_type != LYA &&
+			        vista_type != HNEUT_VEL) {
 			    pixel = log10((double)(density[i][j])/size_pixel_2);
 			}
 			else{
