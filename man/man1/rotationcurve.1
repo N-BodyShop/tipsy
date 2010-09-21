@@ -5,6 +5,8 @@ rotationcurve \- calculate the circular velocity rotation curve
 .B rotationcurve
 .I box-number
 .I center-box-number
+.I center-type
+.I particle-type
 .I binning
 .I bin-number
 .I filename
@@ -20,8 +22,21 @@ that contains the circular velocity as a function of radius
 gravitationally induced by the particles in box 
 .I box-number.
 
-The center of rotation is taken to be the center of mass of
-the particles in box
+If
+.I center-type
+is "com" then
+the center of rotation is taken to be the center of mass of
+the
+.I particle-type
+particles in box
+.I center-box-number.
+If
+.I center-type
+is "pot" then
+the center of rotation is taken to be the potential minimum of
+the
+.I particle-type
+particles in box
 .I center-box-number.
 The
 .I binning
@@ -33,14 +48,19 @@ bins equally distributed in either radius or log radius between
 and
 .I maximum_radius.
 
-The output file has the following four columns: the radius, the total circular
-velocity, the circular velocity if only the dark matter were included, and the
-circular velocity if only the baryonic matter (stars and gas) were included.
+The output file has the following seven columns: the radius, the total circular
+velocity, the circular velocity if only the dark matter were included, the
+circular velocity if only the baryonic matter (stars and gas) were
+included, the total potential, the potential due to the dark matter
+and the potential due to the baryonic matter.
 The circular velocity is calculated in a plane perpendicular to the angular
-momentum axis of the gas particles in box
+momentum axis of the
+.I particle-type
+particles in box
 .I box-number.
-The calculated velocity is the average of four perpendicular directions in
-this plane.
+The calculated velocity is the average of the circular velocity calculated from the gravitational accelerations at four perpendicular directions in
+this plane.  This implies that the time for this command scales as the number
+of particles times the number of bins.
 
 If the boxes
 .I box-number
@@ -83,6 +103,3 @@ and
 .BR profile (1),
 .BR setbox (1),
 .BR setsphere (1)
-.SH BUGS
-This command assumes the existence of gas particles to determine the plane
-in which the rotation curve is calculated.
