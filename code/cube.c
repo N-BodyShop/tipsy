@@ -20,7 +20,7 @@ cube(job)
   struct star_particle *sp;
   double pixel_pos[2] ;
   double part_pos[3] ;
-  int i,j,k,l ;
+  int i,j,k,l,m ;
   int kx,ky,kz,kv ;
   int kx_min,kx_max ;
   int ky_min,ky_max ;
@@ -65,6 +65,14 @@ cube(job)
   double dvel;
   int cube_type;
 
+  double sigma;
+  double *thermal_tmp;
+  double x1, x2;
+  char options[100];
+  double tmp;
+
+  double total; /* testing thing */
+
 
   /* copied from vista.c */
   if (!ikernel_loaded) {
@@ -84,9 +92,11 @@ cube(job)
    * Parse command line arguments.
    * Everything is in this if statement!
    */
-  if ((num_read = sscanf(job,"%s %s %s %i %lf %lf %lf",command, type, name, 
-			 &xy_size, &vel_min, &vel_max, &dvel)
+  if ((num_read = sscanf(job,"%s %s %s %i %lf %lf %lf %s",command, type, name, 
+			 &xy_size, &vel_min, &vel_max, &dvel, options)
                          >=7)){
+
+    printf("%s", options);
 
     /* make sure input is okay */
     if (strncmp(type, "star", 4) == 0) {
@@ -162,6 +172,18 @@ cube(job)
 
     vmin = vel_ref[0];
 
+
+    /* allocate array to store temporary thermal broadening for gas */
+    thermal_tmp = (double*)malloc(nChannels * sizeof(*thermal_tmp));
+    if (thermal_tmp == NULL) {
+      printf("<sorry, no memory for image, %s>\n",title);
+      return;
+    }
+
+    /* initialize thermal array to 0 just in case */
+    for (i = 0; i < nChannels; i++) {
+      thermal_tmp[i] = 0;
+    }
 
     /* new way of allocating memory */
     density = (float ***)malloc(nChannels * sizeof(*density));
@@ -286,9 +308,104 @@ cube(job)
 		
 		/* find what velocity channel the particle belongs in */
 		vindex = getVelocityChannel(vz, vel_ref, dvel, nChannels);
-
 		
-		/* put it in its pixel(s). */
+
+		/* re-initialize thermal */
+		for (m = 0; m < nChannels; m++) {
+		  thermal_tmp[m] = 0;
+		}
+
+
+		if (strcmp(options, "thermal") == 0) {
+		  
+		  /* calculate the velocity dispersion */
+		  /* no sqrt(3) because it's only 1 line of sight */
+		  sigma = sqrt(KBOLTZ * gp->temp / MHYDR) * pow(10, -5);
+
+		  /* check how big sigma is compared to dvel and put
+		   all the mass in one pixel if necessary. */
+
+		  if (10 * sigma < dvel){
+		    thermal_tmp[vindex] = 1.0;
+		  }
+
+		  /* step through velocity */
+		  else {
+
+		    /* set up the central velocity pixel */
+		    x1 = fabs( (vel_ref[vindex] - dvel / (2.0) - vz) /
+			       sqrt(2.0) / sigma );
+		    thermal_tmp[vindex] = 0.5 * erf( x1 );
+
+		    x2 = fabs( (vel_ref[vindex] + dvel / (2.0) - vz) / 
+			       sqrt(2.0) / sigma );
+		    thermal_tmp[vindex] += 0.5 * erf(x2);
+		    
+
+		    /* then go backwards in velocity */
+		    for (m = vindex - 1; m > 0; m--) {
+		      
+		      /* erf functions for the gaussian distribution */
+		      if (fabs(vel_ref[m] - dvel / 2.0 - vz) < 5 * sigma) {
+			
+			/* set up bounds for erf functions */
+			x2 = fabs((vel_ref[m] - dvel / 2.0 - vz) / 
+				  sqrt(2) / sigma);
+			x1 = fabs((vel_ref[m] + dvel / 2.0 - vz) / 
+				  sqrt(2) / sigma);
+			
+			thermal_tmp[m] += 0.5 * ( erf( x2 ) - 
+						  erf( x1 ) );
+		      }
+		      else {
+			/* put the rest of the mass in this pixel and
+			   exit this loop */
+			x1 = fabs( ( vel_ref[m+1] - dvel / 2.0 - vz ) /
+				   sqrt(2) / sigma);
+			thermal_tmp[m] = 0.5 * (1 - erf( x1 ) );
+
+			break;
+		      }
+		    }
+
+		    /* then go forwards in velocity */
+		    for (m = vindex + 1; m < nChannels; m++) {
+		      if (fabs(vel_ref[m] + dvel / 2.0 - vz) < 5 * sigma) {
+			
+			/* set up erf bounds */
+			x2 = fabs( (vel_ref[m] + dvel / 2.0 - vz) /
+				   sqrt(2) / sigma );
+			x1 = fabs( (vel_ref[m] - dvel / 2.0 - vz) / 
+				   sqrt(2) / sigma );
+
+			/* integrate-esque */
+			thermal_tmp[m] += 0.5 * ( erf( x2 ) - 
+						  erf( x1 ) );
+
+		      }
+		      else {
+			/* put the rest of the mass in this pixel and exit
+			   this loop */
+			x1 = fabs ( ( vel_ref[m-1] + dvel / 2.0 - vz ) /
+				    sqrt(2) / sigma );
+
+			thermal_tmp[m] = 0.5 * (1 - erf( x1 ) );
+
+			break;
+		      }
+		    }
+		  }
+		} /* end of thermal spreading out */
+		
+		else {
+		  /* if thermal was not requested, just put everything
+		   * in the pixel determined solely by its velocity
+		   */
+		  thermal_tmp[vindex] = 1.0;
+		}
+		/* end of new thermal code bit */
+		
+		/* put the particle in its pixel(s). */
 		if (vindex >= 0 && vindex < nChannels) {
 		  delta_d = c1 * hneutral[gp-gas_particles] * (gp->mass);
 		  
@@ -330,7 +447,12 @@ cube(job)
 			
 			kernel *= size_pixel_2;
 			if (kernel != 0.0) {
-			  density[vindex][kx][ky] += (float)(kernel * delta_d);
+			  total = 0;
+			  for (m = 0; m < nChannels; m++) {
+			    density[m][kx][ky] += (float)(kernel * delta_d) *
+			      thermal_tmp[m];
+			    total += thermal_tmp[m];
+			  }
 			}
 		      }
 		    }
@@ -340,10 +462,14 @@ cube(job)
 		    kx = (int)((part_pos[0]-xmin)/size_pixel + 0.499999) ;
 		    ky = (int)((part_pos[1]-ymin)/size_pixel + 0.499999) ;
 		    if(kx >= 0 && kx < xy_size && ky >= 0 && ky < xy_size){
-		      density[vindex][kx][ky] += (float) delta_d ;
+		      total = 0;
+		      for (m = 0; m < nChannels; m++) {
+			density[m][kx][ky] += (float) delta_d * 
+			  thermal_tmp[m];
+			total += thermal_tmp[m];
+		      }
 		    }
 		  }
-		  
 		}
 	      }
 	    }
@@ -351,6 +477,8 @@ cube(job)
 	}
       }
     }
+
+    /* the star cubes are not well tested. */
     else if (cube_type == STAR) {
 
       /* determine constants */
@@ -472,7 +600,7 @@ cube(job)
 		    /* particle fits in a single pixel */
 		    kx = (int)((part_pos[0]-xmin)/size_pixel + 0.499999) ;
 		    ky = (int)((part_pos[1]-ymin)/size_pixel + 0.499999) ;
-		    if(kx >= 0 && kx < xy_size && ky >= 0 && ky < xy_size){
+
 		      density[vindex][kx][ky] += (float) delta_d ;
 		    }
 		  }
@@ -530,41 +658,10 @@ cube(job)
   }
 }
 
-/*
- * This is the OLD linear searcher.
- *
- * Searches through the velocity reference array to find what channel a
- * given pixel belongs to.
- *
- * Returns -1 if the particle is outside the given velocity range.
- */
-/*
-int getVelocityChannel(double velocity, double *vel_ref, double dvel, int nChannels) {
-  int found;
-  int i;
-
-
-  if ((velocity < vel_ref[0]) || (velocity > vel_ref[nChannels-1] + dvel/2.0)){
-    return -1;
-  }
-
-
-  found = 0;
-  i = 0; 
-  while (!found || i < nChannels) {
-     
-    if (velocity < (vel_ref[i] + dvel / 2.0)) { 
-      return i; 
-    } 
-    i++;
-  }
-
-}
-*/
 
 
 /*
- * Here's a new binary searcher!
+ * binary searcher:
  *
  * Searches through the velocity reference array to find what channel a
  * given pixel belongs to.

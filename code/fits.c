@@ -295,7 +295,7 @@ int xsize,ysize,vsize ;
 	cardwrite(fp,"NAXIS3",dum) ;
 
 	cardwrite(fp, "CTYPE1", "'KPC-LIN'");
-	cardwrite(fp, "CUNIT1", "KPC");
+	cardwrite(fp, "CUNIT1", "'KPC'");
 	sprintf(dum,"%lf",xmin) ;
 	cardwrite(fp,"CRVAL1",dum) ;
 	sprintf(dum,"%lf",deltax) ;
@@ -304,7 +304,7 @@ int xsize,ysize,vsize ;
 	cardwrite(fp,"CRPIX1",dum) ;
 
 	cardwrite(fp, "CTYPE2", "'KPC-LIN'");
-	cardwrite(fp, "CUNIT2", "KPC");
+	cardwrite(fp, "CUNIT2", "'KPC'");
 	sprintf(dum,"%lf",ymin) ;
 	cardwrite(fp,"CRVAL2",dum) ;
 	sprintf(dum,"%lf",deltay) ;

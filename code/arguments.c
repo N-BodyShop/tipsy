@@ -1,5 +1,13 @@
 /* $Header$
  * $Log$
+ * Revision 1.31  2010/10/20 21:56:06  adrienne
+ * ams: Added HI thermal velocity dispersion to cube code as an option
+ * (type cube gas <filename> <pixels> <min vel> <max vel> <delta vel> thermal
+ * to use).
+ *
+ * Changed fits.c so python is happy with the fits headers - added ''s around
+ * KPC in cunit.
+ *
  * Revision 1.30  2007/10/05 19:11:08  trq
  * Adrienne Stilp:
  *
@@ -242,7 +250,7 @@ arguments(job)
 	printf("coolout box filename\n") ;
     }
     else if (strcmp(command, "cube") == 0 ){
-      printf("cube type filename size velmin velmax deltavel\n");
+      printf("cube type filename size velmin velmax deltavel (thermal)\n");
     }
     else if ( strcmp(command,"deletemacro") == 0 ||
 	    strcmp(command,"dmac") == 0 ) {
