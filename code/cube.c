@@ -502,7 +502,7 @@ cube(job)
       /* loop over particles */
       for (i = 0; i < boxlist[active_box].nstar; i++) {
 	int spi;
-
+	
 	sp = boxlist[active_box].sp[i];
 	spi = boxlist[active_box].spi[i] ;
 	hsmooth = sqrt(box0_smx->kd->p[spi].fBall2)/2.0;
@@ -547,7 +547,7 @@ cube(job)
 		
 		/* find what velocity channel the particle belongs in */
 		vindex = getVelocityChannel(vz, vel_ref, dvel, nChannels);
-
+		
 		
 		/* put it in its pixel(s). */
 		if (vindex >= 0 && vindex < nChannels) {
@@ -577,7 +577,7 @@ cube(job)
 			pixel_pos[0] = xmin+(kx + .5) * size_pixel ;
 			pixel_pos[1] = ymin+(ky + .5) * size_pixel ;
 			radius2 = distance_dim2(pixel_pos, part_pos) *
-			          distnorm;
+			  distnorm;
 			if(radius2 < 4.){
 			  radius2 *= deldr2i ;
 			  iwsm = (int)radius2 ;
@@ -600,18 +600,18 @@ cube(job)
 		    /* particle fits in a single pixel */
 		    kx = (int)((part_pos[0]-xmin)/size_pixel + 0.499999) ;
 		    ky = (int)((part_pos[1]-ymin)/size_pixel + 0.499999) ;
-
-		      density[vindex][kx][ky] += (float) delta_d ;
-		    }
+		    
+		    density[vindex][kx][ky] += (float) delta_d ;
 		  }
-		  
 		}
+		
 	      }
 	    }
 	  }
 	}
       }
     }
+  
 
     pixmax = -HUGE;
     pixmin = HUGE;
@@ -657,7 +657,6 @@ cube(job)
     input_error(command);
   }
 }
-
 
 
 /*
