@@ -1,6 +1,9 @@
 /*
  * $Header$
  * $Log$
+ * Revision 1.7  2010/11/02 02:28:22  christensen
+ * Enabled viewing the star particles's metallicity using "viewstar metals 0 0.02"
+ *
  * Revision 1.6  2003/06/13 17:37:37  trq
  * Replaced "include <malloc.h>" with "include <stdlib.h>".  This will allow
  * compilation on MAC OSX.  Also replaced "values.h" with "float.h".
@@ -222,6 +225,13 @@ view_star(job)
 		    particle_color[i] = (int)(color_slope * 
 			    kd->p[sp-star_particles].fDensity +
 					      color_offset +0.5);
+		}
+	    }
+	    else if(strcmp(type,"metals") == 0){
+		for (i = 0 ;i < boxlist[active_box].nstar ;i++) {
+		    sp = boxlist[active_box].sp[i] ;
+		    particle_color[i] = (int)(color_slope * 
+			    (sp->metals) + color_offset +0.5) ;
 		}
 	    }
 	    else {
