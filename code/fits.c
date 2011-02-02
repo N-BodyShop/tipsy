@@ -3,9 +3,14 @@
 	cfg 7/89
 */
 #include <stdlib.h>
+#include <time.h>
 #include "defs.h"
 #include "fdefs.h"
 #define BLANK 	-32768		/* short blank value */
+
+time_t rawtime;
+struct tm * timeinfo;
+char buffer[13];
 
 void
 fits(data,xsize,ysize,xmin,ymin,deltax,deltay,zmin,zmax,outfile)
@@ -263,8 +268,9 @@ fits3d(data,xsize,ysize,vsize,xmin,ymin,vmin,deltax,deltay,deltav,zmin,zmax,
 	/* fill out file with zeros */
 	fillno = 1440*((int)(1.0 + xsize*ysize*vsize/1440)) -
 	  xsize*ysize*vsize ;
+
 	for(i=0;i<fillno;i++) fwrite(&zero,sizeof(short), 1, fpo) ;
-	
+
 	fclose(fpo) ;
 
 	free(page);
@@ -312,7 +318,7 @@ int xsize,ysize,vsize ;
 	sprintf(dum,"1.0") ;
 	cardwrite(fp,"CRPIX2",dum) ;
 
-	cardwrite(fp, "CTYPE3","'VELO-W2V'");
+	cardwrite(fp, "CTYPE3","'FELO-HEL'");
 	cardwrite(fp, "CUNIT3", "'KM/S'");
 	sprintf(dum,"%lf",vmin) ; /* velocity*/
 	cardwrite(fp,"CRVAL3",dum) ; /* velocity*/
@@ -320,7 +326,6 @@ int xsize,ysize,vsize ;
 	cardwrite(fp,"CDELT3",dum) ; /*velocity*/
 	sprintf(dum,"1.0") ; /*velocity*/
 	cardwrite(fp,"CRPIX3",dum) ; /*velocity*/
-
 
 	cardwrite(fp,"BLANK", "-32768" ) ;
 	
