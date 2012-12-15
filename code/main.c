@@ -1,5 +1,9 @@
 /* $Header$
  * $Log$
+ * Revision 1.10  2012/12/15 19:34:22  trq
+ * 1) Fix bug in loading actionTable.
+ * 2) Make button translations more forgiving about modifiers.
+ *
  * Revision 1.9  2007/08/16 16:56:26  trq
  * Tristen's update to use the mouse scroll wheel for zooming.
  *
@@ -134,7 +138,8 @@ static String fallback_resources[] = {
     "*colorview*width:	      320",
     "*colorview*height:	      30",
     "*colorview*background:   black",
-    "*colorbar.font:          *-times-med*-r-*--*-240-*",
+    /* Some servers can't find this font */
+    /* "*colorbar.font:          *-times-med*-r-*--*-240-*", */
     "*orient*width:	      80",
     "*orient*height:	      80",
     "*orient*foreground:      white",
@@ -167,13 +172,13 @@ void zoom_window();
 static char vpTranslations[] = 
   "<Expose>:	RedrawViewport() \n\
    <ConfigureNotify>:	canvas_resize_proc() \n\
-   None <Btn1Down>:	ZoomIn() \n\
-   None <Btn2Down>:	ZoomOut() \n\
-   None <Btn3Down>:	Pan() \n\
-   None <Btn4Down>:	WheelZoomIn() \n\
-   None <Btn5Down>:	WheelZoomOut() \n\
-   ! Shift <Btn1Down>:	SetBox() \n\
-   <MotionNotify>:	DrawBox()";
+   Shift <Btn1Down>:	SetBox() \n\
+   <Btn1Down>:	ZoomIn() \n\
+   <Btn2Down>:	ZoomOut() \n\
+   <Btn3Down>:	Pan() \n\
+   <Btn4Down>:	WheelZoomIn() \n\
+   <Btn5Down>:	WheelZoomOut() \n\
+   <MotionNotify>:	DrawBox() \n";
 
 static char cbTranslations[] = 
   "<Expose>:	RedrawColorbar() \n\
@@ -182,7 +187,7 @@ static char cbTranslations[] =
 static char obTranslations[] = 
   "<Expose>:	draworient()";
 
-static int actionTsize = 10;
+static int actionTsize = 12;
 static XtActionsRec actionTable[] =
 {
   {"RedrawViewport", RedrawViewport},
