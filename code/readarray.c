@@ -239,7 +239,7 @@ readbinarray(job)
            fseek(infile,0,SEEK_SET);
            xdrstdio_create(&xdrs,infile,XDR_DECODE);
            xdr_int(&xdrs,&nbodies);
-           if (nbodies <= 0 || nbodies > 10000000) {
+           if (nbodies <= 0 || nbodies > 100000000) {
              printf("<Sorry %s, file doesn't appear standard or binary or nbodies > 10 mil.>\n",title);
              xdr_destroy(&xdrs);
              fclose(infile);
