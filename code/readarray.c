@@ -235,12 +235,12 @@ readbinarray(job)
 	    printf("<Sorry %s, file format is wrong>\n",title);
 	    fclose(infile);
 	    return;
-	} else if(nbodies <= 0 || nbodies > 10000000 || bStandard == 1){
+	} else if(nbodies <= 0 || nbodies > 100000000 || bStandard == 1){
            fseek(infile,0,SEEK_SET);
            xdrstdio_create(&xdrs,infile,XDR_DECODE);
            xdr_int(&xdrs,&nbodies);
            if (nbodies <= 0 || nbodies > 100000000) {
-             printf("<Sorry %s, file doesn't appear standard or binary or nbodies > 10 mil.>\n",title);
+             printf("<Sorry %s, file doesn't appear standard or binary or nbodies > 100 mil.>\n",title);
              xdr_destroy(&xdrs);
              fclose(infile);
              return;
