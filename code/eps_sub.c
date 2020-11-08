@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 eps_sub(job)
     char job[MAXCOMM] ;
 {

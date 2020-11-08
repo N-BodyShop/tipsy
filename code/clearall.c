@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 clearall(job)
     char job[MAXCOMM] ;
 {

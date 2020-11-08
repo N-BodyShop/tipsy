@@ -143,6 +143,7 @@
 #include <X11/StringDefs.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 #if !defined(HUGE) && defined(MAXFLOAT)
 #define HUGE MAXFLOAT

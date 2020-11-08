@@ -15,6 +15,8 @@
  * 
  */
 #include "defs.h"
+#include "fdefs.h"
+void
 view_all(job)
     char job[MAXCOMM] ;
 {

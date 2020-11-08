@@ -21,6 +21,7 @@
    have a copy of the license, write to the Free Software Foundation,
    675 Mass Ave, Cambridge, MA 02139, USA. */
 #define READLINE_LIBRARY
+#include "config.h"
 
 /* **************************************************************** */
 /*								    */

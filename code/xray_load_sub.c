@@ -117,7 +117,7 @@ xray_load_sub(job)
 
   /* Close the file */
 
-  close( hardfile.ptr ) ;
+  fclose( hardfile.ptr ) ;
 
   printf(" Spline file: %s loaded \n", hardfile.name ) ;  
   xray_loaded = YES ;

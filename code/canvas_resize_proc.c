@@ -18,6 +18,7 @@
  */
 
 #include "defs.h"
+#include "fdefs.h"
 
 void
 canvas_resize_proc(canvas,event, params, n_params)

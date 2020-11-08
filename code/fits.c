@@ -4,6 +4,10 @@
 */
 #include <stdlib.h>
 #include <time.h>
+#if defined (HAVE_UNISTD_H)
+#define __USE_XOPEN
+#include <unistd.h>
+#endif
 #include "defs.h"
 #include "fdefs.h"
 #define BLANK 	-32768		/* short blank value */

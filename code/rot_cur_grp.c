@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 void rot_cur_grp(job)
     char job[MAXCOMM] ;
 {
@@ -25,6 +26,9 @@ void rot_cur_grp(job)
     Real acc_star[MAXDIM] ;
     Real acc_dark[MAXDIM] ;
     Real acc_bar[MAXDIM] ;
+    Real pot_gas;
+    Real pot_dark;
+    Real pot_star;
     double rot_vel_tot ;
     double acc_rad_tot ;
     double vsys ;
@@ -67,25 +71,25 @@ void rot_cur_grp(job)
 	    for(i = 0 ;i < number_bins ; i++){
 		rot_vel_tot = 0. ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit1) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box, &pot_gas, &pot_star, &pot_dark) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
 		acc_rad_tot = dot_product(acc_tot,unit1) ;
 		rot_vel_tot += sqrt(fabs(radius*acc_rad_tot)) ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit2) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box, &pot_gas, &pot_star, &pot_dark) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
 		acc_rad_tot = dot_product(acc_tot,unit2) ;
 		rot_vel_tot += sqrt(fabs(radius*acc_rad_tot)) ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit3) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box, &pot_gas, &pot_star, &pot_dark) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
 		acc_rad_tot = dot_product(acc_tot,unit3) ;
 		rot_vel_tot += sqrt(fabs(radius*acc_rad_tot)) ;
 		vec_add_const_mult_vec(test_particle,center,radius,unit4) ;
-		grav(test_particle,acc_gas,acc_star,acc_dark,box) ;
+		grav(test_particle,acc_gas,acc_star,acc_dark,box, &pot_gas, &pot_star, &pot_dark) ;
 		add_vec(acc_bar,acc_gas,acc_star) ;
 		add_vec(acc_tot,acc_bar,acc_dark) ;
 		acc_rad_tot = dot_product(acc_tot,unit4) ;

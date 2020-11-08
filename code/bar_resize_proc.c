@@ -2,6 +2,7 @@
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
 
+void
 bar_resize_proc(colorbar, event, params, n_params)
     Widget colorbar ;
      XEvent *event;

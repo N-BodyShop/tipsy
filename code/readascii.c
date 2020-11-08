@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 void
 readascii(job)
     char job[MAXCOMM] ;

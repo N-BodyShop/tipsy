@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "defs.h"
 
+void
 oldascii2binary(infile,outfile)
     FILE *infile;
     FILE *outfile;

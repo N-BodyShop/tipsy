@@ -137,7 +137,7 @@ int xray_lum_load()
 	  }
 	}
 	/* Close the file */
-	close ( hardfile.ptr ) ;
+	fclose ( hardfile.ptr ) ;
 	
 	xray_loaded = YES ;
     }

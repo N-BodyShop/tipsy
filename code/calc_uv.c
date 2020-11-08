@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 void calc_uv(gp)
     struct gas_particle *gp ;
 {

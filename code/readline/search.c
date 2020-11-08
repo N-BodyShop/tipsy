@@ -24,6 +24,7 @@
 
 #include <sys/types.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #if defined (HAVE_UNISTD_H)
 #  include <unistd.h>

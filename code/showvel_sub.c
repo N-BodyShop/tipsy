@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 showvel_sub(job)
     char *job;
 {

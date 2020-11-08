@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 unload_box(job)
     char *job ;
 {

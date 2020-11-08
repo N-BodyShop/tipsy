@@ -21,6 +21,8 @@
    675 Mass Ave, Cambridge, MA 02139, USA. */
 #define READLINE_LIBRARY
 
+#include "config.h"
+
 #if defined (STATIC_MALLOC)
 static char *xmalloc (), *xrealloc ();
 #else

@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 markstat(job)
     char job[MAXCOMM] ;
 {

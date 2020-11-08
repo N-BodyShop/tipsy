@@ -79,10 +79,14 @@
 
 /* Function definitions */
 PROTO(void, absorb, (char *job));
+PROTO(void, acc_load, ());
 PROTO(void, add_const_mult_vec, (Real *a,double constant, Real *b));
+PROTO(void, add_vec, (Real a[MAXDIM], Real b[MAXDIM], Real c[MAXDIM]));
 PROTO(void, all_color, ());
 PROTO(void, arguments, (char *job));
 PROTO(void, array_color, ());
+PROTO(void, ascii2binary, (FILE *infile, FILE *outfile));
+PROTO(void, bar_resize_proc, (Widget colorbar, XEvent *event, String *params, Cardinal *n_params));
 PROTO(int, boxlist_alloc, (int box, int ngas, int ndark, int nstar));
 PROTO(void, boxlist_realloc, (int box));
 PROTO(void, box_cumulate, (int box));
@@ -126,10 +130,12 @@ PROTO(void, fits_xray, (float **data, int xsize, int ysize,
 			double deltay, double zmin, double zmax, char
 			*outfile));
 PROTO(void, get_nsktrq, (char **bitP, int *widthP, int *heightP));
+PROTO(void, grav, (Real pos[MAXDIM], Real acc_gas[MAXDIM], Real acc_star[MAXDIM], Real acc_dark[MAXDIM], int box, Real *pot_gas, Real *pot_star, Real *pot_dark));
 PROTO(double, heatcool, (struct gas_particle *gp));
 PROTO(void, hneutral_func, ());
 PROTO(void, ikernel_load, ());
 PROTO(void, input_error, (char *command));
+PROTO(void, ionize, ());
 PROTO(void, jacobi, (double (*a)[4], int n, double *d, double (*v)[4],
 		     int *nrot));
 PROTO(void, load_color_table, ());
@@ -163,6 +169,7 @@ PROTO(void, matrix_vector_mult, (double mat[MAXDIM][MAXDIM],
 PROTO(void, maxpos, (Real *xmax, Real *xmin));
 PROTO(void, meanmwt_func, ());
 PROTO(void, old2binary, (FILE *infile, FILE *outfile));
+PROTO(void, oldascii2binary, (FILE *infile, FILE *outfile));
 PROTO(double, perp_distance, (Real *x1,Real *x2,Real *x3));
 PROTO(void, plane, (Real x1[MAXDIM], Real x2[MAXDIM], Real x3[MAXDIM],
 		    Real x4[MAXDIM], double constant[5])) ;
@@ -173,6 +180,7 @@ PROTO(void, potential_color, ());
 PROTO(void, project, ());
 PROTO(void, radial_color, ());
 PROTO(void, readarray, (char *job));
+PROTO(void, readbinarray, (char *job));
 PROTO(void, readoldbin, (char *job));
 PROTO(void, reset_color, (char *job));
 PROTO(void, reset_zoom_scroll, ());
@@ -190,13 +198,18 @@ PROTO(void, sub_vec, (Real *a,Real *b,Real *c));
 PROTO(void, transpose, (double mat[MAXDIM][MAXDIM], double
 		      trans_mat[MAXDIM][MAXDIM]));
 PROTO(void, unload_all, ());
+PROTO(void, unmark_all, ());
+PROTO(void, unmarkbox, (int i));
 PROTO(void, vec_add_const_mult_vec, (Real *a, Real *b, double
 				     constant, Real *c));
 PROTO(void, view, (char *job));
+PROTO(void, view_all, (char *job));
 PROTO(void, view_array, (char *job));
+PROTO(void, view_gas, (char *job));
 PROTO(void, view_mag, (char *job));
 PROTO(void, view_pot, (char *job)) ;
 PROTO(void, view_rad, (char *job)) ;
+PROTO(void, view_star, (char *job)) ;
 PROTO(void, wait_on_X, ());
 PROTO(void, window, (char *job));
 PROTO(void, delete_window, (char *job));
@@ -204,4 +217,7 @@ PROTO(void, xplot_array, (char *job));
 PROTO(int, xray_lum_load, ());
 PROTO(void, yplot_array, (char *job));
 PROTO(void, zplot_array, (char *job));
+PROTO(void, initialize_readline, ());
+PROTO(void, fits3d, (float ***data, int xsize, int ysize, int vsize, double xmin, double ymin, double vmin, double deltax, double deltay, double deltav, double zmin, double zmax , char *outfile)) ;
+
      

@@ -21,6 +21,7 @@
    675 Mass Ave, Cambridge, MA 02139, USA. */
 #define READLINE_LIBRARY
 
+#include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
 #include <fcntl.h>

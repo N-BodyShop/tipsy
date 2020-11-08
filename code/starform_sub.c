@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 void
 starform_sub(job)
     char job[MAXCOMM] ;

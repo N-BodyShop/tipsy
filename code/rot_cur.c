@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 void rot_cur(job)
     char job[MAXCOMM] ;
 {

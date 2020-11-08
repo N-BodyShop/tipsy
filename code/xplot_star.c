@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 xplot_star(job)
     char job[MAXCOMM] ;
 {

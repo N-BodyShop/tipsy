@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 moments(job)
     char job[MAXCOMM] ;
 {
