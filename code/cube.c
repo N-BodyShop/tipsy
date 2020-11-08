@@ -4,6 +4,8 @@
 #include <math.h>
 #include <stdlib.h>
 
+PROTO(int, getVelocityChannel, (double velocity, double *vel_ref, double dvel, int nChannels));
+
 void
 cube(job)
      char *job;

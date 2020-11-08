@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 framepoints(job)
     char job[MAXCOMM] ;
 {

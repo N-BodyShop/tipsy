@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 void
 writebox_rot(job)
     char job[MAXCOMM] ;

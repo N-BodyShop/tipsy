@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 double ell_distance(x1)
     Real x1[MAXDIM] ;
 {

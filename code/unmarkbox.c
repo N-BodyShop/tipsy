@@ -1,4 +1,5 @@
 #include "defs.h"
+void
 unmarkbox(i)
     int i ;
 {

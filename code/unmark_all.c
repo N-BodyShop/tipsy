@@ -1,4 +1,6 @@
 #include "defs.h"
+#include "fdefs.h"
+void
 unmark_all()
 {
     int i,j ;

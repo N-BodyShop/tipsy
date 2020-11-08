@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 point_size_sub(job)
     char job[MAXCOMM] ;
 {

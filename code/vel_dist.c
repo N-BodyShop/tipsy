@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 vel_dist(job)
     char job[MAXCOMM] ;
 {

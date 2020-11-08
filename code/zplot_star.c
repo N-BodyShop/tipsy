@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 zplot_star(job)
     char job[MAXCOMM] ;
 {

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 int circe(x,t,n) /* returns index i of first element of t >= x */
 double x ;
 float *t ;
@@ -53,7 +54,6 @@ int n ;
 	float hio, hip, dio, dip ;
 	float *a, *b, *c, *f;
 	int i, ip ;
-	char *calloc();   
 	a = (float*)calloc(4*n, sizeof(float)) ; 
 	b = a + n ;
 	c = b + n ;

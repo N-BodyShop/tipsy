@@ -1,6 +1,8 @@
 #define NPOINTSGAUSS 100
 #define EPS 3.0e-11
 #include "defs.h"
+#include "fdefs.h"
+PROTO(void, gauleg, (double x1, double x2, double x[], double w[], int n));
 
 double norm()
 {
@@ -107,6 +109,7 @@ double z2(x,y)
     return sqrt((fit_radius*fit_radius-(x-center_fit[0])*(x-center_fit[0])-
 	    (y-center_fit[1])*(y-center_fit[1]))) + center_fit[2] ;
 }
+void
 gauleg(x1,x2,x,w,n)
 double x1,x2,x[],w[];
 int n;

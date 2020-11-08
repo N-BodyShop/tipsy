@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 rotate_sub(job)
     char *job;
 {

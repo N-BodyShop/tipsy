@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "fdefs.h"
 void grav(pos,acc_gas,acc_star,acc_dark,box,pot_gas, pot_star, pot_dark)
     Real pos[MAXDIM] ;
     Real acc_gas[MAXDIM] ;

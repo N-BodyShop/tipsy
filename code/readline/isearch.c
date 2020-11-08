@@ -27,10 +27,15 @@
 #define READLINE_LIBRARY
 
 #include <stdio.h>
-
+#include "config.h"
 #if defined (HAVE_UNISTD_H)
 #  include <unistd.h>
 #endif
+#if defined (HAVE_STDLIB_H)
+#  include <stdlib.h>
+#else
+#  include "ansi_stdlib.h"
+#endif /* HAVE_STDLIB_H */
 
 #include "memalloc.h"
 #include "readline.h"

@@ -102,9 +102,13 @@
 #include "defs.h"
 #include "fdefs.h"
 #include "main.h"
+#if defined (HAVE_UNISTD_H)
+#include <unistd.h>
+#endif
 #include <pwd.h>
 
 #include <readline/readline.h>
+#include <readline/history.h>
 
 #include <X11/Xatom.h>
 #include <X11/Intrinsic.h>
