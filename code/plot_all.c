@@ -83,7 +83,7 @@ plot_all(job)
     int offset ;
     int tmp_color;
     static GC back_gc = 0;
-    static h_back, w_back;
+    static int h_back, w_back;
     static unsigned char **c_array;
 
     if(!back_gc)

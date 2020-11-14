@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
+void
 axesscale(job)
     char job[MAXCOMM] ;
 {

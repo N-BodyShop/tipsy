@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
+void
 xyzpoints(job)
     char job[MAXCOMM] ;
 {

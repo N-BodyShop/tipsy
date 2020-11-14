@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
+void
 yplot_gas(job)
     char job[MAXCOMM] ;
 {

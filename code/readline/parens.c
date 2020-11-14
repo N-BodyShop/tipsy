@@ -22,9 +22,12 @@
 #define READLINE_LIBRARY
 
 #include "rlconf.h"
+#include <stdio.h>
+#include "readline.h"
 
 #if !defined (PAREN_MATCHING)
 
+int
 rl_insert_close (count, invoking_key)
      int count, invoking_key;
 {

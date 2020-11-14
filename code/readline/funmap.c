@@ -162,6 +162,7 @@ static FUNMAP default_funmap[] = {
  {(char *)NULL, (Function *)NULL }
 };
 
+int
 rl_add_funmap_entry (name, function)
      char *name;
      Function *function;

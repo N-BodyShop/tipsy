@@ -838,6 +838,7 @@ update_line (old, new, current_line, omax, nmax, inv_botlin)
 }
 
 /* Tell the update routines that we have moved onto a new (empty) line. */
+int
 rl_on_new_line ()
 {
   if (visible_line)
@@ -849,6 +850,7 @@ rl_on_new_line ()
 }
 
 /* Actually update the display, period. */
+int
 rl_forced_update_display ()
 {
   if (visible_line)
@@ -958,6 +960,7 @@ _rl_move_vert (to)
 
 /* Physically print C on rl_outstream.  This is for functions which know
    how to optimize the display.  Return the number of characters output. */
+int
 rl_show_char (c)
      int c;
 {
@@ -1028,6 +1031,7 @@ rl_message (va_alist)
   return 0;
 }
 #else /* !HAVE_VARARGS_H */
+int
 rl_message (format, arg1, arg2)
      char *format;
 {
@@ -1039,6 +1043,7 @@ rl_message (format, arg1, arg2)
 #endif /* !HAVE_VARARGS_H */
 
 /* How to clear things from the "echo-area". */
+int
 rl_clear_message ()
 {
   rl_display_prompt = rl_prompt;
@@ -1046,6 +1051,7 @@ rl_clear_message ()
   return 0;
 }
 
+int
 rl_reset_line_state ()
 {
   rl_on_new_line ();

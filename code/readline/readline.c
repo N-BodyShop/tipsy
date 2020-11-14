@@ -437,6 +437,7 @@ Function *rl_event_hook = (Function *)NULL;
 #define any_typein (push_index != pop_index)
 
 /* Add KEY to the buffer of characters to be read. */
+int
 rl_stuff_char (key)
      int key;
 {
@@ -831,6 +832,7 @@ add_macro_char (c)
    If a numeric argument was explicitly typed, then append this
    definition to the end of the existing macro, and start by
    re-executing the existing macro. */
+int
 rl_start_kbd_macro (ignore1, ignore2)
      int ignore1, ignore2;
 {
@@ -855,6 +857,7 @@ rl_start_kbd_macro (ignore1, ignore2)
 /* Stop defining a keyboard macro.
    A numeric argument says to execute the macro right now,
    that many times, counting the definition as the first time. */
+int
 rl_end_kbd_macro (count, ignore)
      int count, ignore;
 {
@@ -874,6 +877,7 @@ rl_end_kbd_macro (count, ignore)
 
 /* Execute the most recently defined keyboard macro.
    COUNT says how many times to execute it. */
+int
 rl_call_last_kbd_macro (count, ignore)
      int count, ignore;
 {
@@ -919,6 +923,7 @@ _rl_kill_kbd_macro ()
 /* **************************************************************** */
 
 /* Initliaze readline (and terminal if not already). */
+int
 rl_initialize ()
 {
   char *t;
@@ -1126,6 +1131,7 @@ rl_digit_loop ()
 }
 
 /* Add the current digit to the argument in progress. */
+int
 rl_digit_argument (ignore, key)
      int ignore, key;
 {
@@ -1134,6 +1140,7 @@ rl_digit_argument (ignore, key)
 }
 
 /* What to do when you abort reading an argument. */
+int
 rl_discard_argument ()
 {
   ding ();
@@ -1143,6 +1150,7 @@ rl_discard_argument ()
 }
 
 /* Create a default argument. */
+int
 rl_init_argument ()
 {
   rl_numeric_arg = rl_arg_sign = 1;
@@ -1153,6 +1161,7 @@ rl_init_argument ()
 /* C-u, universal argument.  Multiply the current argument by 4.
    Read a key.  If the key has nothing to do with arguments, then
    dispatch on it.  If the key is the abort character then abort. */
+int
 rl_universal_argument ()
 {
   rl_numeric_arg *= 4;
@@ -1221,6 +1230,7 @@ char *term_ks, *term_ke;
 
 /* Re-initialize the terminal considering that the TERM/TERMCAP variable
    has changed. */
+int
 rl_reset_terminal (terminal_name)
      char *terminal_name;
 {
@@ -1500,6 +1510,7 @@ _rl_output_some_chars (string, count)
 }
 
 /* Move the cursor back. */
+int
 backspace (count)
      int count;
 {
@@ -1517,6 +1528,7 @@ backspace (count)
 }
 
 /* Move to the start of the next line. */
+int
 crlf ()
 {
 #if defined (NEW_TTY_DRIVER)
@@ -1526,6 +1538,7 @@ crlf ()
   return 0;
 }
 
+int
 rl_tty_status (count, key)
      int count, key;
 {
@@ -1598,6 +1611,7 @@ ding ()
 }
 
 /* How to abort things. */
+int
 rl_abort (count, key)
      int count, key;
 {
@@ -1612,6 +1626,7 @@ rl_abort (count, key)
 
   rl_last_func = (Function *)NULL;
   longjmp (readline_top_level, 1);
+  return 0;
 }
 
 /* Return a copy of the string between FROM and TO.
@@ -1663,6 +1678,7 @@ rl_extend_line_buffer (len)
 /* Insert a string of text into the line at point.  This is the only
    way that you should do insertion.  rl_insert () calls this
    function. */
+int
 rl_insert_text (string)
      char *string;
 {
@@ -1696,6 +1712,7 @@ rl_insert_text (string)
 
 /* Delete the string between FROM and TO.  FROM is
    inclusive, TO is not. */
+int
 rl_delete_text (from, to)
      int from, to;
 {
@@ -1763,6 +1780,7 @@ rl_delete_text (from, to)
    might as well let rl_redisplay do that job. */
 
 /* Move forward COUNT characters. */
+int
 rl_forward (count, key)
      int count, key;
 {
@@ -1789,6 +1807,7 @@ rl_forward (count, key)
 }
 
 /* Move backward COUNT characters. */
+int
 rl_backward (count, key)
      int count, key;
 {
@@ -1808,6 +1827,7 @@ rl_backward (count, key)
 }
 
 /* Move to the beginning of the line. */
+int
 rl_beg_of_line (count, key)
      int count, key;
 {
@@ -1816,6 +1836,7 @@ rl_beg_of_line (count, key)
 }
 
 /* Move to the end of the line. */
+int
 rl_end_of_line (count, key)
      int count, key;
 {
@@ -1824,6 +1845,7 @@ rl_end_of_line (count, key)
 }
 
 /* Move forward a word.  We do what Emacs does. */
+int
 rl_forward_word (count, key)
      int count, key;
 {
@@ -1866,6 +1888,7 @@ rl_forward_word (count, key)
 }
 
 /* Move backward a word.  We do what Emacs does. */
+int
 rl_backward_word (count, key)
      int count, key;
 {
@@ -1910,6 +1933,7 @@ rl_backward_word (count, key)
 }
 
 /* Clear the current line.  Numeric argument to C-l does this. */
+int
 rl_refresh_line ()
 {
   int curr_line, nleft;
@@ -1952,6 +1976,7 @@ rl_refresh_line ()
 /* C-l typed to a line without quoting clears the screen, and then reprints
    the prompt and the current input line.  Given a numeric arg, redraw only
    the current line. */
+int
 rl_clear_screen (count, key)
      int count, key;
 {
@@ -1974,6 +1999,7 @@ rl_clear_screen (count, key)
   return 0;
 }
 
+int
 rl_arrow_keys (count, c)
      int count, c;
 {
@@ -2013,6 +2039,7 @@ rl_arrow_keys (count, c)
 /* **************************************************************** */
 
 /* Insert the character C at the current location, moving point forward. */
+int
 rl_insert (count, c)
      int count, c;
 {
@@ -2094,6 +2121,7 @@ rl_insert (count, c)
 }
 
 /* Insert the next typed character verbatim. */
+int
 rl_quoted_insert (count, key)
      int count, key;
 {
@@ -2104,6 +2132,7 @@ rl_quoted_insert (count, key)
 }
 
 /* Insert a tab character. */
+int
 rl_tab_insert (count, key)
      int count, key;
 {
@@ -2113,6 +2142,7 @@ rl_tab_insert (count, key)
 /* What to do when a NEWLINE is pressed.  We accept the whole line.
    KEY is the key that invoked this command.  I guess it could have
    meaning in the future. */
+int
 rl_newline (count, key)
      int count, key;
 {
@@ -2129,6 +2159,7 @@ rl_newline (count, key)
   return 0;
 }
 
+int
 rl_clean_up_for_exit ()
 {
   if (readline_echoing_p)
@@ -2145,6 +2176,7 @@ rl_clean_up_for_exit ()
    and some characters appearing in emacs_ctlx_keymap.  This function
    is just a stub, you bind keys to it and the code in _rl_dispatch ()
    is special cased. */
+int
 rl_do_lowercase_version (ignore1, ignore2)
      int ignore1, ignore2;
 {
@@ -2152,6 +2184,7 @@ rl_do_lowercase_version (ignore1, ignore2)
 }
 
 /* Rubout the character behind point. */
+int
 rl_rubout (count, key)
      int count, key;
 {
@@ -2190,6 +2223,7 @@ rl_rubout (count, key)
 
 /* Delete the character under the cursor.  Given a numeric argument,
    kill that many characters instead. */
+int
 rl_delete (count, invoking_key)
      int count, invoking_key;
 {
@@ -2218,6 +2252,7 @@ rl_delete (count, invoking_key)
 }
 
 /* Delete all spaces and tabs around point. */
+int
 rl_delete_horizontal_space (count, ignore)
      int count, ignore;
 {
@@ -2252,6 +2287,7 @@ rl_delete_horizontal_space (count, ignore)
 
 /* This does what C-w does in Unix.  We can't prevent people from
    using behaviour that they expect. */
+int
 rl_unix_word_rubout (count, key)
      int count, key;
 {
@@ -2278,6 +2314,7 @@ rl_unix_word_rubout (count, key)
    latter, because if you are a Unix weenie, then you haven't backspaced
    into the line at all, and if you aren't, then you know what you are
    doing. */
+int
 rl_unix_line_discard (count, key)
      int count, key;
 {
@@ -2314,6 +2351,7 @@ rl_unix_line_discard (count, key)
 static int rl_change_case ();
 
 /* Uppercase the word at point. */
+int
 rl_upcase_word (count, key)
      int count, key;
 {
@@ -2321,6 +2359,7 @@ rl_upcase_word (count, key)
 }
 
 /* Lowercase the word at point. */
+int
 rl_downcase_word (count, key)
      int count, key;
 {
@@ -2328,6 +2367,7 @@ rl_downcase_word (count, key)
 }
 
 /* Upcase the first letter, downcase the rest. */
+int
 rl_capitalize_word (count, key)
      int count, key;
 {
@@ -2401,6 +2441,7 @@ rl_change_case (count, op)
 /* **************************************************************** */
 
 /* Transpose the words at point. */
+int
 rl_transpose_words (count, key)
      int count, key;
 {
@@ -2461,6 +2502,7 @@ rl_transpose_words (count, key)
 
 /* Transpose the characters at point.  If point is at the end of the line,
    then transpose the characters before point. */
+int
 rl_transpose_chars (count, key)
      int count, key;
 {
@@ -2616,6 +2658,7 @@ rl_end_undo_group ()
 }
 
 /* Save an undo entry for the text from START to END. */
+int
 rl_modifying (start, end)
      int start, end;
 {
@@ -2711,6 +2754,7 @@ _rl_free_history_entry (entry)
 }
 
 /* Perhaps put back the current line if it has changed. */
+int
 maybe_replace_line ()
 {
   HIST_ENTRY *temp = current_history ();
@@ -2726,6 +2770,7 @@ maybe_replace_line ()
 }
 
 /* Put back the saved_line_for_history if there is one. */
+int
 maybe_unsave_line ()
 {
   if (saved_line_for_history)
@@ -2749,6 +2794,7 @@ maybe_unsave_line ()
 }
 
 /* Save the current line in saved_line_for_history. */
+int
 maybe_save_line ()
 {
   if (!saved_line_for_history)
@@ -2767,6 +2813,7 @@ maybe_save_line ()
 /* **************************************************************** */
 
 /* Meta-< goes to the start of the history. */
+int
 rl_beginning_of_history (count, key)
      int count, key;
 {
@@ -2774,6 +2821,7 @@ rl_beginning_of_history (count, key)
 }
 
 /* Meta-> goes to the end of the history.  (The current line). */
+int
 rl_end_of_history (count, key)
      int count, key;
 {
@@ -2784,6 +2832,7 @@ rl_end_of_history (count, key)
 }
 
 /* Move down to the next history line. */
+int
 rl_get_next_history (count, key)
      int count, key;
 {
@@ -2829,6 +2878,7 @@ rl_get_next_history (count, key)
 
 /* Get the previous item out of our interactive history, making it the current
    line.  If there is no previous history, just ding. */
+int
 rl_get_previous_history (count, key)
      int count, key;
 {
@@ -2886,6 +2936,7 @@ rl_get_previous_history (count, key)
 }
 
 /* Make C be the next command to be executed. */
+int
 rl_execute_next (c)
      int c;
 {
@@ -2900,6 +2951,7 @@ rl_execute_next (c)
 /* **************************************************************** */
 
 /* Set the mark at POSITION. */
+int
 rl_set_mark (position)
      int position;
 {
@@ -2911,6 +2963,7 @@ rl_set_mark (position)
 }
 
 /* Exchange the position of mark and point. */
+int
 rl_exchange_mark_and_point (count, key)
      int count, key;
 {
@@ -2956,6 +3009,7 @@ int rl_kill_ring_length = 0;
 
 /* How to say that you only want to save a certain amount
    of kill material. */
+int
 rl_set_retained_kills (num)
      int num;
 {
@@ -2967,6 +3021,7 @@ rl_set_retained_kills (num)
    than TO, then the text is appended, otherwise prepended.  If the
    last command was not a kill command, then a new slot is made for
    this kill. */
+int
 rl_kill_text (from, to)
      int from, to;
 {
@@ -3059,6 +3114,7 @@ rl_kill_text (from, to)
 /* **************************************************************** */
 
 /* Delete the word at point, saving the text in the kill ring. */
+int
 rl_kill_word (count, key)
      int count, key;
 {
@@ -3079,6 +3135,7 @@ rl_kill_word (count, key)
 }
 
 /* Rubout the word before point, placing it on the kill ring. */
+int
 rl_backward_kill_word (count, ignore)
      int count, ignore;
 {
@@ -3098,6 +3155,7 @@ rl_backward_kill_word (count, ignore)
 
 /* Kill from here to the end of the line.  If DIRECTION is negative, kill
    back to the line start instead. */
+int
 rl_kill_line (direction, ignore)
      int direction, ignore;
 {
@@ -3117,6 +3175,7 @@ rl_kill_line (direction, ignore)
 
 /* Kill backwards to the start of the line.  If DIRECTION is negative, kill
    forwards to the line end instead. */
+int
 rl_backward_kill_line (direction, ignore)
      int direction, ignore;
 {
@@ -3138,6 +3197,7 @@ rl_backward_kill_line (direction, ignore)
 }
 
 /* Kill the whole line, no matter where point is. */
+int
 rl_kill_full_line (count, ignore)
      int count, ignore;
 {
@@ -3149,6 +3209,7 @@ rl_kill_full_line (count, ignore)
 }
 
 /* Yank back the last killed text.  This ignores arguments. */
+int
 rl_yank (count, ignore)
      int count, ignore;
 {
@@ -3167,6 +3228,7 @@ rl_yank (count, ignore)
    before point is identical to the current kill item, then
    delete that text from the line, rotate the index down, and
    yank back some other text. */
+int
 rl_yank_pop (count, key)
      int count, key;
 {
@@ -3200,6 +3262,7 @@ rl_yank_pop (count, key)
 }
 
 /* Yank the COUNTth argument from the previous history line. */
+int
 rl_yank_nth_arg (count, ignore)
      int count, ignore;
 {
@@ -3254,6 +3317,7 @@ rl_yank_last_arg (count, key)
 }
 
 /* How to toggle back and forth between editing modes. */
+int
 rl_vi_editing_mode (count, key)
      int count, key;
 {
@@ -3264,6 +3328,7 @@ rl_vi_editing_mode (count, key)
 #endif /* VI_MODE */
 }
 
+int
 rl_emacs_editing_mode (count, key)
      int count, key;
 {

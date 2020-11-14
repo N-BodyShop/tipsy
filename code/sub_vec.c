@@ -1,4 +1,5 @@
 #include "defs.h"
+void
 sub_vec(a,b,c)
     Real a[MAXDIM] ;
     Real b[MAXDIM] ;

@@ -1,4 +1,5 @@
 #include "defs.h"
+void
 vec_add_const_mult_vec(a,b,constant,c)
     Real a[MAXDIM] ;
     Real b[MAXDIM] ;

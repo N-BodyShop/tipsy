@@ -1,4 +1,5 @@
 #include "defs.h"
+void
 packfit(c,ibuf,nbyte)
 
     short *c ;	

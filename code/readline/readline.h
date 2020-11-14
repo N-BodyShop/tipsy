@@ -53,6 +53,10 @@ extern int
   rl_delete_horizontal_space (), rl_history_search_forward (),
   rl_history_search_backward (), rl_tty_status (), rl_yank_last_arg ();
 
+void
+rltty_set_default_bindings (Keymap kmap);
+void rl_extend_line_buffer (int len);
+
 /* `Public' utility functions. */
 extern int rl_insert_text (), rl_delete_text (), rl_kill_text ();
 extern int rl_complete_internal ();
@@ -252,6 +256,13 @@ extern char *filename_completion_function ();
    be the function that gets called.
    If KEY is not -1, then bind it. */
 extern int rl_add_defun ();
+extern int rl_add_funmap_entry ();
+extern int rl_execute_next ();
+extern int backspace ();
+extern void _rl_set_screen_size ();
+extern void _rl_kill_kbd_macro ();
+extern int rl_clean_up_for_exit ();
+extern void rl_prep_terminal (), rl_deprep_terminal ();
 extern int rl_bind_key (), rl_bind_key_in_map ();
 extern int rl_unbind_key (), rl_unbind_key_in_map ();
 extern int rl_set_key ();
@@ -261,6 +272,7 @@ extern Function *rl_named_function (), *rl_function_of_keyseq ();
 extern int rl_parse_and_bind ();
 extern Keymap rl_get_keymap (), rl_get_keymap_by_name ();
 extern void rl_set_keymap ();
+extern void rl_set_keymap_from_edit_mode ();
 extern char **rl_invoking_keyseqs (), **rl_invoking_keyseqs_in_map ();
 extern void rl_function_dumper ();
 extern int rl_read_init_file ();

@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
+void
 xplot_gas(job)
     char job[MAXCOMM] ;
 {

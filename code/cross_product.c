@@ -1,4 +1,5 @@
 #include "defs.h"
+void
 cross_product(a,b,c)
     Real a[MAXDIM] ;
     Real b[MAXDIM] ;

@@ -232,6 +232,7 @@ rl_set_sighandler (sig, handler)
 #  define rl_set_sighandler(sig, handler) (SigHandler *)signal (sig, handler)
 #endif /* !HAVE_POSIX_SIGNALS */
 
+int
 rl_set_signals ()
 {
   old_int = (SigHandler *)rl_set_sighandler (SIGINT, rl_signal_handler);
@@ -269,6 +270,7 @@ rl_set_signals ()
   return 0;
 }
 
+int
 rl_clear_signals ()
 {
   rl_set_sighandler (SIGINT, old_int);

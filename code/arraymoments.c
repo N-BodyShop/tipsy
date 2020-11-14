@@ -1,6 +1,7 @@
 #include "defs.h"
 #include "fdefs.h"
 
+void
 arraymoments(job)
     char job[MAXCOMM] ;
 {

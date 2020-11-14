@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
+void
 velscale(job)
     char job[MAXCOMM] ;
 {

@@ -1,6 +1,7 @@
 #include "defs.h"
 #include "fdefs.h"
 
+void
 scale_sub(job)
     char *job;
 {

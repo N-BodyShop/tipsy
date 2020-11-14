@@ -113,6 +113,7 @@ extern char *xmalloc (), *xrealloc ();
 /* rl_add_defun (char *name, Function *function, int key)
    Add NAME to the list of named functions.  Make FUNCTION be the function
    that gets called.  If KEY is not -1, then bind it. */
+int
 rl_add_defun (name, function, key)
      char *name;
      Function *function;
@@ -192,6 +193,7 @@ rl_unbind_key_in_map (key, map)
 /* Bind the key sequence represented by the string KEYSEQ to
    FUNCTION.  This makes new keymaps as necessary.  The initial
    place to do bindings is in MAP. */
+int
 rl_set_key (keyseq, function, map)
      char *keyseq;
      Function *function;
@@ -203,6 +205,7 @@ rl_set_key (keyseq, function, map)
 /* Bind the key sequence represented by the string KEYSEQ to
    the string of characters MACRO.  This makes new keymaps as
    necessary.  The initial place to do bindings is in MAP. */
+int
 rl_macro_bind (keyseq, macro, map)
      char *keyseq, *macro;
      Keymap map;
@@ -226,6 +229,7 @@ rl_macro_bind (keyseq, macro, map)
    pointed to by DATA, right now this can be a function (ISFUNC),
    a macro (ISMACR), or a keymap (ISKMAP).  This makes new keymaps
    as necessary.  The initial place to do bindings is in MAP. */
+int
 rl_generic_bind (type, keyseq, data, map)
      int type;
      char *keyseq, *data;
@@ -294,6 +298,7 @@ rl_generic_bind (type, keyseq, data, map)
 /* Translate the ASCII representation of SEQ, stuffing the values into ARRAY,
    an array of characters.  LEN gets the final length of ARRAY.  Return
    non-zero if there was an error parsing SEQ. */
+int
 rl_translate_keyseq (seq, array, len)
      char *seq, *array;
      int *len;
@@ -436,6 +441,7 @@ rl_function_of_keyseq (keyseq, map, type)
 static char *last_readline_init_file = (char *)NULL;
 
 /* Re-read the current keybindings file. */
+int
 rl_re_read_init_file (count, ignore)
      int count, ignore;
 {
@@ -721,6 +727,7 @@ static int substring_member_of_array ();
    A key binding command looks like: Keyname: function-name\0,
    a variable binding command looks like: set variable value.
    A new-style keybinding looks like "\C-x\C-x": exchange-point-and-mark. */
+int
 rl_parse_and_bind (string)
      char *string;
 {
@@ -972,6 +979,7 @@ static struct {
   { (char *)NULL, (int *)NULL }
 };
 
+int
 rl_variable_bind (name, value)
      char *name, *value;
 {

@@ -20,7 +20,9 @@ int n ;
 	}
 	if(x < *t) return 0 ;
 	if(x > *(t+n-1)) return n-1 ;
+        return 0;
 }
+void
 tridi(a,b,c,f,x,n)  /* solves tridiagonal linear system .   
 	diag elts mii=ai, subdiag mii-1=bi, superdiag mii+1=ci.
 	it is understood that b0 and cn-1 are zero, but are not referenced.
@@ -42,6 +44,7 @@ int n ;
 		x[i] = (f[i] - (c[i] * x[i+1])) / a[i];
 	}
 }
+void
 splinit(x,y,k,n,q2b,q2e)  /* sets up spline derivative array k for a
 	given x and y array of length n POINTS, n-1 intervals, for
 	given estimates for the second derivatives at the endpoints,
