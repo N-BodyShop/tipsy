@@ -69,7 +69,7 @@ int arraygeti(i, box, particle_type)
     }
     else {
 	printf("<not a valid particle type for index>\n");
-	return; 
+	return -1; 
     }
 
 }

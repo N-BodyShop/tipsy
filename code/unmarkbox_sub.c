@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
+void
 unmarkbox_sub(job)
     char job[MAXCOMM] ;
 {

@@ -669,7 +669,8 @@ cube(job)
  *
  * Returns -1 if the particle is outside the given velocity range.
  */
-int getVelocityChannel(double velocity, double *vel_ref, double dvel, int nChannels) {
+int
+getVelocityChannel(double velocity, double *vel_ref, double dvel, int nChannels) {
 
   double dv = dvel / 2.0;
 
@@ -691,4 +692,5 @@ int getVelocityChannel(double velocity, double *vel_ref, double dvel, int nChann
     else if (vel_ref[mid] > velocity)
       high = mid - 1;
   }
+  return 0;
 }

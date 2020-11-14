@@ -61,6 +61,7 @@ static char *prev_line_found;
 
 /* Search backwards through the history looking for a string which is typed
    interactively.  Start with the current line. */
+int
 rl_reverse_search_history (sign, key)
      int sign;
      int key;
@@ -70,6 +71,7 @@ rl_reverse_search_history (sign, key)
 
 /* Search forwards through the history looking for a string which is typed
    interactively.  Start with the current line. */
+int
 rl_forward_search_history (sign, key)
      int sign;
      int key;

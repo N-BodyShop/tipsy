@@ -150,6 +150,7 @@ static int completion_changed_buffer = 0;
    that does the initial simple matching selection algorithm (see
    completion_matches ()).  The default is to do filename completion. */
 
+int
 rl_complete (ignore, invoking_key)
      int ignore, invoking_key;
 {
@@ -162,12 +163,14 @@ rl_complete (ignore, invoking_key)
 }
 
 /* List the possible completions.  See description of rl_complete (). */
+int
 rl_possible_completions (ignore, invoking_key)
      int ignore, invoking_key;
 {
   return (rl_complete_internal ('?'));
 }
 
+int
 rl_insert_completions (ignore, invoking_key)
      int ignore, invoking_key;
 {
@@ -175,6 +178,7 @@ rl_insert_completions (ignore, invoking_key)
 }
 
 /* The user must press "y" or "n". Non-zero return means "y" pressed. */
+int
 get_y_or_n ()
 {
   int c;
@@ -366,6 +370,7 @@ print_filename (to_print, full_pathname)
    `*' means insert all of the possible completions.
    `!' means to do standard completion, and list all possible completions if
    there is more than one. */
+int
 rl_complete_internal (what_to_do)
      int what_to_do;
 {

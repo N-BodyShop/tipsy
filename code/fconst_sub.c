@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "fdefs.h"
+void
 fconst_sub(job)
     char job[MAXCOMM] ;
 {

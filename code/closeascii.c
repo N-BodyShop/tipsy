@@ -1,4 +1,5 @@
 #include "defs.h"
+void
 closeascii(job)
     char job[MAXCOMM] ;
 {

@@ -1,4 +1,5 @@
 #include "defs.h"
+void
 printhelp(job)
     char job[MAXCOMM] ;
 {

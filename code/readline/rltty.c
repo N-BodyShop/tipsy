@@ -572,6 +572,7 @@ rl_deprep_terminal ()
 /*								    */
 /* **************************************************************** */
 
+int
 rl_restart_output (count, key)
      int count, key;
 {
@@ -604,6 +605,7 @@ rl_restart_output (count, key)
   return 0;
 }
 
+int
 rl_stop_output (count, key)
      int count, key;
 {

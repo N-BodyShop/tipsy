@@ -160,6 +160,7 @@ rl_vi_textmod_command (c)
 /* Bound to `.'.  Called from command mode, so we know that we have to
    redo a text modification command.  The default for _rl_vi_last_command
    puts you back into insert mode. */
+int
 rl_vi_redo (count, c)
      int count, c;
 {
@@ -177,6 +178,7 @@ rl_vi_redo (count, c)
 }
     
 /* Yank the nth arg from the previous line into this line at point. */
+int
 rl_vi_yank_arg (count, key)
      int count, key;
 {
@@ -192,6 +194,7 @@ rl_vi_yank_arg (count, key)
 
 /* With an argument, move back that many history lines, else move to the
    beginning of history. */
+int
 rl_vi_fetch_history (count, c)
      int count, c;
 {
@@ -216,6 +219,7 @@ rl_vi_fetch_history (count, c)
 }
 
 /* Search again for the last thing searched for. */
+int
 rl_vi_search_again (count, key)
      int count, key;
 {
@@ -233,6 +237,7 @@ rl_vi_search_again (count, key)
 }
 
 /* Do a vi style search. */
+int
 rl_vi_search (count, key)
      int count, key;
 {
@@ -254,6 +259,7 @@ rl_vi_search (count, key)
 }
 
 /* Completion, from vi's point of view. */
+int
 rl_vi_complete (ignore, key)
      int ignore, key;
 {
@@ -282,6 +288,7 @@ rl_vi_complete (ignore, key)
 }
 
 /* Tilde expansion for vi mode. */
+int
 rl_vi_tilde_expand (ignore, key)
      int ignore, key;
 {
@@ -292,6 +299,7 @@ rl_vi_tilde_expand (ignore, key)
 }
 
 /* Previous word in vi mode. */
+int
 rl_vi_prev_word (count, key)
      int count, key;
 {
@@ -313,6 +321,7 @@ rl_vi_prev_word (count, key)
 }
 
 /* Next word in vi mode. */
+int
 rl_vi_next_word (count, key)
      int count, key;
 {
@@ -333,6 +342,7 @@ rl_vi_next_word (count, key)
 }
 
 /* Move to the end of the ?next? word. */
+int
 rl_vi_end_word (count, key)
      int count, key;
 {
@@ -350,6 +360,7 @@ rl_vi_end_word (count, key)
 }
 
 /* Move forward a word the way that 'W' does. */
+int
 rl_vi_fWord (count)
      int count;
 {
@@ -366,6 +377,7 @@ rl_vi_fWord (count)
   return (0);
 }
 
+int
 rl_vi_bWord (count)
      int count;
 {
@@ -389,6 +401,7 @@ rl_vi_bWord (count)
   return (0);
 }
 
+int
 rl_vi_eWord (count)
      int count;
 {
@@ -418,6 +431,7 @@ rl_vi_eWord (count)
   return (0);
 }
 
+int
 rl_vi_fword (count)
      int count;
 {
@@ -443,6 +457,7 @@ rl_vi_fword (count)
   return (0);
 }
 
+int
 rl_vi_bword (count)
      int count;
 {
@@ -481,6 +496,7 @@ rl_vi_bword (count)
   return (0);
 }
 
+int
 rl_vi_eword (count)
      int count;
 {
@@ -505,6 +521,7 @@ rl_vi_eword (count)
   return (0);
 }
 
+int
 rl_vi_insert_beg (count, key)
      int count, key;
 {
@@ -513,6 +530,7 @@ rl_vi_insert_beg (count, key)
   return (0);
 }
 
+int
 rl_vi_append_mode (count, key)
      int count, key;
 {
@@ -522,6 +540,7 @@ rl_vi_append_mode (count, key)
   return (0);
 }
 
+int
 rl_vi_append_eol (count, key)
      int count, key;
 {
@@ -531,6 +550,7 @@ rl_vi_append_eol (count, key)
 }
 
 /* What to do in the case of C-d. */
+int
 rl_vi_eof_maybe (count, c)
      int count, c;
 {
@@ -541,6 +561,7 @@ rl_vi_eof_maybe (count, c)
 
 /* Switching from one mode to the other really just involves
    switching keymaps. */
+int
 rl_vi_insertion_mode (count, key)
      int count, key;
 {
@@ -564,6 +585,7 @@ _rl_vi_done_inserting ()
     vi_continued_command = 0;
 }
 
+int
 rl_vi_movement_mode (count, key)
      int count, key;
 {
@@ -579,6 +601,7 @@ rl_vi_movement_mode (count, key)
   return (0);
 }
 
+int
 rl_vi_arg_digit (count, c)
      int count, c;
 {
@@ -588,6 +611,7 @@ rl_vi_arg_digit (count, c)
     return (rl_digit_argument (count, c));
 }
 
+int
 rl_vi_change_case (count, ignore)
      int count, ignore;
 {
@@ -625,6 +649,7 @@ rl_vi_change_case (count, ignore)
   return (0);
 }
 
+int
 rl_vi_put (count, key)
      int count, key;
 {
@@ -636,6 +661,7 @@ rl_vi_put (count, key)
   return (0);
 }
 
+int
 rl_vi_check ()
 {
   if (rl_point && rl_point == rl_end)
@@ -643,6 +669,7 @@ rl_vi_check ()
   return (0);
 }
 
+int
 rl_vi_column (count, key)
      int count, key;
 {
@@ -779,6 +806,7 @@ rl_digit_loop1 ()
   return (0);
 }
 
+int
 rl_vi_delete_to (count, key)
      int count, key;
 {
@@ -804,6 +832,7 @@ rl_vi_delete_to (count, key)
   return (0);
 }
 
+int
 rl_vi_change_to (count, key)
      int count, key;
 {
@@ -842,6 +871,7 @@ rl_vi_change_to (count, key)
   return (0);
 }
 
+int
 rl_vi_yank_to (count, key)
      int count, key;
 {
@@ -870,6 +900,7 @@ rl_vi_yank_to (count, key)
   return (0);
 }
 
+int
 rl_vi_delete (count, key)
      int count, key;
 {
@@ -895,6 +926,7 @@ rl_vi_delete (count, key)
 
 /* Turn the current line into a comment in shell history.
    A K*rn shell style function. */
+int
 rl_vi_comment (count, key)
      int count, key;
 {
@@ -910,12 +942,17 @@ rl_vi_comment (count, key)
   return (0);
 }
 
+int rl_back_to_indent (int ignore1, int ignore2);
+
+int
 rl_vi_first_print (count, key)
      int count, key;
 {
-  return (rl_back_to_indent ());
+    int dummy1, dummy2;
+    return (rl_back_to_indent (dummy1, dummy2));
 }
 
+int
 rl_back_to_indent (ignore1, ignore2)
      int ignore1, ignore2;
 {
@@ -931,6 +968,7 @@ rl_back_to_indent (ignore1, ignore2)
 #define FFIND	 2		/* forward find */
 #define BFIND	-2		/* backward find */
 
+int
 rl_vi_char_search (count, key)
      int count, key;
 {
@@ -1032,6 +1070,7 @@ rl_vi_char_search (count, key)
 }
 
 /* Match brackets */
+int
 rl_vi_match (ignore, key)
      int ignore, key;
 {
@@ -1112,6 +1151,7 @@ rl_vi_bracktype (c)
     }
 }
 
+int
 rl_vi_change_char (count, key)
      int count, key;
 {
@@ -1139,6 +1179,7 @@ rl_vi_change_char (count, key)
   return (0);
 }
 
+int
 rl_vi_subst (count, key)
      int count, key;
 {
@@ -1163,6 +1204,7 @@ rl_vi_subst (count, key)
   return (0);
 }
 
+int
 rl_vi_overstrike (count, key)
      int count, key;
 {
@@ -1192,6 +1234,7 @@ rl_vi_overstrike (count, key)
   return (0);
 }
 
+int
 rl_vi_overstrike_delete (count)
      int count;
 {
@@ -1222,6 +1265,7 @@ rl_vi_overstrike_delete (count)
   return (0);
 }
 
+int
 rl_vi_replace (count, key)
      int count, key;
 {
