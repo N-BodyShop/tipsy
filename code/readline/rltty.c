@@ -23,6 +23,7 @@
 #define READLINE_LIBRARY
 
 #include <sys/types.h>
+#include <sys/ioctl.h>
 #include <signal.h>
 #include <errno.h>
 #include <stdio.h>
