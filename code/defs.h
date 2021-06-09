@@ -149,6 +149,10 @@
 #define HUGE MAXFLOAT
 #endif
 
+#if !defined(HUGE)
+#define HUGE 1e38
+#endif
+
 #ifdef HAVE_STRING_H
 #include <string.h>
 #else
