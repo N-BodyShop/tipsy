@@ -663,6 +663,7 @@ static void
 update_line (old, new, current_line, omax, nmax, inv_botlin)
      register char *old, *new;
      int current_line, omax, nmax;
+     int inv_botlin;
 {
   register char *ofd, *ols, *oe, *nfd, *nls, *ne;
   int temp, lendiff, wsatend, od, nd;
@@ -1034,6 +1035,7 @@ rl_message (va_alist)
 int
 rl_message (format, arg1, arg2)
      char *format;
+     int arg1, arg2;
 {
   sprintf (msg_buf, format, arg1, arg2);
   rl_display_prompt = msg_buf;
